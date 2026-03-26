@@ -1,0 +1,109 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique identifier for the user." },
+        "displayName": { "type": "string", "description": "The user's display name." },
+        "email": { "type": "string", "format": "email", "description": "The user's email address." },
+        "phoneNumber": { "type": "string", "description": "The user's phone number." },
+        "role": { "type": "string", "enum": ["user", "admin"], "description": "The user's role." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the user was created." }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Investment": {
+      "title": "Investment",
+      "description": "Investment details.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user ID of the investor." },
+        "plan": { "type": "string", "description": "The chosen investment plan." },
+        "slots": { "type": "number", "description": "Number of slots invested." },
+        "amount": { "type": "number", "description": "Total amount invested." },
+        "status": { "type": "string", "enum": ["pending", "active", "completed"], "description": "The status of the investment." },
+        "paymentId": { "type": "string", "description": "The ID of the payment record." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the investment was made." }
+      },
+      "required": ["uid", "plan", "slots", "amount", "status", "paymentId"]
+    },
+    "CooperativeMember": {
+      "title": "CooperativeMember",
+      "description": "Cooperative membership details.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user ID of the member." },
+        "status": { "type": "string", "enum": ["pending", "active", "inactive"], "description": "The status of the membership." },
+        "registrationFeePaid": { "type": "boolean", "description": "Whether the registration fee has been paid." },
+        "paymentId": { "type": "string", "description": "The ID of the payment record." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the member joined." }
+      },
+      "required": ["uid", "status", "registrationFeePaid", "paymentId"]
+    },
+    "RiceOrder": {
+      "title": "RiceOrder",
+      "description": "Rice purchase details.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user ID of the buyer." },
+        "items": { "type": "array", "items": { "type": "object" }, "description": "The items purchased." },
+        "totalAmount": { "type": "number", "description": "Total amount paid." },
+        "paymentId": { "type": "string", "description": "The ID of the payment record." },
+        "status": { "type": "string", "enum": ["pending", "processing", "shipped", "delivered"], "description": "The status of the order." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the order was placed." }
+      },
+      "required": ["uid", "items", "totalAmount", "paymentId", "status"]
+    },
+    "Training": {
+      "title": "Training",
+      "description": "Training program details.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "The unique identifier for the training." },
+        "title": { "type": "string", "description": "The title of the training." },
+        "description": { "type": "string", "description": "The description of the training." },
+        "price": { "type": "number", "description": "The price of the training." },
+        "date": { "type": "string", "format": "date-time", "description": "When the training will take place." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the training was created." }
+      },
+      "required": ["id", "title", "price", "date"]
+    },
+    "TrainingRegistration": {
+      "title": "TrainingRegistration",
+      "description": "Registration for a training program.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user ID of the registrant." },
+        "trainingId": { "type": "string", "description": "The ID of the training." },
+        "paymentId": { "type": "string", "description": "The ID of the payment record." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the registration was made." }
+      },
+      "required": ["uid", "trainingId", "paymentId"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Payment records.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "The unique identifier for the payment." },
+        "uid": { "type": "string", "description": "The user ID of the payer." },
+        "amount": { "type": "number", "description": "The amount paid." },
+        "purpose": { "type": "string", "description": "The purpose of the payment (e.g., investment, cooperative, rice, training)." },
+        "status": { "type": "string", "enum": ["pending", "success", "failed"], "description": "The status of the payment." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the payment was made." }
+      },
+      "required": ["id", "uid", "amount", "purpose", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": { "schema": "User", "description": "User profiles." },
+    "/investments/{investmentId}": { "schema": "Investment", "description": "Investment records." },
+    "/cooperativeMembers/{memberId}": { "schema": "CooperativeMember", "description": "Cooperative membership records." },
+    "/riceOrders/{orderId}": { "schema": "RiceOrder", "description": "Rice purchase records." },
+    "/trainings/{trainingId}": { "schema": "Training", "description": "Training programs." },
+    "/trainingRegistrations/{registrationId}": { "schema": "TrainingRegistration", "description": "Training registrations." },
+    "/payments/{paymentId}": { "schema": "Payment", "description": "Payment records." }
+  }
+}

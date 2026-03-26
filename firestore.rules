@@ -1,0 +1,212 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: uid
+    // Fields:
+    //   - uid: string (required)
+    //   - displayName: string (optional)
+    //   - email: string (required)
+    //   - phoneNumber: string (optional)
+    //   - role: string (required, 'user' or 'admin')
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: investments
+    // Document ID: investmentId
+    // Fields:
+    //   - uid: string (required)
+    //   - plan: string (required)
+    //   - slots: number (required)
+    //   - amount: number (required)
+    //   - status: string (required, 'pending', 'active', 'completed')
+    //   - paymentId: string (required)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: cooperativeMembers
+    // Document ID: memberId
+    // Fields:
+    //   - uid: string (required)
+    //   - status: string (required, 'pending', 'active', 'inactive')
+    //   - registrationFeePaid: bool (required)
+    //   - paymentId: string (required)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: riceOrders
+    // Document ID: orderId
+    // Fields:
+    //   - uid: string (required)
+    //   - items: list (required)
+    //   - totalAmount: number (required)
+    //   - paymentId: string (required)
+    //   - status: string (required, 'pending', 'processing', 'shipped', 'delivered')
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: trainings
+    // Document ID: trainingId
+    // Fields:
+    //   - id: string (required)
+    //   - title: string (required)
+    //   - description: string (optional)
+    //   - price: number (required)
+    //   - date: timestamp (required)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: trainingRegistrations
+    // Document ID: registrationId
+    // Fields:
+    //   - uid: string (required)
+    //   - trainingId: string (required)
+    //   - paymentId: string (required)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: payments
+    // Document ID: paymentId
+    // Fields:
+    //   - id: string (required)
+    //   - uid: string (required)
+    //   - amount: number (required)
+    //   - purpose: string (required)
+    //   - status: string (required, 'pending', 'success', 'failed')
+    //   - createdAt: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "clhoetash@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidEmail(email) {
+      return email is string &&
+        email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidUser(data) {
+      return hasOnlyAllowedFields(['uid', 'displayName', 'email', 'phoneNumber', 'role', 'createdAt']) &&
+             data.uid is string && data.uid.size() > 0 &&
+             data.email is string && isValidEmail(data.email) &&
+             data.role in ['user', 'admin'] &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidInvestment(data) {
+      return hasOnlyAllowedFields(['uid', 'plan', 'slots', 'amount', 'status', 'paymentId', 'createdAt']) &&
+             data.uid is string && data.plan is string &&
+             data.slots is number && data.slots > 0 &&
+             data.amount is number && data.amount > 0 &&
+             data.status in ['pending', 'active', 'completed'] &&
+             data.paymentId is string &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidCooperativeMember(data) {
+      return hasOnlyAllowedFields(['uid', 'status', 'registrationFeePaid', 'paymentId', 'createdAt']) &&
+             data.uid is string &&
+             data.status in ['pending', 'active', 'inactive'] &&
+             data.registrationFeePaid is bool &&
+             data.paymentId is string &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidRiceOrder(data) {
+      return hasOnlyAllowedFields(['uid', 'items', 'totalAmount', 'paymentId', 'status', 'createdAt']) &&
+             data.uid is string && data.items is list &&
+             data.totalAmount is number && data.totalAmount > 0 &&
+             data.paymentId is string &&
+             data.status in ['pending', 'processing', 'shipped', 'delivered'] &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidTraining(data) {
+      return hasOnlyAllowedFields(['id', 'title', 'description', 'price', 'date', 'createdAt']) &&
+             data.id is string && data.title is string &&
+             data.price is number && data.price >= 0 &&
+             data.date is timestamp &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidTrainingRegistration(data) {
+      return hasOnlyAllowedFields(['uid', 'trainingId', 'paymentId', 'createdAt']) &&
+             data.uid is string && data.trainingId is string &&
+             data.paymentId is string &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidPayment(data) {
+      return hasOnlyAllowedFields(['id', 'uid', 'amount', 'purpose', 'status', 'createdAt']) &&
+             data.id is string && data.uid is string &&
+             data.amount is number && data.amount > 0 &&
+             data.purpose is string &&
+             data.status in ['pending', 'success', 'failed'] &&
+             data.createdAt is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && (request.resource.data.role == 'user' || isAdmin());
+      allow update: if (isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == resource.data.role) || isAdmin();
+    }
+
+    match /investments/{investmentId} {
+      allow read: if isOwner(resource.data.uid) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(request.resource.data.uid) && isValidInvestment(request.resource.data);
+      allow update: if isAdmin();
+    }
+
+    match /cooperativeMembers/{memberId} {
+      allow read: if isOwner(resource.data.uid) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(request.resource.data.uid) && isValidCooperativeMember(request.resource.data);
+      allow update: if isAdmin();
+    }
+
+    match /riceOrders/{orderId} {
+      allow read: if isOwner(resource.data.uid) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(request.resource.data.uid) && isValidRiceOrder(request.resource.data);
+      allow update: if isAdmin();
+    }
+
+    match /trainings/{trainingId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidTraining(request.resource.data);
+    }
+
+    match /trainingRegistrations/{registrationId} {
+      allow read: if isOwner(resource.data.uid) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(request.resource.data.uid) && isValidTrainingRegistration(request.resource.data);
+      allow update: if isAdmin();
+    }
+
+    match /payments/{paymentId} {
+      allow read: if isOwner(resource.data.uid) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(request.resource.data.uid) && isValidPayment(request.resource.data);
+      allow update: if isAdmin();
+    }
+  }
+}
