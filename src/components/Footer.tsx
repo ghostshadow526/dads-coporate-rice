@@ -10,7 +10,7 @@ export default function Footer() {
             <div className="flex items-center mb-4">
               <img 
                 src="https://raw.githubusercontent.com/ghostshadow526/jtech/main/IMG-20260116-WA0004.jpg-removebg-preview.png" 
-                alt="DAD’s RICE Logo" 
+                alt="salvagebizhub Logo" 
                 className="h-14 w-auto brightness-0 invert"
                 referrerPolicy="no-referrer"
               />
@@ -24,10 +24,12 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2 text-gray-400 text-sm">
               <li><Link to="/" className="hover:text-green-500 transition-colors">Home</Link></li>
-              <li><Link to="/invest" className="hover:text-green-500 transition-colors">Invest Now</Link></li>
-              <li><Link to="/cooperative" className="hover:text-green-500 transition-colors">Join Cooperative</Link></li>
+              <li><Link to="/about" className="hover:text-green-500 transition-colors">About Us</Link></li>
+              <li><Link to="/login" className="hover:text-green-500 transition-colors">Investor Login</Link></li>
+              <li><Link to="/cooperative" className="hover:text-green-500 transition-colors">Join Cooperative (SMCS)</Link></li>
               <li><Link to="/buy-rice" className="hover:text-green-500 transition-colors">Buy Rice</Link></li>
-              <li><Link to="/training" className="hover:text-green-500 transition-colors">Training Programs</Link></li>
+              <li><Link to="/training" className="hover:text-green-500 transition-colors">Register for Training</Link></li>
+              <li><Link to="/testimonials" className="hover:text-green-500 transition-colors">Testimonials</Link></li>
             </ul>
           </div>
           
@@ -44,7 +46,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-green-500" />
-                <span>info@dadsrice.com</span>
+                <span>info@salvagebizhub.com</span>
               </li>
             </ul>
           </div>
@@ -60,7 +62,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-gray-800 pt-8 text-center text-gray-500 text-xs">
-          <p>&copy; {new Date().getFullYear()} DAD’s RICE. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} salvagebizhub. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -5,7 +5,7 @@ export const generateInvestmentPDF = (investment: any, user: any) => {
   const doc = new jsPDF();
   
   doc.setFontSize(22);
-  doc.text("DAD'S RICE INVESTMENT DOCUMENT", 105, 20, { align: 'center' });
+  doc.text("salvagebizhub INVESTMENT DOCUMENT", 105, 20, { align: 'center' });
   
   doc.setFontSize(12);
   doc.text(`Date: ${format(new Date(), 'PPP')}`, 20, 40);
@@ -21,7 +21,7 @@ export const generateInvestmentPDF = (investment: any, user: any) => {
   doc.text(`Status: ${investment.status.toUpperCase()}`, 20, 120);
   
   doc.setFontSize(10);
-  doc.text("Thank you for investing in DAD'S Rice. This document serves as a proof of your investment.", 20, 140);
+  doc.text("Thank you for investing in salvagebizhub. This document serves as a proof of your investment.", 20, 140);
   doc.text("Please keep this document safe for future reference.", 20, 150);
   
   doc.save(`investment_${investment.paymentId}.pdf`);
@@ -31,7 +31,7 @@ export const generateReceiptPDF = (payment: any, user: any) => {
   const doc = new jsPDF();
   
   doc.setFontSize(22);
-  doc.text("DAD'S RICE PAYMENT RECEIPT", 105, 20, { align: 'center' });
+  doc.text("salvagebizhub PAYMENT RECEIPT", 105, 20, { align: 'center' });
   
   doc.setFontSize(12);
   doc.text(`Date: ${format(new Date(), 'PPP')}`, 20, 40);
@@ -55,7 +55,7 @@ export const generateTrainingPassPDF = (registration: any, training: any, user: 
   const doc = new jsPDF();
   
   doc.setFontSize(22);
-  doc.text("DAD'S RICE TRAINING PASS", 105, 20, { align: 'center' });
+  doc.text("salvagebizhub TRAINING PASS", 105, 20, { align: 'center' });
   
   doc.setFontSize(12);
   doc.text(`Date: ${format(new Date(), 'PPP')}`, 20, 40);

@@ -129,7 +129,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
               <div>
                 <h3 className="font-bold text-green-900 mb-1">Cooperative Registration</h3>
                 <p className="text-green-800 text-sm">
-                  To join the DAD’s Rice SMCS Cooperative, a one-time registration fee of <strong>NGN {REGISTRATION_FEE.toLocaleString()}</strong> is required. This grants you full membership benefits and access to our monthly savings system.
+                  To join the salvagebizhub SMCS Cooperative, a one-time registration fee of <strong>NGN {REGISTRATION_FEE.toLocaleString()}</strong> is required. This grants you full membership benefits and access to our monthly savings system.
                 </p>
               </div>
             </div>

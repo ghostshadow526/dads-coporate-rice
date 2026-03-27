@@ -152,7 +152,7 @@ export default function Training({ user, profile }: TrainingProps) {
                     </div>
                     <div className="flex items-center space-x-3">
                       <MapPin className="w-4 h-4 text-purple-600" />
-                      <span>DAD’s Training Center, Abuja</span>
+                      <span>salvagebizhub Training Center, Abuja</span>
                     </div>
                   </div>
                 </div>

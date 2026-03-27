@@ -20,10 +20,10 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
   const navigate = useNavigate();
 
   const products = [
-    { id: 'rice-50kg', name: 'DAD’s Premium Rice (50kg)', price: 45000, image: 'https://picsum.photos/seed/rice-50kg/400/400' },
-    { id: 'rice-25kg', name: 'DAD’s Premium Rice (25kg)', price: 23000, image: 'https://picsum.photos/seed/rice-25kg/400/400' },
-    { id: 'rice-10kg', name: 'DAD’s Premium Rice (10kg)', price: 10000, image: 'https://picsum.photos/seed/rice-10kg/400/400' },
-    { id: 'rice-5kg', name: 'DAD’s Premium Rice (5kg)', price: 5500, image: 'https://picsum.photos/seed/rice-5kg/400/400' },
+    { id: 'rice-50kg', name: 'salvagebizhub Premium Rice (50kg)', price: 45000, image: 'https://picsum.photos/seed/rice-50kg/400/400' },
+    { id: 'rice-25kg', name: 'salvagebizhub Premium Rice (25kg)', price: 23000, image: 'https://picsum.photos/seed/rice-25kg/400/400' },
+    { id: 'rice-10kg', name: 'salvagebizhub Premium Rice (10kg)', price: 10000, image: 'https://picsum.photos/seed/rice-10kg/400/400' },
+    { id: 'rice-5kg', name: 'salvagebizhub Premium Rice (5kg)', price: 5500, image: 'https://picsum.photos/seed/rice-5kg/400/400' },
   ];
 
   const addToCart = (product: any) => {
@@ -90,7 +90,7 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Buy DAD’s Rice</h1>
+        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Buy salvagebizhub Rice</h1>
         <p className="text-gray-600 text-lg">Premium quality, locally grown rice delivered to your doorstep.</p>
       </div>
 

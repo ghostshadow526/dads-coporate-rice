@@ -92,7 +92,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Invest in DAD’s Rice</h1>
+        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Invest in salvagebizhub Rice</h1>
         <p className="text-gray-600 text-lg">Secure your future by investing in sustainable agriculture.</p>
       </div>
 

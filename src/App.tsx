@@ -7,6 +7,7 @@ import { UserProfile } from './types';
 // Pages
 import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
+import BoardOfDirectors from './pages/BoardOfDirectors';
 import Testimonials from './pages/Testimonials';
 import Dashboard from './pages/Dashboard';
 import Investment from './pages/Investment';
@@ -70,6 +71,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<AboutUs />} />
+              <Route path="/about/board" element={<BoardOfDirectors />} />
               <Route path="/testimonials" element={<Testimonials />} />
               <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
               

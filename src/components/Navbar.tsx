@@ -14,6 +14,7 @@ export default function Navbar({ user, profile }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,11 +31,19 @@ export default function Navbar({ user, profile }: NavbarProps) {
   };
 
   const navLinks = [
-    { name: 'About Us', path: '/about' },
-    { name: 'Products & Services', path: '/products' },
-    { name: 'Sustainability', path: '/sustainability' },
-    { name: 'News', path: '/news' },
-    { name: 'Careers', path: '/careers' },
+    { 
+      name: 'About Us', 
+      path: '/about',
+      subLinks: [
+        { name: 'Company Overview', path: '/about' },
+        { name: 'Board of Directors', path: '/about/board' },
+      ]
+    },
+    { name: 'Investor Portal', path: '/login' },
+    { name: 'Join Cooperative (SMCS)', path: '/cooperative' },
+    { name: 'Buy Rice', path: '/buy-rice' },
+    { name: 'Register for Training', path: '/training' },
+    { name: 'Testimonials', path: '/testimonials' },
   ];
 
   return (
@@ -76,23 +85,64 @@ export default function Navbar({ user, profile }: NavbarProps) {
                     referrerPolicy="no-referrer"
                   />
                 </div>
-                <span className="text-white text-2xl font-bold tracking-tight">DAD'S RICE</span>
+                <span className="text-white text-xl font-bold tracking-tight uppercase">SALVAGEBIZHUB</span>
               </Link>
             </div>
 
             {/* Desktop Nav Links */}
             <div className="hidden md:flex items-center space-x-10">
               {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className="text-white hover:text-brand-yellow font-bold text-sm uppercase tracking-wider transition-colors"
-                >
-                  {link.name}
-                </Link>
+                <div key={link.name} className="relative group">
+                  {link.subLinks ? (
+                    <div 
+                      className="flex items-center space-x-1 cursor-pointer"
+                      onMouseEnter={() => setIsAboutOpen(true)}
+                      onMouseLeave={() => setIsAboutOpen(false)}
+                    >
+                      <Link
+                        to={link.path}
+                        className="text-white hover:text-brand-yellow font-bold text-xs uppercase tracking-wider transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                      <ChevronDown className={`w-4 h-4 text-white transition-transform duration-200 ${isAboutOpen ? 'rotate-180' : ''}`} />
+                      
+                      <AnimatePresence>
+                        {isAboutOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className="absolute left-0 top-full pt-4 w-56"
+                          >
+                            <div className="bg-white rounded-xl shadow-2xl py-2 overflow-hidden border border-gray-100">
+                              {link.subLinks.map((sub) => (
+                                <Link
+                                  key={sub.name}
+                                  to={sub.path}
+                                  className="block px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-600 hover:bg-brand-orange hover:text-white transition-all"
+                                  onClick={() => setIsAboutOpen(false)}
+                                >
+                                  {sub.name}
+                                </Link>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <Link
+                      to={link.path}
+                      className="text-white hover:text-brand-yellow font-bold text-xs uppercase tracking-wider transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  )}
+                </div>
               ))}
 
-              {user ? (
+              {user && (
                 <div className="relative">
                   <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -101,7 +151,7 @@ export default function Navbar({ user, profile }: NavbarProps) {
                     <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
                       <User className="w-5 h-5 text-white" />
                     </div>
-                    <span className="font-bold text-sm uppercase tracking-wider">{profile?.displayName?.split(' ')[0] || 'User'}</span>
+                    <span className="font-bold text-xs uppercase tracking-wider">{profile?.displayName?.split(' ')[0] || 'User'}</span>
                     <ChevronDown className="w-4 h-4" />
                   </button>
 
@@ -130,13 +180,6 @@ export default function Navbar({ user, profile }: NavbarProps) {
                     )}
                   </AnimatePresence>
                 </div>
-              ) : (
-                <Link
-                  to="/login"
-                  className="text-white border-2 border-white/30 hover:border-white px-6 py-2 rounded-full font-bold text-xs uppercase tracking-widest transition-all"
-                >
-                  Login
-                </Link>
               )}
             </div>
 
@@ -154,9 +197,9 @@ export default function Navbar({ user, profile }: NavbarProps) {
           {/* Breadcrumbs - Only on Home Page and Desktop */}
           {window.location.pathname === '/' && (
             <div className="hidden md:flex items-center space-x-2 text-white/70 text-xs py-2">
-              <Link to="/products" className="hover:text-white transition-colors">Products & Services</Link>
+              <Link to="/buy-rice" className="hover:text-white transition-colors">Buy Rice</Link>
               <span>›</span>
-              <span className="text-white">Rice</span>
+              <span className="text-white">Premium Quality</span>
             </div>
           )}
         </div>
@@ -179,31 +222,49 @@ export default function Navbar({ user, profile }: NavbarProps) {
             
             <div className="flex flex-col space-y-8">
               {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className="text-white text-3xl font-black uppercase tracking-tighter"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.name}
-                </Link>
+                <div key={link.name} className="flex flex-col space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Link
+                      to={link.path}
+                      className="text-white text-xl font-black uppercase tracking-tighter"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {link.name}
+                    </Link>
+                    {link.subLinks && (
+                      <button 
+                        onClick={() => setIsAboutOpen(!isAboutOpen)}
+                        className="p-2 text-white"
+                      >
+                        <ChevronDown className={`w-6 h-6 transition-transform ${isAboutOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {link.subLinks && isAboutOpen && (
+                    <div className="flex flex-col space-y-4 pl-6 border-l-2 border-white/20">
+                      {link.subLinks.map((sub) => (
+                        <Link
+                          key={sub.name}
+                          to={sub.path}
+                          className="text-white/80 text-lg font-bold uppercase tracking-tighter"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
               
-              {user ? (
+              {user && (
                 <Link
                   to="/dashboard"
-                  className="text-white text-3xl font-black uppercase tracking-tighter"
+                  className="text-white text-xl font-black uppercase tracking-tighter"
                   onClick={() => setIsOpen(false)}
                 >
                   Dashboard
-                </Link>
-              ) : (
-                <Link
-                  to="/login"
-                  className="text-white text-3xl font-black uppercase tracking-tighter"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Login
                 </Link>
               )}
             </div>
