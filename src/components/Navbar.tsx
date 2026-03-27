@@ -47,31 +47,40 @@ export default function Navbar({ user, profile }: NavbarProps) {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
       {/* Top Bar */}
-      <div className="bg-black text-white text-[13px] py-2 hidden md:block">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end items-center space-x-8">
-          <button className="flex items-center hover:text-brand-yellow transition-colors">
-            <MessageSquare className="w-4 h-4 mr-2" />
-            Contact Us
-          </button>
-          <button className="flex items-center hover:text-brand-yellow transition-colors">
-            <MapPin className="w-4 h-4 mr-2" />
-            Locations
-          </button>
-          <button className="flex items-center hover:text-brand-yellow transition-colors">
-            <Search className="w-4 h-4 mr-2" />
-            Search
-          </button>
-          <button className="bg-white text-black px-4 py-2 flex items-center font-bold hover:bg-gray-100 transition-colors -my-2">
-            <Mail className="w-4 h-4 mr-2" />
-            Subscribe
-          </button>
-        </div>
-      </div>
+      <AnimatePresence>
+        {!isScrolled && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-black text-white text-[13px] py-2 hidden md:block overflow-hidden"
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end items-center space-x-8">
+              <Link to="/contact" className="flex items-center hover:text-brand-yellow transition-colors">
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Contact Us
+              </Link>
+              <button className="flex items-center hover:text-brand-yellow transition-colors">
+                <MapPin className="w-4 h-4 mr-2" />
+                Locations
+              </button>
+              <button className="flex items-center hover:text-brand-yellow transition-colors">
+                <Search className="w-4 h-4 mr-2" />
+                Search
+              </button>
+              <button className="bg-white text-black px-4 py-2 flex items-center font-bold hover:bg-gray-100 transition-colors -my-2">
+                <Mail className="w-4 h-4 mr-2" />
+                Subscribe
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Nav */}
-      <nav className={`transition-all duration-300 ${isScrolled ? 'bg-brand-orange shadow-lg' : 'bg-transparent'}`}>
+      <nav className={`transition-all duration-500 ${isScrolled ? 'bg-[#222222] shadow-xl' : 'bg-brand-orange'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
@@ -85,12 +94,12 @@ export default function Navbar({ user, profile }: NavbarProps) {
                     referrerPolicy="no-referrer"
                   />
                 </div>
-                <span className="text-white text-xl font-bold tracking-tight uppercase">SALVAGEBIZHUB</span>
+                <span className="text-white text-sm font-bold tracking-tight uppercase">SALVAGEBIZHUB</span>
               </Link>
             </div>
 
             {/* Desktop Nav Links */}
-            <div className="hidden md:flex items-center space-x-10">
+            <div className="hidden md:flex items-center space-x-8">
               {navLinks.map((link) => (
                 <div key={link.name} className="relative group">
                   {link.subLinks ? (
@@ -101,11 +110,11 @@ export default function Navbar({ user, profile }: NavbarProps) {
                     >
                       <Link
                         to={link.path}
-                        className="text-white hover:text-brand-yellow font-bold text-xs uppercase tracking-wider transition-colors"
+                        className={`${isScrolled ? 'text-white' : 'text-brand-dark'} hover:text-brand-yellow font-bold text-[10px] uppercase tracking-wider transition-colors`}
                       >
                         {link.name}
                       </Link>
-                      <ChevronDown className={`w-4 h-4 text-white transition-transform duration-200 ${isAboutOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-3 h-3 ${isScrolled ? 'text-white' : 'text-brand-dark'} transition-transform duration-200 ${isAboutOpen ? 'rotate-180' : ''}`} />
                       
                       <AnimatePresence>
                         {isAboutOpen && (
@@ -120,7 +129,7 @@ export default function Navbar({ user, profile }: NavbarProps) {
                                 <Link
                                   key={sub.name}
                                   to={sub.path}
-                                  className="block px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-600 hover:bg-brand-orange hover:text-white transition-all"
+                                  className="block px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-gray-600 hover:bg-brand-orange hover:text-white transition-all"
                                   onClick={() => setIsAboutOpen(false)}
                                 >
                                   {sub.name}
@@ -134,7 +143,7 @@ export default function Navbar({ user, profile }: NavbarProps) {
                   ) : (
                     <Link
                       to={link.path}
-                      className="text-white hover:text-brand-yellow font-bold text-xs uppercase tracking-wider transition-colors"
+                      className={`${isScrolled ? 'text-white' : 'text-brand-dark'} hover:text-brand-yellow font-bold text-[10px] uppercase tracking-wider transition-colors`}
                     >
                       {link.name}
                     </Link>
@@ -148,11 +157,11 @@ export default function Navbar({ user, profile }: NavbarProps) {
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                     className="flex items-center space-x-2 text-white hover:text-brand-yellow focus:outline-none"
                   >
-                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                      <User className="w-5 h-5 text-white" />
+                    <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+                      <User className="w-4 h-4 text-white" />
                     </div>
-                    <span className="font-bold text-xs uppercase tracking-wider">{profile?.displayName?.split(' ')[0] || 'User'}</span>
-                    <ChevronDown className="w-4 h-4" />
+                    <span className="font-bold text-[10px] uppercase tracking-wider">{profile?.displayName?.split(' ')[0] || 'User'}</span>
+                    <ChevronDown className="w-3 h-3" />
                   </button>
 
                   <AnimatePresence>
@@ -193,15 +202,6 @@ export default function Navbar({ user, profile }: NavbarProps) {
               </button>
             </div>
           </div>
-
-          {/* Breadcrumbs - Only on Home Page and Desktop */}
-          {window.location.pathname === '/' && (
-            <div className="hidden md:flex items-center space-x-2 text-white/70 text-xs py-2">
-              <Link to="/buy-rice" className="hover:text-white transition-colors">Buy Rice</Link>
-              <span>›</span>
-              <span className="text-white">Premium Quality</span>
-            </div>
-          )}
         </div>
       </nav>
 
@@ -270,10 +270,10 @@ export default function Navbar({ user, profile }: NavbarProps) {
             </div>
 
             <div className="mt-auto pt-12 border-t border-white/20 flex flex-col space-y-6">
-              <button className="flex items-center text-white font-bold">
+              <Link to="/contact" className="flex items-center text-white font-bold" onClick={() => setIsOpen(false)}>
                 <MessageSquare className="w-6 h-6 mr-4" />
                 Contact Us
-              </button>
+              </Link>
               <button className="flex items-center text-white font-bold">
                 <MapPin className="w-6 h-6 mr-4" />
                 Locations

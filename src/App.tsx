@@ -15,10 +15,12 @@ import Cooperative from './pages/Cooperative';
 import BuyRice from './pages/BuyRice';
 import Training from './pages/Training';
 import Login from './pages/Login';
+import Contact from './pages/Contact';
 
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import TalkToUs from './components/TalkToUs';
 import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
@@ -73,6 +75,7 @@ export default function App() {
               <Route path="/about" element={<AboutUs />} />
               <Route path="/about/board" element={<BoardOfDirectors />} />
               <Route path="/testimonials" element={<Testimonials />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
               
               {/* Protected Routes */}
@@ -83,6 +86,7 @@ export default function App() {
               <Route path="/training" element={user ? <Training user={user} profile={userProfile} /> : <Navigate to="/login" />} />
             </Routes>
           </main>
+          <TalkToUs />
           <Footer />
           <Toaster position="top-right" />
         </div>
