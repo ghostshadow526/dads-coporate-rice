@@ -115,7 +115,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32">
       <div className="text-center mb-12">
         <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Join Our Cooperative (SMCS)</h1>
         <p className="text-gray-600 text-lg">Be part of a community that grows together and supports each other.</p>
@@ -153,14 +153,20 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
               </div>
             </div>
 
-            <button
+            <motion.button
               onClick={handleJoin}
               disabled={processing}
+              whileHover={{ 
+                borderTopLeftRadius: "2rem",
+                borderBottomRightRadius: "2rem",
+                scale: 1.02
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
               className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
             >
               {processing ? 'Processing...' : `Pay NGN ${REGISTRATION_FEE.toLocaleString()} to Join Now`}
               {!processing && <ArrowRight className="w-5 h-5" />}
-            </button>
+            </motion.button>
           </div>
         </div>
       ) : (
@@ -234,20 +240,36 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
               <h3 className="text-xl font-bold text-gray-900 mb-6">Resources</h3>
               <div className="space-y-4">
-                <button className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors group">
+                <motion.button
+                  whileHover={{ 
+                    borderTopLeftRadius: "2rem",
+                    borderBottomRightRadius: "2rem",
+                    scale: 1.02
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors group"
+                >
                   <div className="flex items-center space-x-3">
                     <Download className="w-5 h-5 text-green-700" />
                     <span className="font-bold text-gray-700">Constitution</span>
                   </div>
                   <ArrowRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform" />
-                </button>
-                <button className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors group">
+                </motion.button>
+                <motion.button
+                  whileHover={{ 
+                    borderTopLeftRadius: "2rem",
+                    borderBottomRightRadius: "2rem",
+                    scale: 1.02
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors group"
+                >
                   <div className="flex items-center space-x-3">
                     <Download className="w-5 h-5 text-green-700" />
                     <span className="font-bold text-gray-700">Bye-laws</span>
                   </div>
                   <ArrowRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform" />
-                </button>
+                </motion.button>
               </div>
             </div>
 
@@ -257,9 +279,17 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
               <p className="text-green-100 text-sm leading-relaxed mb-6">
                 Need help with your membership or payments? Our cooperative support team is here for you.
               </p>
-              <button className="w-full bg-green-500 text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-colors">
+              <motion.button
+                whileHover={{ 
+                  borderTopLeftRadius: "2rem",
+                  borderBottomRightRadius: "2rem",
+                  scale: 1.02
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                className="w-full bg-green-500 text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-colors"
+              >
                 Contact Support
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>

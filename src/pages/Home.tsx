@@ -11,6 +11,14 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       {/* Full-Width Brand Hero Section */}
       <section className="relative flex flex-col items-center justify-center min-h-[140vh] bg-brand-orange overflow-hidden">
+        {/* Green Bottom Section with Styled Separation */}
+        <div 
+          className="absolute bottom-0 left-0 w-full h-[55%] bg-brand-green z-0"
+          style={{
+            clipPath: 'ellipse(100% 100% at 50% 100%)',
+          }}
+        />
+
         {/* Top Right Image - Masked like the guide */}
         <motion.div
           initial={{ opacity: 0, x: 100 }}

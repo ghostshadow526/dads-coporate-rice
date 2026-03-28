@@ -90,7 +90,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32">
       <div className="text-center mb-12">
         <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Invest in salvagebizhub Rice</h1>
         <p className="text-gray-600 text-lg">Secure your future by investing in sustainable agriculture.</p>
@@ -153,14 +153,20 @@ export default function Investment({ user, profile }: InvestmentProps) {
                   </div>
                 </div>
 
-                <button
+                <motion.button
                   onClick={handlePayRegistration}
                   disabled={loading}
+                  whileHover={{ 
+                    borderTopLeftRadius: "2rem",
+                    borderBottomRightRadius: "2rem",
+                    scale: 1.02
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
                 >
                   {loading ? 'Processing...' : `Pay NGN ${REGISTRATION_FEE.toLocaleString()} to Unlock`}
                   {!loading && <ArrowRight className="w-5 h-5" />}
-                </button>
+                </motion.button>
               </motion.div>
             )}
 
@@ -243,14 +249,20 @@ export default function Investment({ user, profile }: InvestmentProps) {
                   </div>
                 </div>
 
-                <button
+                <motion.button
                   onClick={handleInvest}
                   disabled={loading}
+                  whileHover={{ 
+                    borderTopLeftRadius: "2rem",
+                    borderBottomRightRadius: "2rem",
+                    scale: 1.02
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
                 >
                   {loading ? 'Processing Payment...' : 'Confirm & Pay Now'}
                   {!loading && <DollarSign className="w-5 h-5" />}
-                </button>
+                </motion.button>
               </motion.div>
             )}
 

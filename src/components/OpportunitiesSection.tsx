@@ -12,7 +12,7 @@ export default function OpportunitiesSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative h-[500px] md:h-[750px] w-full rounded-tr-[120px] rounded-bl-[120px] overflow-hidden shadow-2xl"
+            className="relative aspect-video w-full rounded-tr-[120px] rounded-bl-[120px] overflow-hidden shadow-2xl"
           >
             <video
               autoPlay

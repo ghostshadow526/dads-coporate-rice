@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { Linkedin, Twitter } from 'lucide-react';
 
@@ -98,9 +99,16 @@ export default function Footer() {
 
       {/* Manage Cookies Button */}
       <div className="absolute bottom-0 left-0">
-        <button className="bg-white text-brand-orange px-4 py-2 text-xs font-bold border-t border-r border-brand-orange">
+        <motion.button 
+          whileHover={{ 
+            borderTopRightRadius: "20px",
+            scale: 1.05
+          }}
+          transition={{ duration: 0.3 }}
+          className="bg-white text-brand-orange px-4 py-2 text-xs font-bold border-t border-r border-brand-orange"
+        >
           Manage Cookies
-        </button>
+        </motion.button>
       </div>
     </footer>
   );

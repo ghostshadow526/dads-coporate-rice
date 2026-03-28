@@ -154,13 +154,19 @@ export default function Contact() {
                   />
                 </div>
 
-                <button
+                <motion.button
                   type="submit"
+                  whileHover={{ 
+                    borderTopLeftRadius: "2rem",
+                    borderBottomRightRadius: "2rem",
+                    scale: 1.02
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   className="w-full bg-brand-orange text-white py-5 rounded-xl font-black uppercase tracking-widest hover:bg-brand-dark transition-all flex items-center justify-center space-x-3 shadow-xl"
                 >
                   <span>Send Message</span>
                   <Send className="w-5 h-5" />
-                </button>
+                </motion.button>
               </form>
             </motion.div>
           </div>

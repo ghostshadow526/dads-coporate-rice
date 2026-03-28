@@ -1,9 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X } from 'lucide-react';
+import { X, ChevronRight } from 'lucide-react';
 
 export default function ProductsServicesSection() {
-  const [hoveredIndex, setHoveredIndex] = React.useState<number>(0);
   const [selectedService, setSelectedService] = React.useState<number | null>(null);
 
   const services = [
@@ -30,102 +29,102 @@ export default function ProductsServicesSection() {
   return (
     <section className="py-24 bg-white overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          {/* Left Side: Content & Dynamic Images */}
-          <div className="space-y-12">
+        {/* Header Section */}
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-black text-brand-dark mb-6 tracking-tight uppercase">
+              Our Products & Services
+            </h2>
+            <p className="text-lg text-gray-600 leading-relaxed">
+              Whether it's working with rice farmers in Nigeria, sourcing high-quality grains, or producing value-added products, we help our customers around the world meet the increasing demand for food, feed and fibre.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Services Grid - Styled like Board of Directors */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+          {services.map((service, idx) => (
             <motion.div
+              key={idx}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
+              transition={{ delay: idx * 0.1 }}
+              className="flex flex-col items-center text-center group"
             >
-              <h2 className="text-4xl md:text-5xl font-black text-brand-dark mb-6 tracking-tight">
-                Our Products & Services
-              </h2>
-              <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
-                Whether it's working with rice farmers in Nigeria, sourcing high-quality grains, or producing value-added products, we help our customers around the world meet the increasing demand for food, feed and fibre.
-              </p>
-            </motion.div>
-
-            {/* Dynamic Image Display */}
-            <div className="relative h-[400px] w-full max-w-md mx-auto lg:mx-0 flex items-center justify-center">
-              {services.map((service, idx) => (
-                <motion.img
-                  key={idx}
-                  initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                  animate={{ 
-                    opacity: hoveredIndex === idx ? 1 : 0,
-                    scale: hoveredIndex === idx ? 1 : 0.8,
-                    y: hoveredIndex === idx ? 0 : 20,
-                    zIndex: hoveredIndex === idx ? 20 : 0
-                  }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
+              {/* Image Container with Custom Border Radius */}
+              <div className="relative w-full aspect-[4/5] mb-8 overflow-hidden rounded-tl-[60px] rounded-br-[60px] bg-gray-100 shadow-xl group-hover:shadow-2xl transition-all duration-500">
+                <img
                   src={service.image}
                   alt={service.title}
-                  className="absolute w-full h-auto max-h-full object-contain drop-shadow-2xl"
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
-              ))}
-            </div>
-          </div>
-
-          {/* Right Side: Services List */}
-          <div className="grid grid-cols-1 gap-8 pt-12">
-            {services.map((service, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                onMouseEnter={() => setHoveredIndex(idx)}
-                onMouseLeave={() => setHoveredIndex(0)}
-                onClick={() => setSelectedService(idx)}
-                className="flex items-center space-x-6 group cursor-pointer"
-              >
-                <div className={`w-20 h-20 rounded-full border-2 flex items-center justify-center p-4 transition-all duration-300 ${hoveredIndex === idx ? 'bg-brand-orange border-brand-orange shadow-lg scale-110' : 'border-brand-orange bg-transparent'}`}>
+                {/* Icon Overlay */}
+                <div className="absolute top-6 right-6 w-16 h-16 bg-white/90 backdrop-blur-sm rounded-2xl p-3 shadow-lg transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                   <img 
                     src={service.icon} 
-                    alt={service.title} 
-                    className={`w-full h-full object-contain transition-all ${hoveredIndex === idx ? 'brightness-0 invert' : ''}`}
+                    alt="Icon" 
+                    className="w-full h-full object-contain"
                     referrerPolicy="no-referrer"
                   />
                 </div>
-                <span className={`text-xl font-bold transition-all duration-300 ${hoveredIndex === idx ? 'text-brand-orange translate-x-2' : 'text-brand-dark'}`}>
-                  {service.title}
-                </span>
-              </motion.div>
-            ))}
-          </div>
+              </div>
+
+              <h3 className="text-2xl font-black text-brand-dark mb-4 uppercase tracking-tighter">
+                {service.title}
+              </h3>
+              
+              <motion.button
+                onClick={() => setSelectedService(idx)}
+                whileHover={{ 
+                  borderTopLeftRadius: "2rem",
+                  borderBottomRightRadius: "2rem",
+                  scale: 1.02
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                className="text-sm font-bold text-brand-orange hover:text-brand-dark transition-colors flex items-center space-x-2 bg-brand-orange/10 px-6 py-2 rounded-full"
+              >
+                <span>View Details</span>
+                <ChevronRight className="w-4 h-4" />
+              </motion.button>
+            </motion.div>
+          ))}
         </div>
       </div>
 
-      {/* Detail Card Overlay */}
+      {/* Detail Card Overlay - Styled like Board of Directors Modal */}
       <AnimatePresence>
         {selectedService !== null && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-            onClick={() => setSelectedService(null)}
-          >
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
             <motion.div 
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              className="bg-white rounded-[40px] overflow-hidden max-w-4xl w-full shadow-2xl flex flex-col md:flex-row relative"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-brand-dark/80 backdrop-blur-sm"
+              onClick={() => setSelectedService(null)}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative bg-white w-full max-w-5xl rounded-[40px] overflow-hidden shadow-2xl flex flex-col md:flex-row"
               onClick={(e) => e.stopPropagation()}
             >
               <button 
                 onClick={() => setSelectedService(null)}
-                className="absolute top-6 right-6 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors z-10"
+                className="absolute top-6 right-6 z-10 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center text-brand-dark hover:text-brand-orange transition-colors"
               >
-                <X className="w-6 h-6 text-gray-600" />
+                <X className="w-6 h-6" />
               </button>
 
               {/* Image Left */}
-              <div className="w-full md:w-1/2 h-64 md:h-auto bg-gray-50">
+              <div className="w-full md:w-2/5 aspect-[4/5] md:aspect-auto bg-gray-50">
                 <img 
                   src={services[selectedService].image} 
                   alt={services[selectedService].title}
@@ -134,25 +133,47 @@ export default function ProductsServicesSection() {
                 />
               </div>
 
-              {/* Bio Right */}
-              <div className="w-full md:w-1/2 p-12 flex flex-col justify-center">
-                <h3 className="text-3xl font-black text-brand-dark mb-6 uppercase tracking-tighter">
-                  {services[selectedService].title}
-                </h3>
-                <p className="text-lg text-gray-600 leading-relaxed">
-                  {services[selectedService].bio}
-                </p>
-                <div className="mt-8">
-                  <button 
+              {/* Content Right */}
+              <div className="flex-1 p-8 md:p-16 overflow-y-auto max-h-[60vh] md:max-h-none flex flex-col justify-center">
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="w-12 h-12 bg-brand-orange/10 rounded-xl p-2">
+                    <img 
+                      src={services[selectedService].icon} 
+                      alt="Icon" 
+                      className="w-full h-full object-contain"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+                  <h3 className="text-3xl md:text-4xl font-black text-brand-dark uppercase tracking-tighter">
+                    {services[selectedService].title}
+                  </h3>
+                </div>
+                
+                <div className="w-12 h-1 bg-brand-orange mb-8" />
+                
+                <div className="prose prose-lg text-gray-600 leading-relaxed">
+                  <p className="text-lg">
+                    {services[selectedService].bio}
+                  </p>
+                </div>
+
+                <div className="mt-12">
+                  <motion.button 
+                    whileHover={{ 
+                      borderTopLeftRadius: "30px",
+                      borderBottomRightRadius: "30px",
+                      scale: 1.05
+                    }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                     onClick={() => setSelectedService(null)}
-                    className="bg-brand-orange text-white px-8 py-3 rounded-full font-bold hover:bg-brand-dark transition-colors"
+                    className="bg-brand-orange text-white px-10 py-4 rounded-full font-bold hover:bg-brand-dark transition-colors shadow-xl"
                   >
                     Close Details
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </section>

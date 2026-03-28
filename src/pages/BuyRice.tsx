@@ -88,7 +88,7 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32">
       <div className="text-center mb-12">
         <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Buy salvagebizhub Rice</h1>
         <p className="text-gray-600 text-lg">Premium quality, locally grown rice delivered to your doorstep.</p>
@@ -177,13 +177,19 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
                         <span className="text-gray-500 font-bold">Total:</span>
                         <span className="text-2xl font-bold text-green-700">NGN {totalAmount.toLocaleString()}</span>
                       </div>
-                      <button
+                      <motion.button
                         onClick={() => setStep(2)}
+                        whileHover={{ 
+                          borderTopLeftRadius: "2rem",
+                          borderBottomRightRadius: "2rem",
+                          scale: 1.02
+                        }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
                         className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
                       >
                         <span>Checkout</span>
                         <ArrowRight className="w-5 h-5" />
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
                 )}
@@ -223,20 +229,32 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
               </div>
 
               <div className="space-y-4">
-                <button
+                <motion.button
                   onClick={handleCheckout}
                   disabled={loading}
+                  whileHover={{ 
+                    borderTopLeftRadius: "2rem",
+                    borderBottomRightRadius: "2rem",
+                    scale: 1.02
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
                 >
                   {loading ? 'Processing Payment...' : 'Pay Now & Place Order'}
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={() => setStep(1)}
                   disabled={loading}
+                  whileHover={{ 
+                    borderTopLeftRadius: "2rem",
+                    borderBottomRightRadius: "2rem",
+                    scale: 1.02
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   className="w-full bg-gray-100 text-gray-700 py-4 rounded-xl font-bold text-lg hover:bg-gray-200 transition-all disabled:opacity-50"
                 >
                   Back to Products
-                </button>
+                </motion.button>
               </div>
             </div>
           </motion.div>
@@ -257,18 +275,30 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
               Thank you for your purchase. Your order is being processed and will be shipped soon. You can download your receipt and track your order in the dashboard.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-4">
-              <button
+              <motion.button
                 onClick={() => navigate('/dashboard')}
+                whileHover={{ 
+                  borderTopLeftRadius: "2rem",
+                  borderBottomRightRadius: "2rem",
+                  scale: 1.02
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 className="bg-green-700 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-800 transition-all shadow-md"
               >
                 Go to Dashboard
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 onClick={() => setStep(1)}
+                whileHover={{ 
+                  borderTopLeftRadius: "2rem",
+                  borderBottomRightRadius: "2rem",
+                  scale: 1.02
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 className="bg-gray-100 text-gray-700 px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
               >
                 Buy More Rice
-              </button>
+              </motion.button>
             </div>
           </motion.div>
         )}

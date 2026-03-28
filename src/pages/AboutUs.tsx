@@ -1,11 +1,47 @@
-import { motion } from 'motion/react';
-import { Target, Eye, Users, Mail, Phone, MapPin, Globe, ShieldCheck, Briefcase, Award, TrendingUp, Building2, Leaf } from 'lucide-react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Target, Eye, Users, Mail, Phone, MapPin, Globe, ShieldCheck, Briefcase, Award, TrendingUp, Building2, Leaf, ChevronLeft, ChevronRight } from 'lucide-react';
+
+const slides = [
+  {
+    id: 'experience',
+    title: 'Our Experience',
+    image: 'https://ik.imagekit.io/qrfqn43oq/card2.webp',
+    content: 'At Salvage Biz-Hub Nig. Ltd, we have years of collective experience in this industry and we have trained over thirty five thousand (35,000) people in Nigeria who most of them are financially independent now.',
+    isAchievement: false
+  },
+  {
+    id: 'impact',
+    title: 'Years Impact',
+    value: '8',
+    image: 'https://ik.imagekit.io/qrfqn43oq/card3.webp',
+    content: 'We have helped good number of people/investors across the world to gain high value for their money using the return on their investment, using our technical and domain knowledge on our farming investment as a business and as a profession, thus making them financially independent.',
+    isAchievement: true
+  },
+  {
+    id: 'hectares',
+    title: 'Hectares (2024)',
+    value: '537',
+    image: 'https://ik.imagekit.io/qrfqn43oq/card.webp',
+    content: 'Within 8 years of establishment, we have expanded our production capacity to 537 hectares of rice farm in 2024. We are pushing towards cultivation 5,000 hectares in the Five years. More so, we are glad to have a special rice brand for the company as "DAD\'s RICE"',
+    isAchievement: true
+  }
+];
 
 export default function AboutUs() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative min-h-[80vh] flex items-center overflow-hidden bg-brand-orange">
+      <section className="relative min-h-[80vh] flex items-center overflow-hidden bg-brand-orange pt-32">
         {/* Right Side Curved Image */}
         <div 
           className="absolute top-0 right-0 w-1/2 h-full z-0 hidden lg:block"
@@ -165,39 +201,69 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Experience & Achievements */}
-      <section className="py-24">
+      {/* Experience & Achievements Slider */}
+      <section className="py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
-            <div className="space-y-8">
-              <h2 className="text-4xl font-bold text-gray-900 uppercase tracking-widest">Our Experience</h2>
-              <p className="text-xl text-gray-600 leading-relaxed">
-                At Salvage Biz-Hub Nig. Ltd, we have years of collective experience in this industry and we have trained over thirty five thousand (35,000) people in Nigeria who most of them are financially independent now.
-              </p>
-            </div>
-            <div className="space-y-12">
-              <h2 className="text-4xl font-bold text-gray-900 uppercase tracking-widest">Our Achievements</h2>
-              <div className="space-y-8">
-                <div className="flex gap-6">
-                  <div className="text-5xl font-black text-brand-orange shrink-0">8</div>
-                  <div>
-                    <h4 className="text-xl font-bold text-gray-900 mb-2">Years Impact</h4>
-                    <p className="text-gray-600">
-                      We have helped good number of people/investors across the world to gain high value for their money using the return on their investment, using our technical and domain knowledge on our farming investment as a business and as a profession, thus making them financially independent.
-                    </p>
-                  </div>
+          <div className="relative group">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="flex flex-col lg:flex-row overflow-hidden rounded-tl-[60px] rounded-br-[60px] bg-brand-green shadow-2xl min-h-[500px]"
+              >
+                <div className={`w-full lg:w-1/2 h-64 lg:h-auto ${slides[currentSlide].id === 'impact' ? 'lg:order-2' : ''}`}>
+                  <img
+                    src={slides[currentSlide].image}
+                    alt={slides[currentSlide].title}
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
                 </div>
-                <div className="flex gap-6">
-                  <div className="text-5xl font-black text-brand-green shrink-0">537</div>
-                  <div>
-                    <h4 className="text-xl font-bold text-gray-900 mb-2">Hectares (2024)</h4>
-                    <p className="text-gray-600">
-                      Within 8 years of establishment, we have expanded our production capacity to 537 hectares of rice farm in 2024. We are pushing towards cultivation 5,000 hectares in the Five years. More so, we are glad to have a special rice brand for the company as "DAD's RICE"
-                    </p>
-                  </div>
+                <div className={`w-full lg:w-1/2 p-10 lg:p-16 flex flex-col justify-center text-white ${slides[currentSlide].id === 'impact' ? 'lg:order-1' : ''}`}>
+                  {slides[currentSlide].isAchievement ? (
+                    <div className="flex items-baseline space-x-4 mb-6">
+                      <span className="text-6xl font-black leading-none">{slides[currentSlide].value}</span>
+                      <h3 className="text-2xl font-bold uppercase tracking-tighter">{slides[currentSlide].title}</h3>
+                    </div>
+                  ) : (
+                    <h2 className="text-3xl font-black mb-6 uppercase tracking-tighter">{slides[currentSlide].title}</h2>
+                  )}
+                  <p className="text-base leading-relaxed opacity-90">
+                    {slides[currentSlide].content}
+                  </p>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Navigation Arrows */}
+            <button
+              onClick={prevSlide}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-brand-orange text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform md:-left-6"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-brand-orange text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform md:-right-6"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Pagination Dots */}
+          <div className="flex justify-center space-x-3 mt-12">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  currentSlide === idx ? 'bg-brand-orange w-8' : 'bg-gray-300'
+                }`}
+              />
+            ))}
           </div>
         </div>
       </section>

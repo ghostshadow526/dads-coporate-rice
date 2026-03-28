@@ -53,7 +53,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8 pt-32">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -119,13 +119,19 @@ export default function Login() {
             />
           </div>
 
-          <button
+          <motion.button
             type="submit"
             disabled={loading}
+            whileHover={{ 
+              borderTopLeftRadius: "2rem",
+              borderBottomRightRadius: "2rem",
+              scale: 1.02
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
             className="w-full flex justify-center py-4 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Sign Up')}
-          </button>
+          </motion.button>
         </form>
 
         <div className="relative my-6">
@@ -137,16 +143,22 @@ export default function Login() {
           </div>
         </div>
 
-        <button
+        <motion.button
           onClick={handleGoogleLogin}
           disabled={loading}
+          whileHover={{ 
+            borderTopLeftRadius: "2rem",
+            borderBottomRightRadius: "2rem",
+            scale: 1.02
+          }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
           className="group relative w-full flex justify-center py-4 px-4 border border-gray-300 text-sm font-bold rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="absolute left-0 inset-y-0 flex items-center pl-3">
             <LogIn className="h-5 w-5 text-gray-400 group-hover:text-green-500" aria-hidden="true" />
           </span>
           {loading ? 'Signing in...' : 'Sign in with Google'}
-        </button>
+        </motion.button>
 
         <div className="text-center mt-6">
           <button

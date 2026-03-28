@@ -50,7 +50,7 @@ export default function Testimonials() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[40vh] flex items-center overflow-hidden bg-brand-dark">
+      <section className="relative h-[40vh] flex items-center overflow-hidden bg-brand-dark pt-32">
         <div className="absolute inset-0 z-0">
           <img
             src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?q=80&w=2070&auto=format&fit=crop"
@@ -131,9 +131,17 @@ export default function Testimonials() {
           <p className="text-xl text-gray-400 mb-12 max-w-md mx-auto">
             We value your feedback! Tell us how our platform has impacted your life or business.
           </p>
-          <button className="bg-brand-orange hover:bg-orange-700 text-white px-10 py-4 rounded-full font-bold transition-all shadow-xl">
+          <motion.button
+            whileHover={{ 
+              borderTopLeftRadius: "2rem",
+              borderBottomRightRadius: "2rem",
+              scale: 1.02
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            className="bg-brand-orange hover:bg-orange-700 text-white px-10 py-4 rounded-full font-bold transition-all shadow-xl"
+          >
             Submit a Testimonial
-          </button>
+          </motion.button>
         </div>
       </section>
     </div>

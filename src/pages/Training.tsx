@@ -117,7 +117,7 @@ export default function Training({ user, profile }: TrainingProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32">
       <div className="text-center mb-12">
         <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Agricultural Training Programs</h1>
         <p className="text-gray-600 text-lg">Enhance your skills with our expert-led agricultural training sessions.</p>
@@ -159,15 +159,21 @@ export default function Training({ user, profile }: TrainingProps) {
                 
                 <div className="p-8 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
                   <p className="text-2xl font-bold text-purple-700">NGN {training.price.toLocaleString()}</p>
-                  <button
+                  <motion.button
                     onClick={() => {
                       setSelectedTraining(training);
                       setStep(2);
                     }}
+                    whileHover={{ 
+                      borderTopLeftRadius: "2rem",
+                      borderBottomRightRadius: "2rem",
+                      scale: 1.02
+                    }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                     className="bg-purple-700 text-white px-6 py-2 rounded-xl font-bold text-sm hover:bg-purple-800 transition-all shadow-md"
                   >
                     Register Now
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             ))}
@@ -198,20 +204,32 @@ export default function Training({ user, profile }: TrainingProps) {
               </div>
 
               <div className="space-y-4">
-                <button
+                <motion.button
                   onClick={handleRegister}
                   disabled={processing}
+                  whileHover={{ 
+                    borderTopLeftRadius: "2rem",
+                    borderBottomRightRadius: "2rem",
+                    scale: 1.02
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   className="w-full bg-purple-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-purple-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
                 >
                   {processing ? 'Processing Payment...' : 'Pay & Confirm Registration'}
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={() => setStep(1)}
                   disabled={processing}
+                  whileHover={{ 
+                    borderTopLeftRadius: "2rem",
+                    borderBottomRightRadius: "2rem",
+                    scale: 1.02
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   className="w-full bg-gray-100 text-gray-700 py-4 rounded-xl font-bold text-lg hover:bg-gray-200 transition-all disabled:opacity-50"
                 >
                   Back to Trainings
-                </button>
+                </motion.button>
               </div>
             </div>
           </motion.div>
@@ -232,18 +250,30 @@ export default function Training({ user, profile }: TrainingProps) {
               You have successfully registered for the training program. You can now download your training pass and view registration details in the dashboard.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-4">
-              <button
+              <motion.button
                 onClick={() => navigate('/dashboard')}
+                whileHover={{ 
+                  borderTopLeftRadius: "2rem",
+                  borderBottomRightRadius: "2rem",
+                  scale: 1.02
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 className="bg-green-700 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-800 transition-all shadow-md"
               >
                 Go to Dashboard
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 onClick={() => setStep(1)}
+                whileHover={{ 
+                  borderTopLeftRadius: "2rem",
+                  borderBottomRightRadius: "2rem",
+                  scale: 1.02
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 className="bg-gray-100 text-gray-700 px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
               >
                 View Other Trainings
-              </button>
+              </motion.button>
             </div>
           </motion.div>
         )}

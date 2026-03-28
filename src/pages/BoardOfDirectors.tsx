@@ -70,7 +70,7 @@ export default function BoardOfDirectors() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center overflow-hidden bg-brand-orange">
+      <section className="relative min-h-[70vh] flex items-center overflow-hidden bg-brand-orange pt-32">
         {/* Right Side Curved Image */}
         <div 
           className="absolute top-0 right-0 w-1/2 h-full z-0 hidden lg:block"
@@ -158,13 +158,19 @@ export default function BoardOfDirectors() {
                 <p className="text-sm text-gray-600 mb-4 px-4 leading-snug h-12 flex items-center justify-center">
                   {director.role}
                 </p>
-                <button
+                <motion.button
                   onClick={() => setSelectedDirector(director)}
+                  whileHover={{ 
+                    borderTopLeftRadius: "2rem",
+                    borderBottomRightRadius: "2rem",
+                    scale: 1.02
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   className="text-sm font-bold text-brand-orange hover:text-brand-dark transition-colors flex items-center space-x-1"
                 >
                   <span>View Biography</span>
                   <ChevronRight className="w-4 h-4" />
-                </button>
+                </motion.button>
               </motion.div>
             ))}
           </div>

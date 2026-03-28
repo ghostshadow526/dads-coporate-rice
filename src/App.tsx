@@ -21,6 +21,7 @@ import Contact from './pages/Contact';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import TalkToUs from './components/TalkToUs';
+import TestimonialsSection from './components/TestimonialsSection';
 import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
@@ -86,6 +87,7 @@ export default function App() {
               <Route path="/training" element={user ? <Training user={user} profile={userProfile} /> : <Navigate to="/login" />} />
             </Routes>
           </main>
+          <TestimonialsSection />
           <TalkToUs />
           <Footer />
           <Toaster position="top-right" />

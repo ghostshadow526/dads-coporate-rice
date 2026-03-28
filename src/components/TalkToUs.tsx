@@ -59,9 +59,19 @@ export default function TalkToUs() {
         >
           <Link
             to="/contact"
-            className="inline-block bg-white text-brand-dark px-12 py-4 rounded-md font-bold hover:bg-gray-100 transition-all shadow-xl"
+            className="inline-block"
           >
-            Contact Us
+            <motion.div
+              whileHover={{ 
+                borderTopLeftRadius: "30px",
+                borderBottomRightRadius: "30px",
+                scale: 1.02
+              }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="bg-white text-brand-dark px-12 py-4 rounded-md font-bold hover:bg-gray-100 transition-all shadow-xl"
+            >
+              Contact Us
+            </motion.div>
           </Link>
         </motion.div>
       </div>
