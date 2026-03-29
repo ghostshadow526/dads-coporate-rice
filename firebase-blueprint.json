@@ -66,9 +66,10 @@
         "description": { "type": "string", "description": "The description of the training." },
         "price": { "type": "number", "description": "The price of the training." },
         "date": { "type": "string", "format": "date-time", "description": "When the training will take place." },
+        "isActive": { "type": "boolean", "description": "Whether the training is active." },
         "createdAt": { "type": "string", "format": "date-time", "description": "When the training was created." }
       },
-      "required": ["id", "title", "price", "date"]
+      "required": ["id", "title", "price", "date", "isActive"]
     },
     "TrainingRegistration": {
       "title": "TrainingRegistration",

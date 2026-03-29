@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingBag, ShoppingCart, CheckCircle, ArrowRight, Minus, Plus, Download, CreditCard, ShoppingBasket } from 'lucide-react';
 import { simulatePayment } from '../services/paymentService';
 import { generateReceiptPDF } from '../services/pdfService';
+import { sendCompanyNotification } from '../services/notificationService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
@@ -75,6 +76,13 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
       };
       await addDoc(collection(db, 'riceOrders'), newOrder);
       
+      // Notify company
+      await sendCompanyNotification('order', {
+        user: profile?.displayName || user.email,
+        items: cart.map(item => `${item.name} x ${item.quantity}`),
+        total: totalAmount
+      });
+      
       toast.success('Order placed successfully!');
       generateReceiptPDF(paymentRecord, profile);
       setStep(3);
@@ -88,10 +96,10 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Buy salvagebizhub Rice</h1>
-        <p className="text-gray-600 text-lg">Premium quality, locally grown rice delivered to your doorstep.</p>
+    <div className="max-w-7xl mx-auto">
+      <div className="mb-6">
+        <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight">Buy salvagebizhub Rice</h1>
+        <p className="text-gray-500 text-[11px]">Premium quality, locally grown rice delivered to your doorstep.</p>
       </div>
 
       <AnimatePresence mode="wait">

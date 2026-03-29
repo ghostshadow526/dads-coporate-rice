@@ -9,20 +9,34 @@ export const generateInvestmentPDF = (investment: any, user: any) => {
   
   doc.setFontSize(12);
   doc.text(`Date: ${format(new Date(), 'PPP')}`, 20, 40);
-  doc.text(`Investor Name: ${user.displayName || 'N/A'}`, 20, 50);
+  doc.text(`Investor Name: ${investment.fullName || user.displayName || 'N/A'}`, 20, 50);
   doc.text(`Investor Email: ${user.email}`, 20, 60);
+  doc.text(`Phone: ${investment.phone || 'N/A'}`, 20, 70);
+  doc.text(`Address: ${investment.address || 'N/A'}`, 20, 80);
   
-  doc.line(20, 65, 190, 65);
+  doc.line(20, 85, 190, 85);
   
-  doc.text(`Investment Plan: ${investment.plan}`, 20, 80);
-  doc.text(`Number of Slots: ${investment.slots}`, 20, 90);
-  doc.text(`Total Amount Invested: NGN ${investment.amount.toLocaleString()}`, 20, 100);
-  doc.text(`Payment ID: ${investment.paymentId}`, 20, 110);
-  doc.text(`Status: ${investment.status.toUpperCase()}`, 20, 120);
+  doc.text(`Investment Plan: ${investment.plan}`, 20, 100);
+  doc.text(`Number of Slots: ${investment.slots}`, 20, 110);
+  doc.text(`Total Amount Invested: NGN ${investment.amount.toLocaleString()}`, 20, 120);
+  doc.text(`Payment ID: ${investment.paymentId}`, 20, 130);
+  doc.text(`Status: ${investment.status.toUpperCase()}`, 20, 140);
+  
+  doc.line(20, 145, 190, 145);
+  
+  doc.text("Next of Kin Details:", 20, 160);
+  doc.text(`Name: ${investment.nextOfKin || 'N/A'}`, 20, 170);
+  doc.text(`Relationship: ${investment.relationship || 'N/A'}`, 20, 180);
+  doc.text(`Phone: ${investment.nextOfKinPhone || 'N/A'}`, 20, 190);
+  
+  doc.text("Bank Details (For Returns):", 20, 210);
+  doc.text(`Bank: ${investment.bankName || 'N/A'}`, 20, 220);
+  doc.text(`Account Name: ${investment.accountName || 'N/A'}`, 20, 230);
+  doc.text(`Account Number: ${investment.accountNumber || 'N/A'}`, 20, 240);
   
   doc.setFontSize(10);
-  doc.text("Thank you for investing in salvagebizhub. This document serves as a proof of your investment.", 20, 140);
-  doc.text("Please keep this document safe for future reference.", 20, 150);
+  doc.text("Thank you for investing in salvagebizhub. This document serves as a proof of your investment.", 20, 260);
+  doc.text("Please keep this document safe for future reference.", 20, 270);
   
   doc.save(`investment_${investment.paymentId}.pdf`);
 };
@@ -72,3 +86,30 @@ export const generateTrainingPassPDF = (registration: any, training: any, user: 
   
   doc.save(`training_pass_${registration.paymentId}.pdf`);
 };
+
+export const generateConstitutionPDF = (user: any) => {
+  const doc = new jsPDF();
+  doc.setFontSize(22);
+  doc.text("salvagebizhub COOPERATIVE CONSTITUTION", 105, 20, { align: 'center' });
+  doc.setFontSize(12);
+  doc.text(`Issued to: ${user?.displayName || 'Member'}`, 20, 40);
+  doc.text("1. NAME AND OBJECTIVES", 20, 60);
+  doc.text("The name of the cooperative shall be salvagebizhub Cooperative Society.", 20, 70);
+  doc.text("2. MEMBERSHIP", 20, 80);
+  doc.text("Membership is open to all individuals interested in sustainable agriculture.", 20, 90);
+  doc.save("salvagebizhub_constitution.pdf");
+};
+
+export const generateByeLawsPDF = (user: any) => {
+  const doc = new jsPDF();
+  doc.setFontSize(22);
+  doc.text("salvagebizhub COOPERATIVE BYE-LAWS", 105, 20, { align: 'center' });
+  doc.setFontSize(12);
+  doc.text(`Issued to: ${user?.displayName || 'Member'}`, 20, 40);
+  doc.text("1. MONTHLY DUES", 20, 60);
+  doc.text("Members are required to pay a monthly due of NGN 2,000.", 20, 70);
+  doc.text("2. VOTING RIGHTS", 20, 80);
+  doc.text("Each active member is entitled to one vote during general meetings.", 20, 90);
+  doc.save("salvagebizhub_bye_laws.pdf");
+};
+

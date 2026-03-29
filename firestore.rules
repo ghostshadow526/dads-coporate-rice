@@ -88,8 +88,19 @@ service cloud.firestore {
 
     function isAdmin() {
       return isAuthenticated() &&
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
-          (request.auth.token.email == "clhoetash@gmail.com" && request.auth.token.email_verified == true));
+        (
+          (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
+          (request.auth.token.email == "clhoetash@gmail.com" && request.auth.token.email_verified == true)
+        );
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.uid;
+    }
+
+    function isRequestOwner() {
+      return isAuthenticated() && request.auth.uid == request.resource.data.uid;
     }
 
     function isValidEmail(email) {
@@ -175,20 +186,20 @@ service cloud.firestore {
     }
 
     match /investments/{investmentId} {
-      allow read: if isOwner(resource.data.uid) || isAdmin();
-      allow create: if isAuthenticated() && isOwner(request.resource.data.uid) && isValidInvestment(request.resource.data);
+      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if isRequestOwner() && isValidInvestment(request.resource.data);
       allow update: if isAdmin();
     }
 
     match /cooperativeMembers/{memberId} {
-      allow read: if isOwner(resource.data.uid) || isAdmin();
-      allow create: if isAuthenticated() && isOwner(request.resource.data.uid) && isValidCooperativeMember(request.resource.data);
+      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if isRequestOwner() && isValidCooperativeMember(request.resource.data);
       allow update: if isAdmin();
     }
 
     match /riceOrders/{orderId} {
-      allow read: if isOwner(resource.data.uid) || isAdmin();
-      allow create: if isAuthenticated() && isOwner(request.resource.data.uid) && isValidRiceOrder(request.resource.data);
+      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if isRequestOwner() && isValidRiceOrder(request.resource.data);
       allow update: if isAdmin();
     }
 
@@ -198,14 +209,14 @@ service cloud.firestore {
     }
 
     match /trainingRegistrations/{registrationId} {
-      allow read: if isOwner(resource.data.uid) || isAdmin();
-      allow create: if isAuthenticated() && isOwner(request.resource.data.uid) && isValidTrainingRegistration(request.resource.data);
+      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if isRequestOwner() && isValidTrainingRegistration(request.resource.data);
       allow update: if isAdmin();
     }
 
     match /payments/{paymentId} {
-      allow read: if isOwner(resource.data.uid) || isAdmin();
-      allow create: if isAuthenticated() && isOwner(request.resource.data.uid) && isValidPayment(request.resource.data);
+      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if isRequestOwner() && isValidPayment(request.resource.data);
       allow update: if isAdmin();
     }
   }

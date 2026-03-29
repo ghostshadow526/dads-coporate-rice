@@ -13,6 +13,10 @@ interface CooperativeProps {
   profile: UserProfile | null;
 }
 
+import { handleFirestoreError, OperationType } from '../services/errorService';
+
+import { generateConstitutionPDF, generateByeLawsPDF } from '../services/pdfService';
+
 export default function Cooperative({ user, profile }: CooperativeProps) {
   const [member, setMember] = useState<CooperativeMember | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,11 +38,11 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
         setMember({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as CooperativeMember);
       }
       setLoading(false);
-    });
+    }, (error) => handleFirestoreError(error, OperationType.LIST, 'cooperativeMembers'));
 
     const unsubPayments = onSnapshot(qPayments, (snapshot) => {
       setPayments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as PaymentRecord)));
-    });
+    }, (error) => handleFirestoreError(error, OperationType.LIST, 'payments'));
 
     return () => {
       unsubMember();
@@ -115,19 +119,19 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Join Our Cooperative (SMCS)</h1>
-        <p className="text-gray-600 text-lg">Be part of a community that grows together and supports each other.</p>
+    <div className="max-w-5xl mx-auto">
+      <div className="mb-6">
+        <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight">Join Our Cooperative (SMCS)</h1>
+        <p className="text-gray-500 text-[11px]">Be part of a community that grows together and supports each other.</p>
       </div>
 
       {!member ? (
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden max-w-3xl mx-auto">
-          <div className="p-8 md:p-12">
-            <div className="bg-green-50 p-6 rounded-2xl flex items-start space-x-4 border border-green-100 mb-8">
-              <Info className="w-6 h-6 text-green-700 mt-1" />
+          <div className="p-6 md:p-8">
+            <div className="bg-green-50 p-4 rounded-2xl flex items-start space-x-4 border border-green-100 mb-6">
+              <Info className="w-5 h-5 text-green-700 mt-1" />
               <div>
-                <h3 className="font-bold text-green-900 mb-1">Cooperative Registration</h3>
+                <h3 className="font-bold text-green-900 mb-0.5 text-sm">Cooperative Registration</h3>
                 <p className="text-green-800 text-sm">
                   To join the salvagebizhub SMCS Cooperative, a one-time registration fee of <strong>NGN {REGISTRATION_FEE.toLocaleString()}</strong> is required. This grants you full membership benefits and access to our monthly savings system.
                 </p>
@@ -241,6 +245,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
               <h3 className="text-xl font-bold text-gray-900 mb-6">Resources</h3>
               <div className="space-y-4">
                 <motion.button
+                  onClick={() => generateConstitutionPDF(profile)}
                   whileHover={{ 
                     borderTopLeftRadius: "2rem",
                     borderBottomRightRadius: "2rem",
@@ -256,6 +261,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
                   <ArrowRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform" />
                 </motion.button>
                 <motion.button
+                  onClick={() => generateByeLawsPDF(profile)}
                   whileHover={{ 
                     borderTopLeftRadius: "2rem",
                     borderBottomRightRadius: "2rem",

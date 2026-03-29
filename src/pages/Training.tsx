@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
-import { FirebaseUser, db, collection, addDoc, query, onSnapshot, orderBy, Timestamp } from '../firebase';
+import { FirebaseUser, db, collection, addDoc, query, onSnapshot, orderBy, Timestamp, where } from '../firebase';
 import { UserProfile, Training as TrainingType, TrainingRegistration, PaymentRecord } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { GraduationCap, Calendar, CheckCircle, ArrowRight, DollarSign, Download, Clock, MapPin, Info } from 'lucide-react';
 import { simulatePayment } from '../services/paymentService';
 import { generateTrainingPassPDF } from '../services/pdfService';
+import { sendCompanyNotification } from '../services/notificationService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { handleFirestoreError, OperationType } from '../services/errorService';
 
 interface TrainingProps {
   user: FirebaseUser;
@@ -23,45 +25,49 @@ export default function Training({ user, profile }: TrainingProps) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const q = query(collection(db, 'trainings'), orderBy('date', 'asc'));
+    const q = query(collection(db, 'trainings'), where('isActive', '==', true), orderBy('date', 'asc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as TrainingType));
       setTrainings(data);
       setLoading(false);
-    });
+    }, (error) => handleFirestoreError(error, OperationType.LIST, 'trainings'));
 
-    // Seed initial data if empty
+    // Seed initial data if empty (only for admins)
     const seedData = async () => {
-      if (trainings.length === 0 && !loading) {
+      if (trainings.length === 0 && !loading && profile?.role === 'admin') {
         const initialTrainings = [
           {
-            id: 't1',
             title: 'Modern Rice Farming Techniques',
             description: 'Learn the latest methods in rice cultivation, pest control, and soil management.',
             price: 15000,
             date: Timestamp.fromDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)),
+            isActive: true,
             createdAt: Timestamp.now(),
           },
           {
-            id: 't2',
             title: 'Agricultural Business & Finance',
             description: 'Master the financial aspects of farming, from budgeting to investment management.',
             price: 20000,
             date: Timestamp.fromDate(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)),
+            isActive: true,
             createdAt: Timestamp.now(),
           },
           {
-            id: 't3',
             title: 'Sustainable Irrigation Systems',
             description: 'A deep dive into efficient water management and irrigation technologies.',
             price: 12000,
             date: Timestamp.fromDate(new Date(Date.now() + 21 * 24 * 60 * 60 * 1000)),
+            isActive: true,
             createdAt: Timestamp.now(),
           },
         ];
         
-        for (const t of initialTrainings) {
-          await addDoc(collection(db, 'trainings'), t);
+        try {
+          for (const t of initialTrainings) {
+            await addDoc(collection(db, 'trainings'), t);
+          }
+        } catch (error) {
+          console.error('Seeding error:', error);
         }
       }
     };
@@ -69,7 +75,7 @@ export default function Training({ user, profile }: TrainingProps) {
     seedData();
 
     return () => unsubscribe();
-  }, []);
+  }, [profile, loading, trainings.length]);
 
   const handleRegister = async () => {
     if (!selectedTraining) return;
@@ -97,6 +103,13 @@ export default function Training({ user, profile }: TrainingProps) {
       };
       await addDoc(collection(db, 'trainingRegistrations'), newRegistration);
       
+      // Notify company
+      await sendCompanyNotification('registration', {
+        user: profile?.displayName || user.email,
+        training: selectedTraining.title,
+        amount: selectedTraining.price
+      });
+      
       toast.success('Successfully registered for training!');
       generateTrainingPassPDF(newRegistration, selectedTraining, profile);
       setStep(3);
@@ -117,10 +130,10 @@ export default function Training({ user, profile }: TrainingProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Agricultural Training Programs</h1>
-        <p className="text-gray-600 text-lg">Enhance your skills with our expert-led agricultural training sessions.</p>
+    <div className="max-w-7xl mx-auto">
+      <div className="mb-6">
+        <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight">Agricultural Training Programs</h1>
+        <p className="text-gray-500 text-[11px]">Enhance your skills with our expert-led agricultural training sessions.</p>
       </div>
 
       <AnimatePresence mode="wait">

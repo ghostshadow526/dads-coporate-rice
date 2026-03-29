@@ -18,6 +18,15 @@ export interface Investment {
   status: 'pending' | 'active' | 'completed';
   paymentId: string;
   createdAt: Timestamp;
+  fullName: string;
+  address: string;
+  phone: string;
+  nextOfKin: string;
+  nextOfKinPhone: string;
+  relationship: string;
+  bankName: string;
+  accountNumber: string;
+  accountName: string;
 }
 
 export interface CooperativeMember {
@@ -27,6 +36,7 @@ export interface CooperativeMember {
   registrationFeePaid: boolean;
   paymentId: string;
   createdAt: Timestamp;
+  lastMonthlyPayment?: Timestamp;
 }
 
 export interface RiceOrder {

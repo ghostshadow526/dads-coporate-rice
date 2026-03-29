@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { useState, useEffect } from 'react';
 import { auth, onAuthStateChanged, FirebaseUser, db, doc, getDoc, setDoc, Timestamp } from './firebase';
@@ -23,6 +23,7 @@ import Footer from './components/Footer';
 import TalkToUs from './components/TalkToUs';
 import TestimonialsSection from './components/TestimonialsSection';
 import ErrorBoundary from './components/ErrorBoundary';
+import DashboardLayout from './components/DashboardLayout';
 
 export default function App() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -66,33 +67,50 @@ export default function App() {
   }
 
   return (
+    <Router>
+      <AppContent user={user} userProfile={userProfile} />
+    </Router>
+  );
+}
+
+function AppContent({ user, userProfile }: { user: FirebaseUser | null, userProfile: UserProfile | null }) {
+  const location = useLocation();
+  const isAppPage = location.pathname.startsWith('/dashboard') || 
+                    location.pathname.startsWith('/invest') || 
+                    location.pathname.startsWith('/cooperative') || 
+                    location.pathname.startsWith('/buy-rice') || 
+                    location.pathname.startsWith('/training');
+
+  return (
     <ErrorBoundary>
-      <Router>
-        <div className="flex flex-col min-h-screen font-sans bg-gray-50 text-gray-900">
-          <Navbar user={user} profile={userProfile} />
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<AboutUs />} />
-              <Route path="/about/board" element={<BoardOfDirectors />} />
-              <Route path="/testimonials" element={<Testimonials />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
-              
-              {/* Protected Routes */}
-              <Route path="/dashboard" element={user ? <Dashboard user={user} profile={userProfile} /> : <Navigate to="/login" />} />
-              <Route path="/invest" element={user ? <Investment user={user} profile={userProfile} /> : <Navigate to="/login" />} />
-              <Route path="/cooperative" element={user ? <Cooperative user={user} profile={userProfile} /> : <Navigate to="/login" />} />
-              <Route path="/buy-rice" element={user ? <BuyRice user={user} profile={userProfile} /> : <Navigate to="/login" />} />
-              <Route path="/training" element={user ? <Training user={user} profile={userProfile} /> : <Navigate to="/login" />} />
-            </Routes>
-          </main>
-          <TestimonialsSection />
-          <TalkToUs />
-          <Footer />
-          <Toaster position="top-right" />
-        </div>
-      </Router>
+      <div className="flex flex-col min-h-screen font-sans bg-gray-50 text-gray-900">
+        {!isAppPage && <Navbar user={user} profile={userProfile} />}
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/about/board" element={<BoardOfDirectors />} />
+            <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+            
+            {/* Protected Routes */}
+            <Route path="/dashboard" element={user ? <DashboardLayout><Dashboard user={user} profile={userProfile} /></DashboardLayout> : <Navigate to="/login" />} />
+            <Route path="/invest" element={user ? <DashboardLayout><Investment user={user} profile={userProfile} /></DashboardLayout> : <Navigate to="/login" />} />
+            <Route path="/cooperative" element={user ? <DashboardLayout><Cooperative user={user} profile={userProfile} /></DashboardLayout> : <Navigate to="/login" />} />
+            <Route path="/buy-rice" element={user ? <DashboardLayout><BuyRice user={user} profile={userProfile} /></DashboardLayout> : <Navigate to="/login" />} />
+            <Route path="/training" element={user ? <DashboardLayout><Training user={user} profile={userProfile} /></DashboardLayout> : <Navigate to="/login" />} />
+          </Routes>
+        </main>
+        {!isAppPage && (
+          <>
+            <TestimonialsSection />
+            <TalkToUs />
+            <Footer />
+          </>
+        )}
+        <Toaster position="top-right" />
+      </div>
     </ErrorBoundary>
   );
 }

@@ -3,58 +3,58 @@ import { motion } from "motion/react";
 
 const testimonials: Testimonial[] = [
   {
-    text: "I have gotten over 250,000 Naira ever since I signed up for the rice investment program. The returns are real and consistent.",
-    image: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/download.jpg",
-    name: "Joshua David",
-    role: "Rice Investor",
+    text: "I started investing with Salvage Biz-Hub Ltd about five years ago... Today, I can confidently say that it was one of the best financial decisions I have made.",
+    image: "https://picsum.photos/seed/ibrahim/200/200",
+    name: "Mr. Ibrahim Musa",
+    role: "Long-Term Investor, Abuja",
   },
   {
-    text: "The quality of the rice is top-notch. I buy in bulk for my family and the savings are incredible. No stones at all!",
-    image: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/images.jpg",
-    name: "Olawale Adeyemi",
-    role: "Regular Customer",
+    text: "Before committing capital, I carried out extensive due diligence... This is a professionally managed agribusiness that aligns well with long-term investment strategies.",
+    image: "https://picsum.photos/seed/james/200/200",
+    name: "James Whitmore",
+    role: "UK Investor, London",
   },
   {
-    text: "Being a part of the SMCS cooperative has changed my life. I've seen a 30% increase in my farming profits this year.",
-    image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=200&h=200&auto=format&fit=crop",
-    name: "Chidi Okafor",
-    role: "Cooperative Member",
+    text: "For the past four years I have invested with Salvage Biz-Hub Ltd... That level of integrity is rare and truly commendable.",
+    image: "https://picsum.photos/seed/grace/200/200",
+    name: "Mrs. Grace Okafor",
+    role: "Investor, Lagos",
   },
   {
-    text: "I was skeptical at first, but after my first payout of 150k, I'm now a regular investor. Highly recommended!",
-    image: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/download.jpg",
-    name: "Aisha Bello",
-    role: "Investor",
+    text: "I joined Salvage Biz-Hub Ltd six years ago... Today, I have increased my investment three times because I trust their system and leadership.",
+    image: "https://picsum.photos/seed/samuel/200/200",
+    name: "Dr. Samuel Danladi",
+    role: "Investor, Jos",
   },
   {
-    text: "The training programs taught me modern rice farming techniques that doubled my yield this season. God bless SMCS.",
-    image: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/images.jpg",
-    name: "Samuel Adeyemi",
-    role: "Farmer",
+    text: "The first time I bought DAD'S RICE, I was surprised by the quality. The rice is very clean, stone-free, and cooks perfectly.",
+    image: "https://picsum.photos/seed/halima/200/200",
+    name: "Mrs. Halima Bello",
+    role: "Customer, Kaduna",
   },
   {
-    text: "The digital platform makes it so easy to track my rice investments. I've already earned back my initial capital and more.",
-    image: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?q=80&w=200&h=200&auto=format&fit=crop",
-    name: "Fatima Yusuf",
-    role: "Digital Investor",
+    text: "I have been investing for over three years now. What makes this company different is that they don't just promise profits, they deliver results.",
+    image: "https://picsum.photos/seed/chinedu/200/200",
+    name: "Mr. Chinedu Nwankwo",
+    role: "Investor, Enugu",
   },
   {
-    text: "I've been buying rice from here for months. It's clean, stone-free, and very affordable compared to the local market.",
-    image: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/download.jpg",
-    name: "Blessing Okoro",
-    role: "Wholesale Buyer",
+    text: "As a food vendor, the quality of rice I use matters greatly. Since I started using DAD'S RICE, my customers often compliment the natural taste.",
+    image: "https://picsum.photos/seed/blessing/200/200",
+    name: "Mrs. Blessing Adebayo",
+    role: "Food Vendor, Ibadan",
   },
   {
-    text: "The cooperative support is amazing. They helped me get the right fertilizers and seeds for my rice farm in Kebbi.",
-    image: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/images.jpg",
-    name: "Emeka Nwosu",
-    role: "Rice Farmer",
+    text: "What convinced me to continue reinvesting is the consistency in paying my ROI as at when due. They communicate with investors regularly.",
+    image: "https://picsum.photos/seed/abdullahi/200/200",
+    name: "Engr. Abdullahi Sani",
+    role: "Investor, Kaduna",
   },
   {
-    text: "Investing in agriculture is the future of Nigeria. I'm glad I chose this platform for my rice investment journey.",
-    image: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?q=80&w=200&h=200&auto=format&fit=crop",
-    name: "Tunde Bakare",
-    role: "Strategic Investor",
+    text: "Nigeria's economy has faced many challenges, but SBH has shown resilience and professionalism. They remained committed to paying investors.",
+    image: "https://picsum.photos/seed/ifeoma/200/200",
+    name: "Barr. Ifeoma Eze",
+    role: "Investor, Port Harcourt",
   },
 ];
 
@@ -80,10 +80,10 @@ export default function TestimonialsSection() {
           </div>
 
           <h2 className="text-3xl md:text-5xl font-black tracking-tighter mt-5 text-center uppercase">
-            What our customers say
+            Voices of Our Partners & Investors
           </h2>
           <p className="text-center mt-5 text-gray-600 font-medium">
-            See what our customers have to say about us.
+            Hear from those who have joined us in transforming agriculture and building wealth.
           </p>
         </motion.div>
 

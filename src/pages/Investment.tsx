@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { FirebaseUser, db, collection, addDoc, Timestamp } from '../firebase';
+import { useState, useEffect } from 'react';
+import { FirebaseUser, db, collection, addDoc, Timestamp, query, where, getDocs } from '../firebase';
 import { UserProfile, Investment as InvestmentType, PaymentRecord } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { TrendingUp, CheckCircle, ArrowRight, ShieldCheck, DollarSign, Info } from 'lucide-react';
 import { simulatePayment } from '../services/paymentService';
 import { generateInvestmentPDF } from '../services/pdfService';
+import { sendCompanyNotification } from '../services/notificationService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,7 +16,8 @@ interface InvestmentProps {
 
 export default function Investment({ user, profile }: InvestmentProps) {
   const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
   const [slots, setSlots] = useState(1);
   const [plan, setPlan] = useState('Standard Plan');
   const navigate = useNavigate();
@@ -23,8 +25,31 @@ export default function Investment({ user, profile }: InvestmentProps) {
   const REGISTRATION_FEE = 5000;
   const SLOT_PRICE = 50000;
 
+  useEffect(() => {
+    const checkAccess = async () => {
+      if (!user) return;
+      try {
+        const q = query(
+          collection(db, 'payments'),
+          where('uid', '==', user.uid),
+          where('purpose', '==', 'Investment Access Fee'),
+          where('status', '==', 'success')
+        );
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+          setStep(2);
+        }
+      } catch (error) {
+        console.error('Error checking access:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAccess();
+  }, [user]);
+
   const handlePayRegistration = async () => {
-    setLoading(true);
+    setProcessing(true);
     try {
       const payment = await simulatePayment(REGISTRATION_FEE, 'Investment Access Fee', user.uid);
       
@@ -45,12 +70,24 @@ export default function Investment({ user, profile }: InvestmentProps) {
       console.error('Payment error:', error);
       toast.error('Payment failed. Please try again.');
     } finally {
-      setLoading(false);
+      setProcessing(false);
     }
   };
 
+  const [formData, setFormData] = useState({
+    fullName: profile?.displayName || '',
+    address: '',
+    phone: profile?.phoneNumber || '',
+    nextOfKin: '',
+    nextOfKinPhone: '',
+    relationship: '',
+    bankName: '',
+    accountNumber: '',
+    accountName: '',
+  });
+
   const handleInvest = async () => {
-    setLoading(true);
+    setProcessing(true);
     const totalAmount = slots * SLOT_PRICE;
     try {
       const payment = await simulatePayment(totalAmount, `Investment: ${plan}`, user.uid);
@@ -75,8 +112,17 @@ export default function Investment({ user, profile }: InvestmentProps) {
         status: 'active',
         paymentId: payment.transactionId,
         createdAt: Timestamp.now(),
+        ...formData,
       };
       await addDoc(collection(db, 'investments'), newInvestment);
+      
+      // Notify company
+      await sendCompanyNotification('investment', {
+        user: profile?.displayName || user.email,
+        plan: newInvestment.plan,
+        amount: newInvestment.amount,
+        slots: newInvestment.slots
+      });
       
       toast.success('Investment successful!');
       generateInvestmentPDF(newInvestment, profile);
@@ -85,38 +131,46 @@ export default function Investment({ user, profile }: InvestmentProps) {
       console.error('Investment error:', error);
       toast.error('Investment failed. Please try again.');
     } finally {
-      setLoading(false);
+      setProcessing(false);
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Invest in salvagebizhub Rice</h1>
-        <p className="text-gray-600 text-lg">Secure your future by investing in sustainable agriculture.</p>
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-6">
+        <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight">Invest in salvagebizhub Rice</h1>
+        <p className="text-gray-500 text-[11px]">Secure your future by investing in sustainable agriculture.</p>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         {/* Progress Bar */}
-        <div className="bg-gray-50 px-8 py-4 border-b border-gray-100 flex justify-between items-center">
+        <div className="bg-gray-50 px-4 py-2 border-b border-gray-100 flex justify-between items-center">
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex items-center space-x-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs ${
                 step >= i ? 'bg-green-700 text-white' : 'bg-gray-200 text-gray-500'
               }`}>
-                {step > i ? <CheckCircle className="w-5 h-5" /> : i}
+                {step > i ? <CheckCircle className="w-4 h-4" /> : i}
               </div>
-              <span className={`text-xs font-bold uppercase tracking-wider ${
+              <span className={`text-[10px] font-bold uppercase tracking-wider ${
                 step >= i ? 'text-green-700' : 'text-gray-400'
               }`}>
                 {i === 1 ? 'Access' : i === 2 ? 'Invest' : 'Complete'}
               </span>
-              {i < 3 && <div className="w-12 h-px bg-gray-200 hidden sm:block"></div>}
+              {i < 3 && <div className="w-10 h-px bg-gray-200 hidden sm:block"></div>}
             </div>
           ))}
         </div>
 
-        <div className="p-8 md:p-12">
+        <div className="p-5 md:p-6">
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div
@@ -155,7 +209,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
 
                 <motion.button
                   onClick={handlePayRegistration}
-                  disabled={loading}
+                  disabled={processing}
                   whileHover={{ 
                     borderTopLeftRadius: "2rem",
                     borderBottomRightRadius: "2rem",
@@ -164,8 +218,8 @@ export default function Investment({ user, profile }: InvestmentProps) {
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
                 >
-                  {loading ? 'Processing...' : `Pay NGN ${REGISTRATION_FEE.toLocaleString()} to Unlock`}
-                  {!loading && <ArrowRight className="w-5 h-5" />}
+                  {processing ? 'Processing...' : `Pay NGN ${REGISTRATION_FEE.toLocaleString()} to Unlock`}
+                  {!processing && <ArrowRight className="w-5 h-5" />}
                 </motion.button>
               </motion.div>
             )}
@@ -180,8 +234,109 @@ export default function Investment({ user, profile }: InvestmentProps) {
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-6">
+                    <h3 className="text-xl font-bold text-gray-900">Personal Details</h3>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Full Name</label>
+                        <input
+                          type="text"
+                          value={formData.fullName}
+                          onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="John Doe"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Residential Address</label>
+                        <input
+                          type="text"
+                          value={formData.address}
+                          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="123 Main St, Abuja"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Phone</label>
+                          <input
+                            type="text"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Relationship</label>
+                          <input
+                            type="text"
+                            value={formData.relationship}
+                            onChange={(e) => setFormData({ ...formData, relationship: e.target.value })}
+                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                            placeholder="Spouse, Child, etc."
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Next of Kin</label>
+                          <input
+                            type="text"
+                            value={formData.nextOfKin}
+                            onChange={(e) => setFormData({ ...formData, nextOfKin: e.target.value })}
+                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Next of Kin Phone</label>
+                          <input
+                            type="text"
+                            value={formData.nextOfKinPhone}
+                            onChange={(e) => setFormData({ ...formData, nextOfKinPhone: e.target.value })}
+                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <h3 className="text-xl font-bold text-gray-900 pt-4">Bank Details (For Returns)</h3>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Bank Name</label>
+                        <input
+                          type="text"
+                          value={formData.bankName}
+                          onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Account Number</label>
+                          <input
+                            type="text"
+                            value={formData.accountNumber}
+                            onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
+                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Account Name</label>
+                          <input
+                            type="text"
+                            value={formData.accountName}
+                            onChange={(e) => setFormData({ ...formData, accountName: e.target.value })}
+                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <h3 className="text-xl font-bold text-gray-900">Investment Plan</h3>
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2">Select Investment Plan</label>
+                      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Select Plan</label>
                       <select
                         value={plan}
                         onChange={(e) => setPlan(e.target.value)}
@@ -194,7 +349,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2">Number of Slots</label>
+                      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Number of Slots</label>
                       <div className="flex items-center space-x-4">
                         <button
                           onClick={() => setSlots(Math.max(1, slots - 1))}
@@ -217,11 +372,9 @@ export default function Investment({ user, profile }: InvestmentProps) {
                       </div>
                       <p className="text-xs text-gray-500 mt-2">Each slot is NGN {SLOT_PRICE.toLocaleString()}</p>
                     </div>
-                  </div>
 
-                  <div className="bg-green-50 p-8 rounded-3xl border border-green-100 flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-lg font-bold text-green-900 mb-4">Investment Summary</h3>
+                    <div className="bg-green-50 p-8 rounded-3xl border border-green-100">
+                      <h3 className="text-lg font-bold text-green-900 mb-4">Summary</h3>
                       <div className="space-y-3 text-sm">
                         <div className="flex justify-between text-green-800">
                           <span>Plan:</span>
@@ -231,38 +384,29 @@ export default function Investment({ user, profile }: InvestmentProps) {
                           <span>Slots:</span>
                           <span className="font-bold">{slots}</span>
                         </div>
-                        <div className="flex justify-between text-green-800">
-                          <span>Price per slot:</span>
-                          <span className="font-bold">NGN {SLOT_PRICE.toLocaleString()}</span>
+                        <div className="flex justify-between text-green-800 border-t border-green-200 pt-3 mt-3">
+                          <span className="font-bold">Total:</span>
+                          <span className="text-2xl font-bold text-green-700">NGN {(slots * SLOT_PRICE).toLocaleString()}</span>
                         </div>
                       </div>
                     </div>
-                    
-                    <div className="pt-6 border-t border-green-200 mt-6">
-                      <div className="flex justify-between items-end">
-                        <span className="text-green-900 font-bold">Total Amount:</span>
-                        <span className="text-3xl font-bold text-green-700 tracking-tight">
-                          NGN {(slots * SLOT_PRICE).toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
+
+                    <motion.button
+                      onClick={handleInvest}
+                      disabled={processing || !formData.fullName || !formData.address || !formData.phone}
+                      whileHover={{ 
+                        borderTopLeftRadius: "2rem",
+                        borderBottomRightRadius: "2rem",
+                        scale: 1.02
+                      }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
+                    >
+                      {processing ? 'Processing Payment...' : 'Confirm & Pay Now'}
+                      {!processing && <DollarSign className="w-5 h-5" />}
+                    </motion.button>
                   </div>
                 </div>
-
-                <motion.button
-                  onClick={handleInvest}
-                  disabled={loading}
-                  whileHover={{ 
-                    borderTopLeftRadius: "2rem",
-                    borderBottomRightRadius: "2rem",
-                    scale: 1.02
-                  }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
-                >
-                  {loading ? 'Processing Payment...' : 'Confirm & Pay Now'}
-                  {!loading && <DollarSign className="w-5 h-5" />}
-                </motion.button>
               </motion.div>
             )}
 
