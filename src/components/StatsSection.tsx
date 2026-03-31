@@ -43,10 +43,7 @@ export default function StatsSection() {
             </h2>
             <div className="space-y-6 text-lg text-gray-400 leading-relaxed max-w-xl">
               <p>
-                We have over 35 years of experience in supply chains across the world with foundations built from our on-the-ground presence in Asia and Africa.
-              </p>
-              <p>
-                Our operating capabilities in global origination, processing, trading, logistics, distribution, and risk management set us apart from our peers. While our strategic manufacturing assets in key destination markets strengthen our service to customers.
+                We have 8 years experience. The company was established in 2018.
               </p>
             </div>
           </motion.div>
@@ -68,7 +65,7 @@ export default function StatsSection() {
                 referrerPolicy="no-referrer"
               />
               <div className="text-5xl font-black text-[#A881FF] mb-2">
-                <Counter value={60} />
+                <Counter value={3} />
               </div>
               <p className="text-lg font-bold text-white leading-tight">
                 Manufacturing & Processing <br /> Facilities
@@ -90,10 +87,10 @@ export default function StatsSection() {
                 referrerPolicy="no-referrer"
               />
               <div className="text-5xl font-black text-brand-yellow mb-2">
-                <Counter value={10600} />
+                <Counter value={8000} suffix="+" />
               </div>
               <p className="text-lg font-bold text-white leading-tight">
-                Customers
+                Customers across the world
               </p>
             </motion.div>
 
@@ -112,7 +109,7 @@ export default function StatsSection() {
                 referrerPolicy="no-referrer"
               />
               <div className="text-5xl font-black text-[#FF6B9E] mb-2">
-                <Counter value={35} suffix="+" />
+                <Counter value={10} suffix="+" />
               </div>
               <p className="text-lg font-bold text-white leading-tight">
                 Countries
@@ -134,10 +131,10 @@ export default function StatsSection() {
                 referrerPolicy="no-referrer"
               />
               <div className="text-5xl font-black text-[#00C2FF] mb-2">
-                <Counter value={10000} suffix="+" />
+                <Counter value={100} suffix="+" />
               </div>
               <p className="text-lg font-bold text-white leading-tight">
-                Employees
+                Over 100+ employees <br /> across the branches
               </p>
             </motion.div>
           </div>

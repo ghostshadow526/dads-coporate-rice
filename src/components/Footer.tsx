@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
-import { Linkedin, Twitter } from 'lucide-react';
+import { Linkedin, Twitter, Facebook } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -69,6 +69,14 @@ export default function Footer() {
           <div className="md:col-span-2">
             <h4 className="text-lg font-bold mb-8 uppercase tracking-wider">Social</h4>
             <ul className="space-y-4">
+              <li>
+                <a href="https://www.facebook.com/share/1C4CYjQFVM/" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 text-sm text-gray-300 hover:text-brand-orange transition-colors">
+                  <div className="bg-white p-1 rounded-sm">
+                    <Facebook className="w-4 h-4 text-[#222222]" />
+                  </div>
+                  <span className="font-bold">Join our Facebook community</span>
+                </a>
+              </li>
               <li>
                 <a href="#" className="flex items-center space-x-3 text-sm text-gray-300 hover:text-brand-orange transition-colors">
                   <div className="bg-white p-1 rounded-sm">
