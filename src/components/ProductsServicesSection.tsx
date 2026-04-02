@@ -30,7 +30,7 @@ export default function ProductsServicesSection() {
     <section className="py-24 bg-white overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
+        <div className="text-center max-w-4xl mx-auto mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -40,9 +40,27 @@ export default function ProductsServicesSection() {
             <h2 className="text-4xl md:text-5xl font-black text-brand-dark mb-6 tracking-tight uppercase">
               Our Products & Services
             </h2>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              Whether it's working with rice farmers in Nigeria, sourcing high-quality grains, or producing value-added products, we help our customers around the world meet the increasing demand for food, feed and fibre.
-            </p>
+            <div className="text-lg text-gray-600 leading-relaxed space-y-6 text-left md:text-center">
+              <p>
+                At the core of our mission is a commitment to delivering more than just products or capital, we provide insight. With over 8 years of experience since our establishment in 2018, we have consistently empowered our customers with a deeper, more practical understanding of real market needs.
+              </p>
+              <p>
+                As an agribusiness and investment company, we operate at the intersection of agriculture, finance, and market intelligence. We understand that, success in today’s agricultural landscape goes beyond production, it requires clarity, strategy, and informed decision-making.
+              </p>
+              <p>
+                Over the years, we have built strong expertise by actively engaging across the agricultural value chain. This experience enables us to analyze market trends, understand consumer demand, and identify profitable opportunities with precision. We help our clients move beyond assumptions and make decisions grounded in real data and proven insights.
+              </p>
+              <p>
+                Whether you are a farmer, agro-processor, distributor, or investor, our role is to position you for success. We ensure that every initiative and investment is aligned with actual market demand, reducing risk, improving efficiency, and maximizing returns.
+              </p>
+              <p>
+                By working with us, or doing business with us, you gain more than a service, we provide you ideas to gain a trusted partner backed by years of hands-on experience and a deep understanding of the agribusiness landscape. We don’t just respond to the market; we help you understand it, navigate it, and grow within it.
+              </p>
+              <div className="pt-4">
+                <p className="font-black text-brand-dark uppercase tracking-tighter text-xl">Salvage Biz-Hub</p>
+                <p className="text-brand-orange font-bold italic">... Creating wealth through Agriculture ...</p>
+              </div>
+            </div>
           </motion.div>
         </div>
 

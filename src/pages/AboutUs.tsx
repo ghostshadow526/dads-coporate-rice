@@ -23,7 +23,7 @@ const slides = [
     title: 'Hectares (2024)',
     value: '537',
     image: 'https://ik.imagekit.io/qrfqn43oq/card.webp',
-    content: 'Within 8 years of establishment, we have expanded our production capacity to 537 hectares of rice farm in 2024. We are pushing towards cultivation 5,000 hectares in the Five years. More so, we are glad to have a special rice brand for the company as "DAD\'s RICE"',
+    content: 'Cultivating 637 hecters in 2025',
     isAchievement: true
   }
 ];
