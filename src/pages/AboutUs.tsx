@@ -28,6 +28,8 @@ const slides = [
   }
 ];
 
+import { ReadMore } from '../components/ReadMore';
+
 export default function AboutUs() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -97,14 +99,25 @@ export default function AboutUs() {
               viewport={{ once: true }}
               className="space-y-8"
             >
-              <h2 className="text-4xl font-bold text-gray-900 tracking-tight">Who We Are</h2>
+              <h2 className="text-4xl font-bold text-gray-900 tracking-tight">WHY CHOOSE US</h2>
               <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
-                <p>
-                  At Salvage Biz-Hub Nig. Ltd, we are a dynamic business consulting and agriculture Business (Investment) company, dedicated to exploring the non-oil sector, driving innovation and sustainability in the agricultural business sector, dedicated to fostering growth and sustainability within the Agricultural industry.
-                </p>
-                <p>
-                  We are dedicated to offering varying solutions to improve and facilitate client’s efficiency and productivity in partnership with United State Department of Agriculture (USDA), Federal Ministry of Health department of hospital services, American University of Nigeria (AUN), Industrial Training Fund (ITF), Special Control Unit Against Money Laundering (SCUML) among others, and membership with Plateau State Chamber of Commerce, Mines and Agriculture (PLACCIMA).
-                </p>
+                <ReadMore maxHeight="150px">
+                  <div className="space-y-6">
+                    <p>
+                      Salvage Biz-Hub Nigeria Limited stands out as a trusted agribusiness partner because we combine practical farming expertise, structured investment management, and professional business consulting under one integrated platform.
+                      Our Key Strengths.
+                    </p>
+                    <p>
+                      •	Integrated value chain: cultivation, processing, and sales
+                      <br />•	Strong focus on sustainability and food security
+                      <br />•	Transparent and structured investment models
+                      <br />•	Proven track record in agribusiness development
+                      <br />•	Experienced management and technical teams
+                      <br />•	Strong institutional relationships and regulatory compliance
+                      <br />We do not just operate farms, we build sustainable agricultural businesses that deliver value to investors, partners, and communities.
+                    </p>
+                  </div>
+                </ReadMore>
               </div>
             </motion.div>
             <motion.div

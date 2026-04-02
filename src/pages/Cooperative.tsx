@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { FirebaseUser, db, collection, addDoc, query, where, onSnapshot, orderBy, Timestamp } from '../firebase';
 import { UserProfile, CooperativeMember, PaymentRecord } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { Users, CheckCircle, ArrowRight, ShieldCheck, Download, CreditCard, Info, History, TrendingUp } from 'lucide-react';
+import { Users, CheckCircle, ArrowRight, ShieldCheck, Download, CreditCard, Info, History, TrendingUp, Leaf } from 'lucide-react';
 import { simulatePayment } from '../services/paymentService';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
 interface CooperativeProps {
@@ -17,6 +17,8 @@ import { handleFirestoreError, OperationType } from '../services/errorService';
 
 import { generateConstitutionPDF, generateByeLawsPDF } from '../services/pdfService';
 
+import { ReadMore } from '../components/ReadMore';
+
 export default function Cooperative({ user, profile }: CooperativeProps) {
   const [member, setMember] = useState<CooperativeMember | null>(null);
   const [loading, setLoading] = useState(true);
@@ -24,7 +26,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
   const navigate = useNavigate();
 
-  const REGISTRATION_FEE = 10000;
+  const REGISTRATION_FEE = 2500;
   const MONTHLY_DUE = 2000;
 
   useEffect(() => {
@@ -120,57 +122,99 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight">Join Our Cooperative (SMCS)</h1>
-        <p className="text-gray-500 text-[11px]">Be part of a community that grows together and supports each other.</p>
+      <div className="mb-10 text-center">
+        <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tight font-serif italic">Salvage Multipurpose Cooperative Society (SMCS)</h1>
+        <p className="text-gray-600 max-w-3xl mx-auto text-lg leading-relaxed">
+          The Salvage Multipurpose Cooperative Society (SMCS) is designed to empower women, youths, farmers, traders, and entrepreneurs through structured savings, affordable financing, and mentorship, encouraging the power of small savings to achieve greater things.
+        </p>
       </div>
 
       {!member ? (
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden max-w-3xl mx-auto">
-          <div className="p-6 md:p-8">
-            <div className="bg-green-50 p-4 rounded-2xl flex items-start space-x-4 border border-green-100 mb-6">
-              <Info className="w-5 h-5 text-green-700 mt-1" />
+        <div className="bg-white rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden max-w-4xl mx-auto">
+          <div className="p-8 md:p-12">
+            <div className="bg-green-50 p-6 rounded-3xl flex items-start space-x-4 border border-green-100 mb-10">
+              <Info className="w-6 h-6 text-green-700 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-bold text-green-900 mb-0.5 text-sm">Cooperative Registration</h3>
-                <p className="text-green-800 text-sm">
-                  To join the salvagebizhub SMCS Cooperative, a one-time registration fee of <strong>NGN {REGISTRATION_FEE.toLocaleString()}</strong> is required. This grants you full membership benefits and access to our monthly savings system.
+                <h3 className="font-black text-green-900 mb-1 text-lg uppercase tracking-wider">Membership Registration</h3>
+                <p className="text-green-800 leading-relaxed">
+                  To join the Salvage Multipurpose Cooperative Society (SMCS), a one-time registration fee of <strong className="text-xl">₦2,500</strong> is required. 
+                  <br />
+                  <span className="text-sm font-medium opacity-80 italic">Includes: The form, savings passbook and cooperative byelaws.</span>
                 </p>
               </div>
             </div>
 
-            <div className="space-y-6 mb-10">
-              <h3 className="text-xl font-bold text-gray-900">Membership Benefits:</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  'Access to low-interest agricultural loans.',
-                  'Collective bargaining power for inputs.',
-                  'Monthly savings and dividend system.',
-                  'Technical support and advisory services.',
-                  'Exclusive access to cooperative events.',
-                  'Downloadable constitution and bye-laws.',
-                ].map((item) => (
-                  <div key={item} className="flex items-center space-x-3 text-gray-600 text-sm">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span>{item}</span>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+              <div className="space-y-8">
+                <div>
+                  <h3 className="text-2xl font-black text-gray-900 mb-6 font-serif">Membership Benefits:</h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {[
+                      'Structured savings with annual interest',
+                      'Business loans with no collateral requirement',
+                      'Access to subsidized food supplies',
+                      'Business mentorship and financial literacy',
+                      'Agricultural empowerment programs',
+                    ].map((item) => (
+                      <div key={item} className="flex items-center space-x-3 text-gray-700 font-medium">
+                        <div className="bg-green-100 p-1 rounded-full">
+                          <CheckCircle className="w-4 h-4 text-green-700" />
+                        </div>
+                        <span>{item}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+
+                <div className="bg-brand-light p-6 rounded-3xl border-2 border-dashed border-green-200">
+                  <h4 className="font-black text-green-900 mb-2 uppercase tracking-tighter">Who Can Join?</h4>
+                  <ul className="space-y-2 text-sm text-gray-600 font-medium">
+                    <li className="flex items-center space-x-2"><span>🔸</span> <span>Aspiring and existing entrepreneurs</span></li>
+                    <li className="flex items-center space-x-2"><span>🔸</span> <span>Farmers looking for financial support and training</span></li>
+                    <li className="flex items-center space-x-2"><span>🔸</span> <span>Traders and small-scale business owners</span></li>
+                    <li className="flex items-center space-x-2"><span>🔸</span> <span>Individuals seeking financial security and growth opportunities</span></li>
+                    <li className="flex items-center space-x-2"><span>🔸</span> <span>Anyone who believes in the power of cooperative success!</span></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="space-y-8 flex flex-col justify-center">
+                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Ready to Join?</h3>
+                  <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+                    By joining SMCS, you gain access to a community dedicated to your financial growth and business success.
+                  </p>
+                  <Link 
+                    to="/cooperative-info"
+                    className="text-green-700 font-bold flex items-center hover:underline"
+                  >
+                    Learn more about SMCS benefits
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+                </div>
               </div>
             </div>
 
-            <motion.button
-              onClick={handleJoin}
-              disabled={processing}
-              whileHover={{ 
-                borderTopLeftRadius: "2rem",
-                borderBottomRightRadius: "2rem",
-                scale: 1.02
-              }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
-            >
-              {processing ? 'Processing...' : `Pay NGN ${REGISTRATION_FEE.toLocaleString()} to Join Now`}
-              {!processing && <ArrowRight className="w-5 h-5" />}
-            </motion.button>
+            <div className="text-center space-y-6">
+              <motion.button
+                onClick={handleJoin}
+                disabled={processing}
+                whileHover={{ 
+                  borderTopLeftRadius: "3rem",
+                  borderBottomRightRadius: "3rem",
+                  scale: 1.02
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                className="w-full bg-green-700 text-white py-6 rounded-2xl font-black text-xl hover:bg-green-800 transition-all shadow-2xl hover:shadow-green-200 flex items-center justify-center space-x-3 disabled:opacity-50"
+              >
+                {processing ? 'Processing...' : `Pay ₦${REGISTRATION_FEE.toLocaleString()} to Join SMCS Now`}
+                {!processing && <ArrowRight className="w-6 h-6" />}
+              </motion.button>
+              
+              <p className="text-gray-500 font-bold italic">
+                "The Time to Secure Your Future is NOW!"
+              </p>
+            </div>
           </div>
         </div>
       ) : (

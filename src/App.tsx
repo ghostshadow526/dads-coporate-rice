@@ -16,6 +16,7 @@ import BuyRice from './pages/BuyRice';
 import Training from './pages/Training';
 import Login from './pages/Login';
 import Contact from './pages/Contact';
+import CooperativeLanding from './pages/CooperativeLanding';
 
 // Components
 import Navbar from './components/Navbar';
@@ -92,6 +93,7 @@ function AppContent({ user, userProfile }: { user: FirebaseUser | null, userProf
             <Route path="/about/board" element={<BoardOfDirectors />} />
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/cooperative-info" element={<CooperativeLanding />} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
             
             {/* Protected Routes */}
