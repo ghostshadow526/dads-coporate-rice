@@ -5,9 +5,10 @@ interface ReadMoreProps {
   children: React.ReactNode;
   maxHeight?: string;
   className?: string;
+  gradientColor?: string;
 }
 
-export const ReadMore: React.FC<ReadMoreProps> = ({ children, maxHeight = "100px", className = "" }) => {
+export const ReadMore: React.FC<ReadMoreProps> = ({ children, maxHeight = "100px", className = "", gradientColor = "from-white" }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
   return (
@@ -19,7 +20,7 @@ export const ReadMore: React.FC<ReadMoreProps> = ({ children, maxHeight = "100px
         {children}
       </div>
       {!isExpanded && (
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+        <div className={`absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t ${gradientColor} to-transparent pointer-events-none`} />
       )}
       <button 
         onClick={() => setIsExpanded(!isExpanded)}

@@ -1,11 +1,21 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, ChevronRight } from 'lucide-react';
+import { X, ChevronRight, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 import { ReadMore } from './ReadMore';
 
 export default function ProductsServicesSection() {
   const [selectedService, setSelectedService] = React.useState<number | null>(null);
+
+  const handleServiceAction = (idx: number) => {
+    const service = services[idx];
+    if (service.link) {
+      window.location.href = service.link;
+    } else {
+      setSelectedService(idx);
+    }
+  };
 
   const services = [
     {
@@ -25,6 +35,13 @@ export default function ProductsServicesSection() {
       icon: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/rice%20icon.webp",
       image: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/risk%20management.webp",
       bio: "Comprehensive risk assessment and management strategies for agricultural investments, ensuring sustainability and protecting our partners' interests in a dynamic global market."
+    },
+    {
+      title: "SMCS Cooperative",
+      icon: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/Untitled%20design%20(1).png",
+      image: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/ChatGPT%20Image%20Mar%2026%2C%202026%2C%2009_08_34%20AM.png",
+      bio: "The Salvage Multipurpose Cooperative Society (SMCS) is designed to empower women, youths, farmers, traders, and entrepreneurs through structured savings, affordable financing, and mentorship, encouraging the power of small savings to achieve greater things.",
+      link: "/cooperative-info"
     }
   ];
 
@@ -71,7 +88,7 @@ export default function ProductsServicesSection() {
         </div>
 
         {/* Services Grid - Styled like Board of Directors */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {services.map((service, idx) => (
             <motion.div
               key={idx}
@@ -100,12 +117,12 @@ export default function ProductsServicesSection() {
                 </div>
               </div>
 
-              <h3 className="text-2xl font-black text-brand-dark mb-4 uppercase tracking-tighter">
+              <h3 className="text-xl font-black text-brand-dark mb-4 uppercase tracking-tighter">
                 {service.title}
               </h3>
               
               <motion.button
-                onClick={() => setSelectedService(idx)}
+                onClick={() => handleServiceAction(idx)}
                 whileHover={{ 
                   borderTopLeftRadius: "2rem",
                   borderBottomRightRadius: "2rem",
@@ -114,8 +131,8 @@ export default function ProductsServicesSection() {
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 className="text-sm font-bold text-brand-orange hover:text-brand-dark transition-colors flex items-center space-x-2 bg-brand-orange/10 px-6 py-2 rounded-full"
               >
-                <span>View Details</span>
-                <ChevronRight className="w-4 h-4" />
+                <span>{service.link ? 'Learn More' : 'View Details'}</span>
+                {service.link ? <ArrowRight className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
               </motion.button>
             </motion.div>
           ))}
