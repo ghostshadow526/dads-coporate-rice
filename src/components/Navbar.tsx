@@ -39,7 +39,7 @@ export default function Navbar({ user, profile }: NavbarProps) {
         { name: 'Board of Directors', path: '/about/board' },
       ]
     },
-    { name: 'Investor Portal', path: '/login' },
+    { name: 'Investor Portal', path: '/investment-info' },
     { name: 'Join Cooperative (SMCS)', path: '/cooperative-info' },
     { name: 'Buy Rice', path: '/buy-rice' },
     { name: 'Register for Training', path: '/training' },
