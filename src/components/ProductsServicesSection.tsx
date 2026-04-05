@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronRight, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Markdown from 'react-markdown';
 
 import { ReadMore } from './ReadMore';
 
@@ -25,16 +26,90 @@ export default function ProductsServicesSection() {
       bio: "Premium quality rice sourced from local Nigerian farmers, processed with the highest standards to ensure nutritional value and great taste. We bridge the gap between farm and table."
     },
     {
-      title: "DAD'S SALAVAGE RICE ",
+      title: "DAD’s Rice!",
       icon: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/bag.webp",
       image: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/rice%20img2.jpeg",
-      bio: "Our signature brand of parboiled rice, known for its unique aroma, long grains, and superior cooking quality. A favorite for families across the region, DAD'S SALVAGE RICE represents our commitment to excellence."
+      bio: `**DAD’s Rice!, where quality meets pride, from our farm to your pot.**
+
+DAD’s Rice, a proud product of Salvage Biz-Hub Ltd, is our signature parboiled rice crafted for people who value taste, quality, and trust in every meal.
+
+🌾 **What makes DAD’s Rice exceptional?**
+
+* Premium long grains that cook fluffy and non-sticky every time
+* Distinct natural aroma that enhances every dish
+* Naturally sweet taste, with no artificial additives
+* Stone-free, clean, and well processed for your peace of mind
+* Freshly produced, not stored for months like imported rice
+* Meets international standards, yet proudly Nigerian
+
+From jollof to fried rice to everyday meals, DAD’s Rice delivers perfect results your family will love, every single time.
+
+More than just rice, it’s a bold statement: supporting local farmers, strengthening Nigeria’s economy, and choosing quality made at home.
+
+Because the truth is simple:
+**The best rice for Nigerians should be Nigerian.**
+
+🇳🇬 Proudly Nigerian. Globally competitive.
+
+DAD’s Rice!, A proud product of Salvage Biz-Hub Ltd. Taste the pride. Experience excellence.`
     },
     {
       title: "Risk Management Solutions",
       icon: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/rice%20icon.webp",
       image: "https://raw.githubusercontent.com/ghostshadow526/jtech/main/risk%20management.webp",
-      bio: "Comprehensive risk assessment and management strategies for agricultural investments, ensuring sustainability and protecting our partners' interests in a dynamic global market."
+      bio: `### Risk Management Solutions for Agricultural Investments | Salvage Biz-Hub
+
+**Comprehensive Agricultural Risk Management for Sustainable Investment Growth**
+
+In the fast-evolving global agricultural sector, risk is inevitable, but unmanaged risk can be costly. Salvage Biz-Hub delivers advanced risk management solutions for agricultural investments, helping investors, agribusinesses, and stakeholders protect assets, ensure sustainability, and achieve long-term profitability.
+
+Our solutions combine data-driven risk assessment, strategic planning, and insurance-backed protection, positioning us as a trusted partner in agriculture and agricultural investment security.
+
+#### Our Agricultural Risk Management Services
+
+**1. Agricultural Risk Assessment & Analysis**
+We provide comprehensive agricultural risk assessments that identify and evaluate potential threats across the value chain, including:
+* Climate and weather variability
+* Market price fluctuations
+* Supply chain disruptions
+* Policy and regulatory risks
+Our insights enable informed decision-making and reduce uncertainty in agribusiness and agricultural investments.
+
+**2. Risk Mitigation Strategies for Agribusiness**
+Our team develops customized risk mitigation strategies designed to minimize exposure and enhance resilience. These include:
+* Diversification models
+* Financial risk planning
+* Operational contingency frameworks
+* Technology-driven monitoring systems
+We ensure your investments remain stable even in volatile market conditions.
+
+**3. Sustainable Agriculture & Investment Protection**
+We prioritize sustainable agricultural practices that protect both profitability and the environment. Our solutions support:
+* Long-term soil and resource management
+* Climate-smart agriculture
+* ESG-aligned investment strategies
+This ensures your agricultural portfolio remains viable and competitive in the global market.
+
+**4. Continuous Risk Monitoring & Advisory**
+Risk is dynamic, and so are our solutions. We provide:
+* Ongoing risk monitoring
+* Real-time advisory support
+* Market intelligence updates
+This proactive approach allows investors to adapt quickly to emerging threats and opportunities.
+
+#### Why Salvage Biz-Hub is a Leader in Agricultural Risk Management
+* Expertise in agricultural investment risk management
+* Data-driven and technology-enabled solutions
+* Strong focus on sustainability and long-term returns
+* Trusted by partners across the agribusiness ecosystem
+
+#### Insurance-Backed agriculture and Agricultural Investment Security
+Salvage Biz-Hub is proudly covered by **AIICO Insurance**, one of Nigeria’s leading insurance providers. This partnership adds an extra layer of protection, giving our clients confidence that their investments are safeguarded against unforeseen risks.
+
+**Secure Your Agricultural Investments Today**
+With Salvage Biz-Hub’s risk management solutions, you gain more than protection, you gain a competitive advantage. Our goal is to help you reduce risk, increase resilience, and maximize returns in the agricultural sector.
+
+👉 **Partner with us today and build a secure, sustainable, and profitable agricultural future**`
     },
     {
       title: "SMCS Cooperative",
@@ -175,7 +250,7 @@ export default function ProductsServicesSection() {
               </div>
 
               {/* Content Right */}
-              <div className="flex-1 p-8 md:p-16 overflow-y-auto max-h-[60vh] md:max-h-none flex flex-col justify-center">
+              <div className="flex-1 p-8 md:p-16 overflow-y-auto max-h-[80vh] md:max-h-none flex flex-col justify-center">
                 <div className="flex items-center space-x-4 mb-6">
                   <div className="w-12 h-12 bg-brand-orange/10 rounded-xl p-2">
                     <img 
@@ -192,10 +267,10 @@ export default function ProductsServicesSection() {
                 
                 <div className="w-12 h-1 bg-brand-orange mb-8" />
                 
-                <div className="prose prose-lg text-gray-600 leading-relaxed">
-                  <p className="text-lg">
+                <div className="markdown-body prose prose-lg text-gray-600 leading-relaxed max-w-none">
+                  <Markdown>
                     {services[selectedService].bio}
-                  </p>
+                  </Markdown>
                 </div>
 
                 <div className="mt-12">

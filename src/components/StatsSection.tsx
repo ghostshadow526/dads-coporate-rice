@@ -44,11 +44,12 @@ export default function StatsSection() {
               <span className="text-brand-orange">Sustainable Agricultural</span> Growth.
             </h2>
             <div className="space-y-6 text-lg text-gray-400 leading-relaxed max-w-xl">
-              <ReadMore maxHeight="120px" gradientColor="from-[#1A1A1A]">
+              <p className="text-white font-bold text-xl">
+                We are redefining agriculture and agribusiness by training and empowering our farmers with the tools, funding, and global market access they need to succeed in the agriculture industry.
+              </p>
+              
+              <ReadMore maxHeight="0px" gradientColor="from-[#1A1A1A]" className="mt-0">
                 <div className="space-y-6">
-                  <p className="text-white font-bold text-xl">
-                    We are redefining agriculture and agribusiness by training and empowering our farmers with the tools, funding, and global market access they need to succeed in the agriculture industry.
-                  </p>
                   <p>
                     At the core of our mission is a commitment to building a sustainable agricultural ecosystem that supports farmers, strengthens food security, and drives economic growth. We connect farmers, buyers, and partners across our global supply chain to ensure efficient distribution of food, feed, and fibre worldwide.
                   </p>
@@ -106,7 +107,7 @@ export default function StatsSection() {
                         "Maximize return on farmers investment"
                       ].map((item, idx) => (
                         <li key={idx} className="flex items-start space-x-3">
-                          <CheckCircle className="w-5 h-5 text-brand-green mt-1 flex-shrink-0" />
+                          <CheckCircle className="w-4 h-4 text-brand-green mt-1 flex-shrink-0" />
                           <span>{item}</span>
                         </li>
                       ))}
