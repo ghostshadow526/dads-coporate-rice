@@ -14,8 +14,8 @@ export const ReadMore: React.FC<ReadMoreProps> = ({ children, maxHeight = "100px
   return (
     <div className={`relative ${className}`}>
       <div 
-        className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'max-h-[2000px]' : `max-h-[${maxHeight}]`}`}
-        style={{ maxHeight: isExpanded ? '2000px' : maxHeight }}
+        className={`overflow-hidden transition-all duration-500 custom-scrollbar ${isExpanded ? 'max-h-[400px] overflow-y-auto pr-2' : `max-h-[${maxHeight}]`}`}
+        style={{ maxHeight: isExpanded ? '400px' : maxHeight }}
       >
         {children}
       </div>

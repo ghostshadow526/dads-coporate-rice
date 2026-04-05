@@ -250,9 +250,9 @@ With Salvage Biz-Hub’s risk management solutions, you gain more than protectio
               </div>
 
               {/* Content Right */}
-              <div className="flex-1 p-8 md:p-16 overflow-y-auto max-h-[80vh] md:max-h-none flex flex-col justify-center">
+              <div className="flex-1 p-8 md:p-16 overflow-y-auto max-h-[80vh] flex flex-col custom-scrollbar">
                 <div className="flex items-center space-x-4 mb-6">
-                  <div className="w-12 h-12 bg-brand-orange/10 rounded-xl p-2">
+                  <div className="w-12 h-12 bg-brand-orange/10 rounded-xl p-2 flex-shrink-0">
                     <img 
                       src={services[selectedService].icon} 
                       alt="Icon" 
@@ -265,15 +265,15 @@ With Salvage Biz-Hub’s risk management solutions, you gain more than protectio
                   </h3>
                 </div>
                 
-                <div className="w-12 h-1 bg-brand-orange mb-8" />
+                <div className="w-12 h-1 bg-brand-orange mb-8 flex-shrink-0" />
                 
-                <div className="markdown-body prose prose-lg text-gray-600 leading-relaxed max-w-none">
+                <div className="markdown-body prose prose-lg text-gray-600 leading-relaxed max-w-none flex-1">
                   <Markdown>
                     {services[selectedService].bio}
                   </Markdown>
                 </div>
 
-                <div className="mt-12">
+                <div className="mt-12 flex-shrink-0">
                   <motion.button 
                     whileHover={{ 
                       borderTopLeftRadius: "30px",

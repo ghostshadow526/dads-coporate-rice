@@ -43,7 +43,7 @@ export default function StatsSection() {
               Firm Foundations for <br />
               <span className="text-brand-orange">Sustainable Agricultural</span> Growth.
             </h2>
-            <div className="space-y-6 text-lg text-gray-400 leading-relaxed max-w-xl">
+            <div className="space-y-6 text-lg text-gray-400 leading-relaxed max-w-2xl">
               <p className="text-white font-bold text-xl">
                 We are redefining agriculture and agribusiness by training and empowering our farmers with the tools, funding, and global market access they need to succeed in the agriculture industry.
               </p>
