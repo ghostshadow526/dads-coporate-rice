@@ -18,6 +18,7 @@ import Login from './pages/Login';
 import Contact from './pages/Contact';
 import CooperativeLanding from './pages/CooperativeLanding';
 import InvestmentLanding from './pages/InvestmentLanding';
+import PaymentStatus from './pages/PaymentStatus';
 
 // Components
 import Navbar from './components/Navbar';
@@ -47,6 +48,7 @@ export default function App() {
             email: firebaseUser.email!,
             role: 'user',
             createdAt: Timestamp.now(),
+            walletBalance: 0,
           };
           await setDoc(doc(db, 'users', firebaseUser.uid), newProfile);
           setUserProfile(newProfile);
@@ -96,6 +98,7 @@ function AppContent({ user, userProfile }: { user: FirebaseUser | null, userProf
             <Route path="/contact" element={<Contact />} />
             <Route path="/cooperative-info" element={<CooperativeLanding />} />
             <Route path="/investment-info" element={<InvestmentLanding />} />
+            <Route path="/payment-status" element={<PaymentStatus />} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
             
             {/* Protected Routes */}

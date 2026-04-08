@@ -21,9 +21,9 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
   const navigate = useNavigate();
 
   const products = [
-    { id: 'rice-50kg', name: 'salvagebizhub Premium Rice (50kg)', price: 45000, image: 'https://picsum.photos/seed/rice-50kg/400/400' },
-    { id: 'rice-25kg', name: 'salvagebizhub Premium Rice (25kg)', price: 23000, image: 'https://picsum.photos/seed/rice-25kg/400/400' },
-    { id: 'rice-10kg', name: 'salvagebizhub Premium Rice (10kg)', price: 10000, image: 'https://picsum.photos/seed/rice-10kg/400/400' },
+    { id: 'rice-50kg', name: 'salvagebizhub Premium Rice (50kg)', price: 65000, image: 'https://raw.githubusercontent.com/ghostshadow526/jtech/main/updt3.jpeg' },
+    { id: 'rice-25kg', name: 'salvagebizhub Premium Rice (25kg)', price: 33000, image: 'https://raw.githubusercontent.com/ghostshadow526/jtech/main/update%20rice.jpeg' },
+    { id: 'rice-10kg', name: 'salvagebizhub Premium Rice (10kg)', price: 13500, image: 'https://raw.githubusercontent.com/ghostshadow526/jtech/main/updt2.jpeg' },
     { id: 'rice-5kg', name: 'salvagebizhub Premium Rice (5kg)', price: 5500, image: 'https://picsum.photos/seed/rice-5kg/400/400' },
   ];
 

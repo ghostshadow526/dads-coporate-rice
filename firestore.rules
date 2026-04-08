@@ -12,7 +12,8 @@ service cloud.firestore {
     //   - displayName: string (optional)
     //   - email: string (required)
     //   - phoneNumber: string (optional)
-    //   - role: string (required, 'user' or 'admin')
+    //   - role: string (required, 'user')
+    //   - walletBalance: number (optional)
     //   - createdAt: timestamp (required)
     //
     // Collection: investments
@@ -86,15 +87,6 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    function isAdmin() {
-      return isAuthenticated() &&
-        (
-          (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
-          (request.auth.token.email == "clhoetash@gmail.com" && request.auth.token.email_verified == true)
-        );
-    }
-
     function isDocOwner() {
       return isAuthenticated() && request.auth.uid == resource.data.uid;
     }
@@ -116,10 +108,10 @@ service cloud.firestore {
     // Domain Validators
     // ===============================================================
     function isValidUser(data) {
-      return hasOnlyAllowedFields(['uid', 'displayName', 'email', 'phoneNumber', 'role', 'createdAt']) &&
+      return hasOnlyAllowedFields(['uid', 'displayName', 'email', 'phoneNumber', 'role', 'createdAt', 'walletBalance']) &&
              data.uid is string && data.uid.size() > 0 &&
              data.email is string && isValidEmail(data.email) &&
-             data.role in ['user', 'admin'] &&
+             data.role == 'user' &&
              data.createdAt is timestamp;
     }
 
@@ -181,43 +173,43 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read: if isAuthenticated();
-      allow create: if isOwner(userId) && isValidUser(request.resource.data) && (request.resource.data.role == 'user' || isAdmin());
-      allow update: if (isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == resource.data.role) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data);
     }
 
     match /investments/{investmentId} {
-      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
       allow create: if isRequestOwner() && isValidInvestment(request.resource.data);
-      allow update: if isAdmin();
+      allow update: if false;
     }
 
     match /cooperativeMembers/{memberId} {
-      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
       allow create: if isRequestOwner() && isValidCooperativeMember(request.resource.data);
-      allow update: if isAdmin();
+      allow update: if false;
     }
 
     match /riceOrders/{orderId} {
-      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
       allow create: if isRequestOwner() && isValidRiceOrder(request.resource.data);
-      allow update: if isAdmin();
+      allow update: if false;
     }
 
     match /trainings/{trainingId} {
       allow read: if true;
-      allow write: if isAdmin() && isValidTraining(request.resource.data);
+      allow write: if false;
     }
 
     match /trainingRegistrations/{registrationId} {
-      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
       allow create: if isRequestOwner() && isValidTrainingRegistration(request.resource.data);
-      allow update: if isAdmin();
+      allow update: if false;
     }
 
     match /payments/{paymentId} {
-      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
       allow create: if isRequestOwner() && isValidPayment(request.resource.data);
-      allow update: if isAdmin();
+      allow update: if false;
     }
   }
 }

@@ -49,7 +49,7 @@ const directors: Director[] = [
     id: '5',
     name: 'Mrs. Progress David',
     role: 'Trading and Export Director',
-    image: 'https://raw.githubusercontent.com/ghostshadow526/jtech/main/eve3.jpeg',
+    image: 'https://raw.githubusercontent.com/ghostshadow526/jtech/main/lady.jpeg',
     phone: '+234(0)8059749818',
     email: 'progressdavid.sbh@gmail.com',
     bio: 'Mrs. Progress David serves as the Trading and Export Director, managing the company\'s international trade relations and export operations. She oversees the distribution of our premium agricultural products, including \'DAD\'s RICE\', to global markets. Her expertise in international trade compliance and market expansion is key to our mission of contributing to global food security.'

@@ -20,7 +20,8 @@ import {
   LogOut,
   ChevronRight,
   Plus,
-  DollarSign
+  DollarSign,
+  Wallet
 } from 'lucide-react';
 import { generateInvestmentPDF, generateReceiptPDF, generateTrainingPassPDF, generateConstitutionPDF, generateByeLawsPDF } from '../services/pdfService';
 import { format } from 'date-fns';
@@ -36,6 +37,7 @@ import {
 } from 'recharts';
 import { simulatePayment } from '../services/paymentService';
 import { toast } from 'sonner';
+import FundWallet from '../components/FundWallet';
 
 interface DashboardProps {
   user: FirebaseUser;
@@ -47,7 +49,7 @@ const MONTHLY_DUE = 2000;
 export default function Dashboard({ user, profile }: DashboardProps) {
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get('tab') as any;
-  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'payments' | 'profile'>(tabParam || 'overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'payments' | 'profile' | 'wallet'>(tabParam || 'overview');
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [cooperative, setCooperative] = useState<CooperativeMember | null>(null);
   const [orders, setOrders] = useState<RiceOrder[]>([]);
@@ -205,7 +207,23 @@ export default function Dashboard({ user, profile }: DashboardProps) {
                 <div className="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="w-7 h-7 bg-green-50 rounded-lg flex items-center justify-center">
-                      <TrendingUp className="text-green-600 w-3.5 h-3.5" />
+                      <Wallet className="text-green-600 w-3.5 h-3.5" />
+                    </div>
+                    <button 
+                      onClick={() => setActiveTab('wallet')}
+                      className="text-[8px] font-bold text-brand-orange bg-orange-50 px-1.5 py-0.5 rounded-md"
+                    >
+                      Fund
+                    </button>
+                  </div>
+                  <p className="text-gray-500 text-[9px] font-medium">Wallet Balance</p>
+                  <h3 className="text-base font-bold text-gray-900">NGN {(profile?.walletBalance || 0).toLocaleString()}</h3>
+                </div>
+
+                <div className="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
+                      <TrendingUp className="text-blue-600 w-3.5 h-3.5" />
                     </div>
                     <span className="text-[8px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-md">+12.5%</span>
                   </div>
@@ -529,6 +547,49 @@ export default function Dashboard({ user, profile }: DashboardProps) {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'wallet' && (
+            <motion.div
+              key="wallet"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="max-w-xl mx-auto"
+            >
+              <FundWallet userId={user.uid} />
+              
+              <div className="mt-8 bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Wallet Transactions</h3>
+                <div className="space-y-4">
+                  {payments.filter(p => p.purpose === 'wallet_funding').length > 0 ? (
+                    payments.filter(p => p.purpose === 'wallet_funding').map(payment => (
+                      <div key={payment.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                            payment.status === 'success' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'
+                          }`}>
+                            <Wallet className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-gray-900 text-sm">Wallet Funding</p>
+                            <p className="text-xs text-gray-500">{format(payment.createdAt.toDate(), 'MMM d, yyyy')}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-gray-900 text-sm">+NGN {payment.amount.toLocaleString()}</p>
+                          <p className={`text-[10px] font-bold uppercase ${
+                            payment.status === 'success' ? 'text-green-600' : 'text-orange-600'
+                          }`}>{payment.status}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-500 py-4">No wallet transactions yet.</p>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}

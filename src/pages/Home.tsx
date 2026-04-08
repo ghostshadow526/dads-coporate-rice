@@ -154,6 +154,25 @@ export default function Home() {
       <ProductsServicesSection />
       <SustainableGrowthSection />
       <OpportunitiesSection />
+
+      {/* Insurance Section */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="rounded-[40px] overflow-hidden shadow-2xl"
+          >
+            <img 
+              src="https://raw.githubusercontent.com/ghostshadow526/jtech/main/insurance.jpeg"
+              alt="Insurance Coverage"
+              className="w-full h-auto object-cover"
+              referrerPolicy="no-referrer"
+            />
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
 }

@@ -9,7 +9,8 @@ import {
   GraduationCap, 
   CheckCircle,
   LogOut,
-  Home
+  Home,
+  Wallet
 } from 'lucide-react';
 import { auth } from '../firebase';
 import { toast } from 'sonner';
@@ -38,6 +39,7 @@ export default function AppSidebar() {
 
   const secondaryItems = [
     { id: 'profile', label: 'Profile', icon: User, path: '/dashboard?tab=profile' },
+    { id: 'wallet', label: 'Wallet', icon: Wallet, path: '/dashboard?tab=wallet' },
     { id: 'documents', label: 'Documents', icon: FileText, path: '/dashboard?tab=documents' },
     { id: 'payments', label: 'Payments', icon: CreditCard, path: '/dashboard?tab=payments' },
     { id: 'home', label: 'Back to Home', icon: Home, path: '/' },

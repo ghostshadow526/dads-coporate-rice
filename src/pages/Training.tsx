@@ -32,50 +32,8 @@ export default function Training({ user, profile }: TrainingProps) {
       setLoading(false);
     }, (error) => handleFirestoreError(error, OperationType.LIST, 'trainings'));
 
-    // Seed initial data if empty (only for admins)
-    const seedData = async () => {
-      if (trainings.length === 0 && !loading && profile?.role === 'admin') {
-        const initialTrainings = [
-          {
-            title: 'Modern Rice Farming Techniques',
-            description: 'Learn the latest methods in rice cultivation, pest control, and soil management.',
-            price: 15000,
-            date: Timestamp.fromDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)),
-            isActive: true,
-            createdAt: Timestamp.now(),
-          },
-          {
-            title: 'Agricultural Business & Finance',
-            description: 'Master the financial aspects of farming, from budgeting to investment management.',
-            price: 20000,
-            date: Timestamp.fromDate(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)),
-            isActive: true,
-            createdAt: Timestamp.now(),
-          },
-          {
-            title: 'Sustainable Irrigation Systems',
-            description: 'A deep dive into efficient water management and irrigation technologies.',
-            price: 12000,
-            date: Timestamp.fromDate(new Date(Date.now() + 21 * 24 * 60 * 60 * 1000)),
-            isActive: true,
-            createdAt: Timestamp.now(),
-          },
-        ];
-        
-        try {
-          for (const t of initialTrainings) {
-            await addDoc(collection(db, 'trainings'), t);
-          }
-        } catch (error) {
-          console.error('Seeding error:', error);
-        }
-      }
-    };
-    
-    seedData();
-
     return () => unsubscribe();
-  }, [profile, loading, trainings.length]);
+  }, [profile, loading]);
 
   const handleRegister = async () => {
     if (!selectedTraining) return;

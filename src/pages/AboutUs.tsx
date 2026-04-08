@@ -22,7 +22,7 @@ const slides = [
     id: 'hectares',
     title: 'Hectares (2024)',
     value: '537',
-    image: 'https://ik.imagekit.io/qrfqn43oq/card.webp',
+    image: 'https://raw.githubusercontent.com/ghostshadow526/jtech/main/hectres.jpeg',
     content: 'Cultivating 637 hecters in 2025',
     isAchievement: true
   }
