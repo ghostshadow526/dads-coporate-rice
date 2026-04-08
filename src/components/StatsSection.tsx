@@ -45,7 +45,7 @@ export default function StatsSection() {
             </h2>
             <div className="space-y-6 text-lg text-gray-400 leading-relaxed max-w-2xl">
               <p className="text-white font-bold text-xl">
-                At the core of our mission is a commitment to delivering more than just products or capital, we provide insight. With over 8 years of experience since our establishment in 2018, we have consistently empowered our customers and partners with a deeper, more practical understanding of real market needs.
+                We are redefining agriculture and agribusiness by training and empowering our farmers with the tools, funding, and global market access they need to succeed in the agriculture industry.
               </p>
               
               <ReadMore maxHeight="0px" gradientColor="from-[#1A1A1A]" className="mt-0">
@@ -180,10 +180,10 @@ export default function StatsSection() {
                 referrerPolicy="no-referrer"
               />
               <div className="text-5xl font-black text-[#A881FF] mb-2">
-                <Counter value={3} />
+                <Counter value={2347} suffix="+" />
               </div>
               <p className="text-lg font-bold text-white leading-tight">
-                Manufacturing & Processing <br /> Facilities
+                investment beneficiaries
               </p>
             </motion.div>
 

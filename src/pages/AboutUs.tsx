@@ -89,7 +89,39 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Company Overview */}
+      {/* Why Choose Us */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl"
+          >
+            <h2 className="text-4xl font-bold text-gray-900 tracking-tight uppercase mb-8">Why Choose Us</h2>
+            <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
+              <ReadMore maxHeight="200px">
+                <div className="space-y-6">
+                  <p>
+                    Salvage Biz-Hub Nigeria Limited is a dynamic agribusiness, Investment and business consulting company strategically positioned within Nigeria’s non-oil sector. We are committed to driving innovation, sustainability, and measurable growth across the agricultural value chain while fostering long-term economic empowerment.
+                  </p>
+                  <p>
+                    Our operations span agricultural cultivation, processing, structured investments, business consulting, and trade, with a clear focus on improving productivity, efficiency, and profitability for individuals, communities, and organizations.
+                  </p>
+                  <p>
+                    We collaborate and engage with reputable local and international institutions and regulatory bodies, including partnerships and professional linkages with organizations such as the United State Department of Agriculture (USDA), Federal Ministry of Health (Department of Hospital Services), American University of Nigeria (AUN), Industrial Training Fund (ITF), Certified by the: Special Control Unit Against Money Laundering (SCUML), and membership of the Plateau State Chamber of Commerce, Mines and Agriculture (PLACCIMA).
+                  </p>
+                  <p>
+                    Our expertise covers a wide range of services, including capacity-building and professional training, business development and management, lifestyle and enterprise management, agricultural contract farming, Import and Export of agricultural commodities. Through these services, we deliver practical solutions that support sustainable development, food security, and wealth creation.
+                  </p>
+                </div>
+              </ReadMore>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Who Are We */}
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -99,7 +131,7 @@ export default function AboutUs() {
               viewport={{ once: true }}
               className="space-y-8"
             >
-              <h2 className="text-4xl font-bold text-gray-900 tracking-tight">WHY CHOOSE US</h2>
+              <h2 className="text-4xl font-bold text-gray-900 tracking-tight uppercase">WHO ARE WE</h2>
               <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
                 <ReadMore maxHeight="150px">
                   <div className="space-y-6">

@@ -22,7 +22,7 @@ export default function SustainableGrowthSection() {
             </h2>
             <div className="space-y-6">
               <p className="text-base font-bold text-gray-900 leading-relaxed">
-                At the core of our mission is a commitment to delivering more than just products or capital, we provide insight. With over 8 years of experience since our establishment in 2018, we have consistently empowered our customers and partners with a deeper, more practical understanding of real market needs.
+                We are redefining agriculture and agribusiness by training and empowering our farmers with the tools, funding, and global market access they need to succeed in the agriculture industry.
               </p>
               
               <ReadMore maxHeight="0px" className="mt-0">

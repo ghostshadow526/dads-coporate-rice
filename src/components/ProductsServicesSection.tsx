@@ -138,7 +138,7 @@ With Salvage Biz-Hub’s risk management solutions, you gain more than protectio
               <ReadMore maxHeight="200px">
                 <div className="space-y-6">
                   <p>
-                    At the core of our mission is a commitment to delivering more than just products or capital, we provide insight. With over 8 years of experience since our establishment in 2018, we have consistently empowered our customers with a deeper, more practical understanding of real market needs.
+                    We are redefining agriculture and agribusiness by training and empowering our farmers with the tools, funding, and global market access they need to succeed in the agriculture industry.
                   </p>
                   <p>
                     As an agribusiness and investment company, we operate at the intersection of agriculture, finance, and market intelligence. We understand that, success in today’s agricultural landscape goes beyond production, it requires clarity, strategy, and informed decision-making.
