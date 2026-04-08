@@ -46,7 +46,14 @@ async function startServer() {
   const KORAPAY_PUBLIC_KEY = process.env.KORAPAY_PUBLIC_KEY;
   const KORAPAY_ENCRYPTION_KEY = process.env.KORAPAY_ENCRYPTION_KEY;
 
-  console.log("Korapay initialized with secret key:", KORAPAY_SECRET_KEY ? KORAPAY_SECRET_KEY.substring(0, 7) + "..." : "MISSING");
+  if (!KORAPAY_SECRET_KEY) {
+    console.warn("WARNING: KORAPAY_SECRET_KEY is missing. Payments will fail.");
+  } else {
+    console.log("Korapay initialized with secret key:", KORAPAY_SECRET_KEY.substring(0, 7) + "...");
+  }
+
+  const APP_URL = process.env.APP_URL || "http://localhost:3000";
+  console.log("App URL for callbacks:", APP_URL);
 
   // API routes
   app.get("/api/health", async (req, res) => {
@@ -135,8 +142,16 @@ async function startServer() {
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
 
-      // Clean up APP_URL to avoid double slashes
-      let baseUrl = process.env.APP_URL || "http://localhost:3000";
+      if (!KORAPAY_SECRET_KEY) {
+        console.error("Payment initialization failed: KORAPAY_SECRET_KEY is missing");
+        return res.status(500).json({ 
+          error: "Payment configuration error", 
+          details: "KORAPAY_SECRET_KEY is not set in environment variables." 
+        });
+      }
+
+      // Clean up baseUrl to avoid double slashes
+      let baseUrl = APP_URL;
       if (baseUrl.endsWith("/")) {
         baseUrl = baseUrl.slice(0, -1);
       }
@@ -229,17 +244,19 @@ async function startServer() {
           return res.status(200).send("OK");
         }
 
+        const { uid: userId, purpose, metadata = {} } = paymentData;
+        const amountInNaira = amount / 100;
+
         // Update transaction status
         await db.collection("payments").doc(reference).update({
           status: "success",
           updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-        // Credit user wallet
-        const userId = paymentData?.uid;
-        const amountInNaira = amount / 100;
+        console.log(`Processing successful payment for user ${userId}, purpose: ${purpose}`);
 
-        if (userId) {
+        // Handle different purposes
+        if (purpose === "wallet_funding") {
           const userRef = db.collection("users").doc(userId);
           await db.runTransaction(async (t) => {
             const userDoc = await t.get(userRef);
@@ -251,6 +268,53 @@ async function startServer() {
             }
           });
           console.log(`Wallet credited for user ${userId}: ${amountInNaira}`);
+        } else if (purpose === "Rice Purchase") {
+          await db.collection("riceOrders").add({
+            uid: userId,
+            items: metadata.cart || [],
+            totalAmount: amountInNaira,
+            paymentId: reference,
+            status: "pending",
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          console.log(`Rice order created for user ${userId}`);
+        } else if (purpose.startsWith("Investment:")) {
+          await db.collection("investments").add({
+            uid: userId,
+            plan: metadata.plan || purpose.split(": ")[1],
+            slots: metadata.slots || 1,
+            amount: amountInNaira,
+            status: "active",
+            paymentId: reference,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            ...metadata.formData
+          });
+          console.log(`Investment record created for user ${userId}`);
+        } else if (purpose.startsWith("Training:")) {
+          await db.collection("trainingRegistrations").add({
+            uid: userId,
+            trainingId: metadata.trainingId,
+            paymentId: reference,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          console.log(`Training registration created for user ${userId}`);
+        } else if (purpose === "Cooperative Registration Fee") {
+          await db.collection("cooperativeMembers").add({
+            uid: userId,
+            status: "active",
+            registrationFeePaid: true,
+            paymentId: reference,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          console.log(`Cooperative membership created for user ${userId}`);
+        } else if (purpose === "Cooperative Monthly Due") {
+          const memberQuery = await db.collection("cooperativeMembers").where("uid", "==", userId).limit(1).get();
+          if (!memberQuery.empty) {
+            await memberQuery.docs[0].ref.update({
+              lastMonthlyPayment: admin.firestore.FieldValue.serverTimestamp(),
+            });
+          }
+          console.log(`Monthly due updated for user ${userId}`);
         }
       }
 

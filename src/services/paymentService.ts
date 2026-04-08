@@ -6,7 +6,7 @@ export interface PaymentResponse {
   timestamp: string;
 }
 
-export const simulatePayment = async (amount: number, purpose: string, uid: string): Promise<PaymentResponse> => {
+export const simulatePayment = async (amount: number, purpose: string, uid: string, metadata: any = {}): Promise<PaymentResponse> => {
   // We're now using real Korapay initialization for all payments
   try {
     const response = await fetch('/api/fund-wallet', {
@@ -14,7 +14,7 @@ export const simulatePayment = async (amount: number, purpose: string, uid: stri
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ userId: uid, amount, purpose }),
+      body: JSON.stringify({ userId: uid, amount, purpose, metadata }),
     });
 
     const data = await response.json();

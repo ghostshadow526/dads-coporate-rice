@@ -51,21 +51,8 @@ export default function Investment({ user, profile }: InvestmentProps) {
   const handlePayRegistration = async () => {
     setProcessing(true);
     try {
-      const payment = await simulatePayment(REGISTRATION_FEE, 'Investment Access Fee', user.uid);
-      
-      // Save payment record
-      const paymentRecord: PaymentRecord = {
-        id: payment.transactionId,
-        uid: user.uid,
-        amount: REGISTRATION_FEE,
-        purpose: 'Investment Access Fee',
-        status: 'success',
-        createdAt: Timestamp.now(),
-      };
-      await addDoc(collection(db, 'payments'), paymentRecord);
-      
-      toast.success('Access fee paid successfully!');
-      setStep(2);
+      await simulatePayment(REGISTRATION_FEE, 'Investment Access Fee', user.uid);
+      // User is redirected to Korapay.
     } catch (error) {
       console.error('Payment error:', error);
       toast.error('Payment failed. Please try again.');
@@ -90,43 +77,8 @@ export default function Investment({ user, profile }: InvestmentProps) {
     setProcessing(true);
     const totalAmount = slots * SLOT_PRICE;
     try {
-      const payment = await simulatePayment(totalAmount, `Investment: ${plan}`, user.uid);
-      
-      // Save payment record
-      const paymentRecord: PaymentRecord = {
-        id: payment.transactionId,
-        uid: user.uid,
-        amount: totalAmount,
-        purpose: `Investment: ${plan}`,
-        status: 'success',
-        createdAt: Timestamp.now(),
-      };
-      await addDoc(collection(db, 'payments'), paymentRecord);
-      
-      // Save investment record
-      const newInvestment: InvestmentType = {
-        uid: user.uid,
-        plan,
-        slots,
-        amount: totalAmount,
-        status: 'active',
-        paymentId: payment.transactionId,
-        createdAt: Timestamp.now(),
-        ...formData,
-      };
-      await addDoc(collection(db, 'investments'), newInvestment);
-      
-      // Notify company
-      await sendCompanyNotification('investment', {
-        user: profile?.displayName || user.email,
-        plan: newInvestment.plan,
-        amount: newInvestment.amount,
-        slots: newInvestment.slots
-      });
-      
-      toast.success('Investment successful!');
-      generateInvestmentPDF(newInvestment, profile);
-      setStep(3);
+      await simulatePayment(totalAmount, `Investment: ${plan}`, user.uid, { plan, slots, formData });
+      // User is redirected to Korapay. Webhook handles investment creation.
     } catch (error) {
       console.error('Investment error:', error);
       toast.error('Investment failed. Please try again.');

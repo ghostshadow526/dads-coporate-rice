@@ -55,30 +55,8 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   const handleJoin = async () => {
     setProcessing(true);
     try {
-      const payment = await simulatePayment(REGISTRATION_FEE, 'Cooperative Registration Fee', user.uid);
-      
-      // Save payment record
-      const paymentRecord: PaymentRecord = {
-        id: payment.transactionId,
-        uid: user.uid,
-        amount: REGISTRATION_FEE,
-        purpose: 'Cooperative Registration Fee',
-        status: 'success',
-        createdAt: Timestamp.now(),
-      };
-      await addDoc(collection(db, 'payments'), paymentRecord);
-      
-      // Save member record
-      const newMember: CooperativeMember = {
-        uid: user.uid,
-        status: 'active',
-        registrationFeePaid: true,
-        paymentId: payment.transactionId,
-        createdAt: Timestamp.now(),
-      };
-      await addDoc(collection(db, 'cooperativeMembers'), newMember);
-      
-      toast.success('Successfully joined the cooperative!');
+      await simulatePayment(REGISTRATION_FEE, 'Cooperative Registration Fee', user.uid);
+      // User is redirected to Korapay. Webhook handles membership creation.
     } catch (error) {
       console.error('Join error:', error);
       toast.error('Failed to join. Please try again.');
@@ -90,20 +68,8 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   const handlePayMonthlyDue = async () => {
     setProcessing(true);
     try {
-      const payment = await simulatePayment(MONTHLY_DUE, 'Cooperative Monthly Due', user.uid);
-      
-      // Save payment record
-      const paymentRecord: PaymentRecord = {
-        id: payment.transactionId,
-        uid: user.uid,
-        amount: MONTHLY_DUE,
-        purpose: 'Cooperative Monthly Due',
-        status: 'success',
-        createdAt: Timestamp.now(),
-      };
-      await addDoc(collection(db, 'payments'), paymentRecord);
-      
-      toast.success('Monthly due paid successfully!');
+      await simulatePayment(MONTHLY_DUE, 'Cooperative Monthly Due', user.uid);
+      // User is redirected to Korapay. Webhook handles payment record creation.
     } catch (error) {
       console.error('Payment error:', error);
       toast.error('Payment failed. Please try again.');

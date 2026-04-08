@@ -39,38 +39,8 @@ export default function Training({ user, profile }: TrainingProps) {
     if (!selectedTraining) return;
     setProcessing(true);
     try {
-      const payment = await simulatePayment(selectedTraining.price, `Training: ${selectedTraining.title}`, user.uid);
-      
-      // Save payment record
-      const paymentRecord: PaymentRecord = {
-        id: payment.transactionId,
-        uid: user.uid,
-        amount: selectedTraining.price,
-        purpose: `Training: ${selectedTraining.title}`,
-        status: 'success',
-        createdAt: Timestamp.now(),
-      };
-      await addDoc(collection(db, 'payments'), paymentRecord);
-      
-      // Save registration record
-      const newRegistration: TrainingRegistration = {
-        uid: user.uid,
-        trainingId: selectedTraining.id,
-        paymentId: payment.transactionId,
-        createdAt: Timestamp.now(),
-      };
-      await addDoc(collection(db, 'trainingRegistrations'), newRegistration);
-      
-      // Notify company
-      await sendCompanyNotification('registration', {
-        user: profile?.displayName || user.email,
-        training: selectedTraining.title,
-        amount: selectedTraining.price
-      });
-      
-      toast.success('Successfully registered for training!');
-      generateTrainingPassPDF(newRegistration, selectedTraining, profile);
-      setStep(3);
+      await simulatePayment(selectedTraining.price, `Training: ${selectedTraining.title}`, user.uid, { trainingId: selectedTraining.id });
+      // User is redirected to Korapay. Webhook handles registration creation.
     } catch (error) {
       console.error('Registration error:', error);
       toast.error('Registration failed. Please try again.');

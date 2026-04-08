@@ -52,41 +52,8 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
     if (cart.length === 0) return;
     setLoading(true);
     try {
-      const payment = await simulatePayment(totalAmount, 'Rice Purchase', user.uid);
-      
-      // Save payment record
-      const paymentRecord: PaymentRecord = {
-        id: payment.transactionId,
-        uid: user.uid,
-        amount: totalAmount,
-        purpose: 'Rice Purchase',
-        status: 'success',
-        createdAt: Timestamp.now(),
-      };
-      await addDoc(collection(db, 'payments'), paymentRecord);
-      
-      // Save order record
-      const newOrder: RiceOrder = {
-        uid: user.uid,
-        items: cart,
-        totalAmount,
-        paymentId: payment.transactionId,
-        status: 'pending',
-        createdAt: Timestamp.now(),
-      };
-      await addDoc(collection(db, 'riceOrders'), newOrder);
-      
-      // Notify company
-      await sendCompanyNotification('order', {
-        user: profile?.displayName || user.email,
-        items: cart.map(item => `${item.name} x ${item.quantity}`),
-        total: totalAmount
-      });
-      
-      toast.success('Order placed successfully!');
-      generateReceiptPDF(paymentRecord, profile);
-      setStep(3);
-      setCart([]);
+      await simulatePayment(totalAmount, 'Rice Purchase', user.uid, { cart });
+      // User is redirected to Korapay. Webhook handles order creation.
     } catch (error) {
       console.error('Checkout error:', error);
       toast.error('Checkout failed. Please try again.');

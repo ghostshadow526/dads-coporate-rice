@@ -127,20 +127,8 @@ export default function Dashboard({ user, profile }: DashboardProps) {
     if (!cooperative) return;
     setProcessingDue(true);
     try {
-      const payment = await simulatePayment(MONTHLY_DUE, 'Monthly Cooperative Due', user.uid);
-      
-      // Save payment record
-      const paymentRecord: PaymentRecord = {
-        id: payment.transactionId,
-        uid: user.uid,
-        amount: MONTHLY_DUE,
-        purpose: 'Monthly Cooperative Due',
-        status: 'success',
-        createdAt: Timestamp.now(),
-      };
-      await addDoc(collection(db, 'payments'), paymentRecord);
-      
-      toast.success('Monthly due paid successfully!');
+      await simulatePayment(MONTHLY_DUE, 'Cooperative Monthly Due', user.uid);
+      // User is redirected to Korapay.
     } catch (error) {
       console.error('Payment error:', error);
       toast.error('Payment failed.');
