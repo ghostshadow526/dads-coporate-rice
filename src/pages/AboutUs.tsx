@@ -89,7 +89,7 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
+      {/* About US */}
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -121,7 +121,7 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Who Are We */}
+      {/* Why Choose Us*/}
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">

@@ -41,6 +41,12 @@ async function startServer() {
   app.use("/api/kora-webhook", express.raw({ type: "application/json" }));
   app.use(express.json());
 
+  // Logging middleware
+  app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+  });
+
   // Korapay Config
   const KORAPAY_SECRET_KEY = process.env.KORAPAY_SECRET_KEY;
   const KORAPAY_PUBLIC_KEY = process.env.KORAPAY_PUBLIC_KEY;
@@ -104,9 +110,13 @@ async function startServer() {
   });
 
   // 1. Payment Initialization API
-  app.post("/api/fund-wallet", async (req, res) => {
+  app.all("/api/fund-wallet", async (req, res) => {
+    if (req.method !== "POST") {
+      console.log(`Method ${req.method} not allowed for /api/fund-wallet`);
+      return res.status(405).json({ error: "Method not allowed. Use POST." });
+    }
     try {
-      const { userId, amount, purpose = "wallet_funding" } = req.body;
+      const { userId, amount, purpose = "wallet_funding", metadata = {} } = req.body;
 
       console.log(`Initializing payment for user ${userId}, amount: ${amount}, purpose: ${purpose}`);
 
@@ -138,6 +148,7 @@ async function startServer() {
         uid: userId,
         amount: Number(amount),
         purpose: purpose,
+        metadata: metadata,
         status: "pending",
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
