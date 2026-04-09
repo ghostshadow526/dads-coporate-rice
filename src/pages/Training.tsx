@@ -60,7 +60,7 @@ export default function Training({ user, profile }: TrainingProps) {
   return (
     <div className="max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight">Agricultural Training Programs</h1>
+        <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight uppercase">Agricultural Training Programs</h1>
         <p className="text-gray-500 text-[11px]">Enhance your skills with our expert-led agricultural training sessions.</p>
       </div>
 
@@ -79,7 +79,7 @@ export default function Training({ user, profile }: TrainingProps) {
                   <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-6">
                     <GraduationCap className="w-6 h-6 text-purple-600" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{training.title}</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 uppercase">{training.title}</h3>
                   <p className="text-gray-600 text-sm mb-6 leading-relaxed">{training.description}</p>
                   
                   <div className="space-y-3 text-sm text-gray-500">
@@ -130,13 +130,13 @@ export default function Training({ user, profile }: TrainingProps) {
             className="max-w-2xl mx-auto"
           >
             <div className="bg-white p-10 rounded-3xl shadow-xl border border-gray-100 space-y-8">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center space-x-2 uppercase">
                 <Info className="w-6 h-6 text-purple-700" />
                 <span>Confirm Registration</span>
               </h2>
 
               <div className="bg-purple-50 p-6 rounded-2xl border border-purple-100">
-                <h3 className="font-bold text-purple-900 mb-2">{selectedTraining.title}</h3>
+                <h3 className="font-bold text-purple-900 mb-2 uppercase">{selectedTraining.title}</h3>
                 <p className="text-purple-800 text-sm mb-4">{selectedTraining.description}</p>
                 <div className="flex justify-between items-end pt-4 border-t border-purple-200">
                   <span className="text-purple-900 font-bold">Registration Fee:</span>
@@ -186,7 +186,7 @@ export default function Training({ user, profile }: TrainingProps) {
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-12 h-12 text-green-600" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Registration Successful!</h2>
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight uppercase">Registration Successful!</h2>
             <p className="text-gray-600 max-w-md mx-auto">
               You have successfully registered for the training program. You can now download your training pass and view registration details in the dashboard.
             </p>

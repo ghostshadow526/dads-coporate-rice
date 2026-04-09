@@ -65,7 +65,7 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
   return (
     <div className="max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight">Buy salvagebizhub Rice</h1>
+        <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight uppercase">Buy salvagebizhub Rice</h1>
         <p className="text-gray-500 text-[11px]">Premium quality, locally grown rice delivered to your doorstep.</p>
       </div>
 
@@ -91,7 +91,7 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
                     />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{product.name}</h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 uppercase">{product.name}</h3>
                     <div className="flex justify-between items-center">
                       <p className="text-2xl font-bold text-green-700">NGN {product.price.toLocaleString()}</p>
                       <button
@@ -109,7 +109,7 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
             {/* Cart Summary */}
             <div className="lg:col-span-1">
               <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 sticky top-24">
-                <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2">
+                <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2 uppercase">
                   <ShoppingCart className="w-6 h-6 text-green-700" />
                   <span>Your Cart</span>
                 </h3>
@@ -182,7 +182,7 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
             className="max-w-2xl mx-auto"
           >
             <div className="bg-white p-10 rounded-3xl shadow-xl border border-gray-100 space-y-8">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center space-x-2 uppercase">
                 <CreditCard className="w-6 h-6 text-green-700" />
                 <span>Confirm Order & Payment</span>
               </h2>
@@ -245,7 +245,7 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-12 h-12 text-green-600" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Order Placed Successfully!</h2>
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight uppercase">Order Placed Successfully!</h2>
             <p className="text-gray-600 max-w-md mx-auto">
               Thank you for your purchase. Your order is being processed and will be shipped soon. You can download your receipt and track your order in the dashboard.
             </p>

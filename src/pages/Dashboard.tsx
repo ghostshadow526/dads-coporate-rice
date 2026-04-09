@@ -602,7 +602,7 @@ export default function Dashboard({ user, profile }: DashboardProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                     <p className="text-xs font-bold text-gray-400 uppercase mb-1">Account Role</p>
-                    <p className="font-bold text-gray-900 capitalize">{profile?.role}</p>
+                    <p className="font-bold text-gray-900 uppercase">{profile?.role}</p>
                   </div>
                   <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                     <p className="text-xs font-bold text-gray-400 uppercase mb-1">Member Since</p>

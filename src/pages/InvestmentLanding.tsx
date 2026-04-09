@@ -172,7 +172,7 @@ export default function InvestmentLanding() {
                                 {i + 1}
                               </div>
                               <div>
-                                <h4 className="font-bold text-brand-dark">{item.title}</h4>
+                                <h4 className="font-bold text-brand-dark uppercase">{item.title}</h4>
                                 <p className="text-sm text-gray-500">{item.desc}</p>
                               </div>
                             </div>
@@ -224,7 +224,7 @@ export default function InvestmentLanding() {
                 <div className="space-y-6">
                   {faqs.map((faq, i) => (
                     <div key={i} className="space-y-2">
-                      <h4 className="font-bold text-brand-dark flex items-center">
+                      <h4 className="font-bold text-brand-dark flex items-center uppercase">
                         <span className="w-2 h-2 bg-brand-orange rounded-full mr-2" />
                         {faq.q}
                       </h4>

@@ -38,7 +38,7 @@ export default function Contact() {
             className="max-w-2xl"
           >
             <span className="text-sm font-bold uppercase tracking-widest mb-8 block">Contact Us</span>
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-none">
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-none uppercase">
               Get in <span className="text-brand-dark">Touch</span>
             </h1>
           </motion.div>
@@ -69,7 +69,7 @@ export default function Contact() {
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-brand-dark mb-2">Our Office</h3>
+                    <h3 className="text-xl font-bold text-brand-dark mb-2 uppercase">Our Office</h3>
                     <p className="text-gray-600">BLOCK A, JOS FOOD COMPLEX, ADJACENT CIVIL DEFENSE HEADQUARTERS, JOS, PLATEAU STATE.</p>
                   </div>
                 </div>
@@ -79,7 +79,7 @@ export default function Contact() {
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-brand-dark mb-2">Call Us</h3>
+                    <h3 className="text-xl font-bold text-brand-dark mb-2 uppercase">Call Us</h3>
                     <p className="text-gray-600">+234 916 731 3334</p>
                   </div>
                 </div>
@@ -91,7 +91,7 @@ export default function Contact() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-brand-dark mb-2">WhatsApp</h3>
+                    <h3 className="text-xl font-bold text-brand-dark mb-2 uppercase">WhatsApp</h3>
                     <p className="text-gray-600">+234 916 731 3334</p>
                   </div>
                 </div>
@@ -101,7 +101,7 @@ export default function Contact() {
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-brand-dark mb-2">Email Us</h3>
+                    <h3 className="text-xl font-bold text-brand-dark mb-2 uppercase">Email Us</h3>
                     <p className="text-gray-600">info@salvagebizhub.com</p>
                   </div>
                 </div>

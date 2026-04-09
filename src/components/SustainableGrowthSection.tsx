@@ -16,7 +16,7 @@ export default function SustainableGrowthSection() {
             transition={{ duration: 0.8 }}
             className="space-y-4"
           >
-            <h2 className="text-2xl md:text-3xl font-black text-brand-dark leading-tight">
+            <h2 className="text-2xl md:text-3xl font-black text-brand-dark leading-tight uppercase">
               Firm Foundations for <br />
               <span className="text-brand-orange">Sustainable Agricultural Growth</span>
             </h2>
@@ -90,7 +90,7 @@ export default function SustainableGrowthSection() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
               {/* Left Text */}
               <div>
-                <h3 className="text-3xl md:text-6xl font-black text-white leading-tight">
+                <h3 className="text-3xl md:text-6xl font-black text-white leading-tight uppercase">
                   Striving for a <br />
                   <span className="text-brand-yellow">Food-Secure Future</span>
                 </h3>

@@ -34,7 +34,7 @@ export default function OpportunitiesSection() {
             transition={{ duration: 0.8 }}
             className="space-y-8 pl-0 lg:pl-8"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-[#222222] leading-tight">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#222222] leading-tight uppercase">
               Creating Opportunities <br />
               to <span className="text-brand-blue">Make a Difference</span>
             </h2>

@@ -77,7 +77,7 @@ export default function AboutUs() {
             className="max-w-2xl"
           >
             <span className="text-sm font-bold uppercase tracking-widest mb-8 block">About Us</span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-6 leading-[1.1]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-6 leading-[1.1] uppercase">
               Cultivating a <br />
               <span className="text-brand-dark">Sustainable</span> <br />
               Future
@@ -158,7 +158,7 @@ export default function AboutUs() {
               viewport={{ once: true }}
               className="bg-gray-50 p-12 rounded-[40px] border border-gray-100"
             >
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Our Specialization</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 uppercase">Our Specialization</h3>
               <ul className="space-y-4">
                 {[
                   'Capacity building trainings',

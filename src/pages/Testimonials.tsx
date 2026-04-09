@@ -120,7 +120,7 @@ export default function Testimonials() {
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-bold tracking-tight"
+            className="text-5xl md:text-7xl font-bold tracking-tight uppercase"
           >
             Testimonials
           </motion.h1>
@@ -170,7 +170,7 @@ export default function Testimonials() {
                     />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-brand-dark">{testimonial.name}</h3>
+                    <h3 className="text-lg font-bold text-brand-dark uppercase">{testimonial.name}</h3>
                     <p className="text-sm text-brand-green font-medium uppercase tracking-wider">{testimonial.role}</p>
                   </div>
                 </div>
@@ -183,7 +183,7 @@ export default function Testimonials() {
       {/* CTA Section */}
       <section className="py-24 bg-brand-dark text-white text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold mb-8">Share Your Experience</h2>
+          <h2 className="text-4xl font-bold mb-8 uppercase">Share Your Experience</h2>
           <p className="text-xl text-gray-400 mb-12 max-w-md mx-auto">
             We value your feedback! Tell us how our platform has impacted your life or business.
           </p>

@@ -98,7 +98,7 @@ export default function BoardOfDirectors() {
               <ChevronRight className="w-4 h-4 opacity-60" />
               <span>Board of Directors</span>
             </nav>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-8 leading-none">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-8 leading-none uppercase">
               Our <span className="text-brand-dark">Guiding</span> Experts
             </h1>
           </motion.div>
@@ -114,7 +114,7 @@ export default function BoardOfDirectors() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight uppercase">
                 <span className="text-brand-orange">Effective governance</span> and informed perspectives
               </h2>
             </motion.div>
@@ -154,7 +154,7 @@ export default function BoardOfDirectors() {
                     referrerPolicy="no-referrer"
                   />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{director.name}</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2 uppercase">{director.name}</h3>
                 <p className="text-sm text-gray-600 mb-4 px-4 leading-snug h-12 flex items-center justify-center">
                   {director.role}
                 </p>
@@ -211,7 +211,7 @@ export default function BoardOfDirectors() {
               </div>
 
               <div className="flex-1 p-8 md:p-16 overflow-y-auto max-h-[60vh] md:max-h-none">
-                <h2 className="text-3xl md:text-4xl font-black text-brand-dark mb-4 leading-tight">
+                <h2 className="text-3xl md:text-4xl font-black text-brand-dark mb-4 leading-tight uppercase">
                   {selectedDirector.name}
                 </h2>
                 <p className="text-lg font-bold text-brand-orange mb-6 uppercase tracking-wider">

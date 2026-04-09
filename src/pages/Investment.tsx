@@ -98,7 +98,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight">Invest in salvagebizhub Rice</h1>
+        <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight uppercase">Invest in salvagebizhub Rice</h1>
         <p className="text-gray-500 text-[11px]">Secure your future by investing in sustainable agriculture.</p>
       </div>
 
@@ -135,7 +135,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
                 <div className="bg-blue-50 p-6 rounded-2xl flex items-start space-x-4 border border-blue-100">
                   <Info className="w-6 h-6 text-blue-600 mt-1" />
                   <div>
-                    <h3 className="font-bold text-blue-900 mb-1">Investment Access Fee</h3>
+                    <h3 className="font-bold text-blue-900 mb-1 uppercase">Investment Access Fee</h3>
                     <p className="text-blue-800 text-sm">
                       To access our investment opportunities, a one-time registration fee of <strong>NGN 5,000</strong> is required. This fee unlocks the investment form and all future investment plans.
                     </p>
@@ -143,7 +143,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-gray-900">Why invest with us?</h3>
+                  <h3 className="text-xl font-bold text-gray-900 uppercase">Why invest with us?</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
                       'Guaranteed returns on investment.',
@@ -186,7 +186,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-6">
-                    <h3 className="text-xl font-bold text-gray-900">Personal Details</h3>
+                    <h3 className="text-xl font-bold text-gray-900 uppercase">Personal Details</h3>
                     <div className="grid grid-cols-1 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Full Name</label>
@@ -251,7 +251,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
                       </div>
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-900 pt-4">Bank Details (For Returns)</h3>
+                    <h3 className="text-xl font-bold text-gray-900 pt-4 uppercase">Bank Details (For Returns)</h3>
                     <div className="grid grid-cols-1 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Bank Name</label>
@@ -286,7 +286,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
                   </div>
 
                   <div className="space-y-6">
-                    <h3 className="text-xl font-bold text-gray-900">Investment Plan</h3>
+                    <h3 className="text-xl font-bold text-gray-900 uppercase">Investment Plan</h3>
                     <div>
                       <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Select Plan</label>
                       <select
@@ -326,7 +326,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
                     </div>
 
                     <div className="bg-green-50 p-8 rounded-3xl border border-green-100">
-                      <h3 className="text-lg font-bold text-green-900 mb-4">Summary</h3>
+                      <h3 className="text-lg font-bold text-green-900 mb-4 uppercase">Summary</h3>
                       <div className="space-y-3 text-sm">
                         <div className="flex justify-between text-green-800">
                           <span>Plan:</span>
@@ -372,7 +372,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
                 <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <CheckCircle className="w-12 h-12 text-green-600" />
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Investment Successful!</h2>
+                <h2 className="text-3xl font-bold text-gray-900 tracking-tight uppercase">Investment Successful!</h2>
                 <p className="text-gray-600 max-w-md mx-auto">
                   Your investment has been processed successfully. You can now download your investment document and track your progress in the dashboard.
                 </p>

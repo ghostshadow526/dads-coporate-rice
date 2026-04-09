@@ -15,6 +15,12 @@
   --color-brand-light: #f5f5f5;
 }
 
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    text-transform: uppercase !important;
+  }
+}
+
 @layer utilities {
   @keyframes marquee {
     0% { transform: translateX(0); }

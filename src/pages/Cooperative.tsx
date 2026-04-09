@@ -89,7 +89,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   return (
     <div className="max-w-5xl mx-auto">
       <div className="mb-10 text-center">
-        <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tight font-serif italic">Salvage Multipurpose Cooperative Society (SMCS)</h1>
+        <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tight font-serif italic uppercase">Salvage Multipurpose Cooperative Society (SMCS)</h1>
         <p className="text-gray-600 max-w-3xl mx-auto text-lg leading-relaxed">
           The Salvage Multipurpose Cooperative Society (SMCS) is designed to empower women, youths, farmers, traders, and entrepreneurs through structured savings, affordable financing, and mentorship, encouraging the power of small savings to achieve greater things.
         </p>
@@ -113,7 +113,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
               <div className="space-y-8">
                 <div>
-                  <h3 className="text-2xl font-black text-gray-900 mb-6 font-serif">Membership Benefits:</h3>
+                  <h3 className="text-2xl font-black text-gray-900 mb-6 font-serif uppercase">Membership Benefits:</h3>
                   <div className="grid grid-cols-1 gap-4">
                     {[
                       'Structured savings with annual interest',
@@ -146,7 +146,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
 
               <div className="space-y-8 flex flex-col justify-center">
                 <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Ready to Join?</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 uppercase">Ready to Join?</h3>
                   <p className="text-gray-600 mb-6 text-sm leading-relaxed">
                     By joining SMCS, you gain access to a community dedicated to your financial growth and business success.
                   </p>
@@ -190,7 +190,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
               <div className="flex justify-between items-start mb-8">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Membership Dashboard</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2 uppercase">Membership Dashboard</h2>
                   <p className="text-gray-500 text-sm">Member since {format(member.createdAt.toDate(), 'PPP')}</p>
                 </div>
                 <span className="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
@@ -225,7 +225,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
 
             {/* Payment History */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2 uppercase">
                 <History className="w-6 h-6 text-green-700" />
                 <span>Monthly Payment History</span>
               </h3>
@@ -252,7 +252,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
           {/* Sidebar Documents */}
           <div className="space-y-8">
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Resources</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-6 uppercase">Resources</h3>
               <div className="space-y-4">
                 <motion.button
                   onClick={() => generateConstitutionPDF(profile)}
@@ -291,7 +291,7 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
 
             <div className="bg-green-900 text-white p-8 rounded-3xl shadow-xl">
               <ShieldCheck className="w-12 h-12 text-green-500 mb-6" />
-              <h3 className="text-xl font-bold mb-4">Member Support</h3>
+              <h3 className="text-xl font-bold mb-4 uppercase">Member Support</h3>
               <p className="text-green-100 text-sm leading-relaxed mb-6">
                 Need help with your membership or payments? Our cooperative support team is here for you.
               </p>

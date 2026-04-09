@@ -11,7 +11,7 @@ export default function CooperativeLanding() {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight font-serif italic"
+            className="text-4xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight font-serif italic uppercase"
           >
             Salvage Multipurpose Cooperative Society (SMCS)
           </motion.h1>
@@ -39,7 +39,7 @@ export default function CooperativeLanding() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
               <div className="space-y-8">
                 <div>
-                  <h3 className="text-2xl font-black text-gray-900 mb-6 font-serif">Membership Benefits:</h3>
+                  <h3 className="text-2xl font-black text-gray-900 mb-6 font-serif uppercase">Membership Benefits:</h3>
                   <div className="grid grid-cols-1 gap-4">
                     {[
                       'Structured savings with annual interest',
@@ -74,11 +74,11 @@ export default function CooperativeLanding() {
               </div>
 
               <div className="space-y-8">
-                <h3 className="text-2xl font-black text-gray-900 font-serif">Why Join SMCS?</h3>
+                <h3 className="text-2xl font-black text-gray-900 font-serif uppercase">Why Join SMCS?</h3>
                 
                 <div className="space-y-6">
                   <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-                    <h4 className="font-black text-gray-900 mb-2 flex items-center space-x-2">
+                    <h4 className="font-black text-gray-900 mb-2 flex items-center space-x-2 uppercase">
                       <TrendingUp className="w-5 h-5 text-green-600" />
                       <span>Turn Small Savings into Big Opportunities</span>
                     </h4>
@@ -90,7 +90,7 @@ export default function CooperativeLanding() {
                   </div>
 
                   <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-                    <h4 className="font-black text-gray-900 mb-2 flex items-center space-x-2">
+                    <h4 className="font-black text-gray-900 mb-2 flex items-center space-x-2 uppercase">
                       <ShieldCheck className="w-5 h-5 text-green-600" />
                       <span>Financial Support Without Collateral</span>
                     </h4>
@@ -102,7 +102,7 @@ export default function CooperativeLanding() {
                   </div>
 
                   <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-                    <h4 className="font-black text-gray-900 mb-2 flex items-center space-x-2">
+                    <h4 className="font-black text-gray-900 mb-2 flex items-center space-x-2 uppercase">
                       <Users className="w-5 h-5 text-green-600" />
                       <span>Affordable Access to Food Supplies</span>
                     </h4>
@@ -114,7 +114,7 @@ export default function CooperativeLanding() {
                   </div>
 
                   <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-                    <h4 className="font-black text-gray-900 mb-2 flex items-center space-x-2">
+                    <h4 className="font-black text-gray-900 mb-2 flex items-center space-x-2 uppercase">
                       <ArrowRight className="w-5 h-5 text-green-600" />
                       <span>Mentorship & Business Growth Opportunities</span>
                     </h4>
@@ -129,7 +129,7 @@ export default function CooperativeLanding() {
                   </div>
 
                   <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-                    <h4 className="font-black text-gray-900 mb-2 flex items-center space-x-2">
+                    <h4 className="font-black text-gray-900 mb-2 flex items-center space-x-2 uppercase">
                       <Leaf className="w-5 h-5 text-green-600" />
                       <span>Agricultural & Business Empowerment</span>
                     </h4>
