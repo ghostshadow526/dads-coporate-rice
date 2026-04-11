@@ -101,18 +101,24 @@ export default async (req: VercelRequest, res: VercelResponse) => {
 
     // Fetch user email from DB
     console.log(`Fetching user doc for UID: ${userId} from collection: users`);
-    const userDoc = await db.collection('users').doc(userId).get();
-    if (!userDoc.exists) {
-      console.error(`User not found in Firestore: ${userId}`);
-      return res.status(404).json({ error: 'User not found' });
+    let email = metadata.email || '';
+    let displayName = metadata.displayName || 'Customer';
+    
+    try {
+      const userDoc = await db.collection('users').doc(userId).get();
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        email = userData?.email || email;
+        displayName = userData?.displayName || displayName;
+      } else {
+        console.warn(`User not found in Firestore, proceeding with metadata: ${userId}`);
+      }
+    } catch (dbError: any) {
+      console.warn(`Error fetching user from DB: ${dbError.message}, proceeding with metadata`);
     }
 
-    const userData = userDoc.data();
-    const email = userData?.email;
-
     if (!email) {
-      console.error(`User email missing for user: ${userId}`);
-      return res.status(400).json({ error: 'User email not found' });
+      return res.status(400).json({ error: 'User email is required (provide via metadata.email if user doc does not exist)' });
     }
 
     // Generate unique reference
@@ -144,7 +150,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         reference,
         notification_url: `${process.env.APP_URL || 'https://your-domain.com'}/api/payment-webhook`,
         customer: {
-          name: userData?.displayName || 'Customer',
+          name: displayName,
           email,
         },
         metadata: {
