@@ -15,36 +15,22 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Initialize Firebase Admin
-let firebaseConfig: any;
-
-try {
-  const configPath = path.join(process.cwd(), "firebase-applet-config.json");
-  const { readFileSync } = await import("fs");
-  firebaseConfig = JSON.parse(readFileSync(configPath, "utf8"));
-  console.log("Loaded Firebase Config for Project:", firebaseConfig.projectId);
-} catch (e) {
-  console.error("Failed to load firebase-applet-config.json", e);
-}
-
 if (!admin.apps.length) {
-  const projectId = firebaseConfig?.projectId;
+  const projectId = process.env.FIREBASE_PROJECT_ID;
   console.log(`Initializing Firebase Admin with Project ID: ${projectId}`);
   
-  // Use environment variable for service account
+  // Use environment variables for service account
   const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
   if (serviceAccountJson) {
     try {
       const serviceAccountKey = JSON.parse(serviceAccountJson);
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccountKey),
-        projectId: projectId,
       });
       console.log("Firebase initialized with service account from environment variable");
     } catch (e) {
       console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT:", e);
-      admin.initializeApp({
-        projectId: projectId,
-      });
+      throw new Error("Invalid FIREBASE_SERVICE_ACCOUNT environment variable");
     }
   } else {
     console.warn("FIREBASE_SERVICE_ACCOUNT not set, using default credentials");
@@ -52,12 +38,9 @@ if (!admin.apps.length) {
       projectId: projectId,
     });
   }
-  }
 }
 
-const databaseId = firebaseConfig?.firestoreDatabaseId || "(default)";
-console.log(`Using Firestore Database ID: ${databaseId}`);
-const db = getFirestore(databaseId);
+const db = admin.firestore();
 
 async function startServer() {
   const app = express();
@@ -184,16 +167,24 @@ async function startServer() {
       // Fetch user email from DB
       console.log(`Fetching user doc for UID: ${userId} from collection: users`);
       const userDoc = await db.collection("users").doc(userId).get();
+      
+      let userData: any;
+      let email: string;
+      
       if (!userDoc.exists) {
-        console.error(`User not found in Firestore: ${userId}`);
-        return res.status(404).json({ error: "User not found" });
-      }
-      const userData = userDoc.data();
-      const email = userData?.email;
-
-      if (!email) {
-        console.error(`User email missing for user: ${userId}`);
-        return res.status(400).json({ error: "User email not found" });
+        console.log(`Creating new user: ${userId}`);
+        userData = {
+          uid: userId,
+          email: `${userId}@placeholder.com`,
+          displayName: "User",
+          walletBalance: 0,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        };
+        await db.collection("users").doc(userId).set(userData);
+        email = userData.email;
+      } else {
+        userData = userDoc.data();
+        email = userData?.email || `${userId}@placeholder.com`;
       }
 
       // Generate unique reference

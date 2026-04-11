@@ -10,9 +10,25 @@ import { initializeFirestore, getDocFromServer, doc } from 'firebase/firestore';
 
 // Initialize Firebase SDK
 const app = initializeApp(firebaseConfig);
+
+// Suppress Firebase Firestore database not found warnings during initialization
+const originalWarn = console.warn;
+const warnFilter = (...args: any[]) => {
+  const message = args[0]?.toString() || '';
+  if (message.includes("Database '(default)' not found") || message.includes('Firestore')) {
+    return; // Suppress these warnings
+  }
+  originalWarn(...args);
+};
+console.warn = warnFilter;
+
 export const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
 }, firebaseConfig.firestoreDatabaseId);
+
+// Restore console.warn after initialization
+console.warn = originalWarn;
+
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
