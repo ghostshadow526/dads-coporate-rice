@@ -1,49 +1,74 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import admin from 'firebase-admin';
-import { getFirestore } from 'firebase-admin/firestore';
 import axios from 'axios';
 
 let db: any;
 let initialized = false;
 
-// Initialize Firebase Admin if not already done
+// Initialize Firebase Admin with individual environment variables
 const initializeFirebase = () => {
   if (initialized) return;
   
   try {
-    // Use environment variable for service account in Vercel
-    const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
-    
-    if (!serviceAccountJson) {
-      throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set');
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+
+    if (!projectId || !clientEmail || !privateKey) {
+      throw new Error('Missing Firebase environment variables: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, or FIREBASE_PRIVATE_KEY');
     }
-    
-    const serviceAccountKey = JSON.parse(serviceAccountJson);
-    
+
     if (!admin.apps.length) {
       admin.initializeApp({
-        credential: admin.credential.cert(serviceAccountKey),
-        projectId: serviceAccountKey.project_id,
+        credential: admin.credential.cert({
+          projectId,
+          clientEmail,
+          privateKey,
+        }),
       });
     }
-    
-    db = getFirestore();
+
+    db = admin.firestore();
     initialized = true;
+    console.log('Firebase initialized successfully for project:', projectId);
   } catch (e) {
     console.error('Firebase init error:', e);
-    throw e; // Re-throw to fail early if Firebase isn't configured
+    throw e;
+  }
+};
+
+// MANDATORY: Auto-create user if doesn't exist
+const ensureUserExists = async (userId: string, email: string, displayName?: string) => {
+  try {
+    const userRef = db.collection('users').doc(userId);
+    const userSnap = await userRef.get();
+
+    if (!userSnap.exists) {
+      console.log(`Creating new user: ${userId}`);
+      await userRef.set({
+        uid: userId,
+        email: email || null,
+        displayName: displayName || 'User',
+        walletBalance: 0,
+        createdAt: new Date().toISOString(),
+      });
+    }
+
+    return userRef;
+  } catch (error: any) {
+    console.error('Error ensuring user exists:', error);
+    throw error;
   }
 };
 
 // Check daily transaction limit using Firestore
 const checkDailyLimit = async (userId: string): Promise<boolean> => {
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  const today = new Date().toISOString().split('T')[0];
   const limitDocId = `${userId}_${today}`;
   
   const limitDoc = await db.collection('transaction_limits').doc(limitDocId).get();
   
   if (!limitDoc.exists) {
-    // First transaction today, create the limit doc
     await db.collection('transaction_limits').doc(limitDocId).set({
       userId,
       date: today,
@@ -58,7 +83,6 @@ const checkDailyLimit = async (userId: string): Promise<boolean> => {
     return false;
   }
   
-  // Increment count
   await db.collection('transaction_limits').doc(limitDocId).update({
     count: data.count + 1,
   });
@@ -99,27 +123,16 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       });
     }
 
-    // Fetch user email from DB
-    console.log(`Fetching user doc for UID: ${userId} from collection: users`);
+    // Extract email and displayName from metadata
     let email = metadata.email || '';
-    let displayName = metadata.displayName || 'Customer';
-    
-    try {
-      const userDoc = await db.collection('users').doc(userId).get();
-      if (userDoc.exists) {
-        const userData = userDoc.data();
-        email = userData?.email || email;
-        displayName = userData?.displayName || displayName;
-      } else {
-        console.warn(`User not found in Firestore, proceeding with metadata: ${userId}`);
-      }
-    } catch (dbError: any) {
-      console.warn(`Error fetching user from DB: ${dbError.message}, proceeding with metadata`);
-    }
+    let displayName = metadata.displayName || 'User';
 
     if (!email) {
-      return res.status(400).json({ error: 'User email is required (provide via metadata.email if user doc does not exist)' });
+      return res.status(400).json({ error: 'User email is required' });
     }
+
+    // MANDATORY: Ensure user exists before processing payment
+    await ensureUserExists(userId, email, displayName);
 
     // Generate unique reference
     const reference = `ref_${userId}_${Date.now()}`;
