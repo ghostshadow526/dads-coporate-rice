@@ -2,6 +2,9 @@ import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
 import { readFileSync } from 'fs';
 import path from 'path';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
 
 async function cleanupPendingPayments() {
   try {
@@ -9,8 +12,13 @@ async function cleanupPendingPayments() {
     const configPath = path.join(process.cwd(), "firebase-applet-config.json");
     const firebaseConfig = JSON.parse(readFileSync(configPath, "utf8"));
     
-    const serviceAccountPath = path.join(process.cwd(), "firebase-service-account.json");
-    const serviceAccountKey = JSON.parse(readFileSync(serviceAccountPath, "utf8"));
+    // Use environment variable for service account credentials
+    const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (!serviceAccountJson) {
+      throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set');
+    }
+    
+    const serviceAccountKey = JSON.parse(serviceAccountJson);
 
     if (!admin.apps.length) {
       admin.initializeApp({

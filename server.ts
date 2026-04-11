@@ -6,7 +6,6 @@ import axios from "axios";
 import crypto from "crypto";
 import admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
-import { readFileSync } from "fs";
 import dotenv from "dotenv";
 
 // Load environment variables from .env.local
@@ -17,37 +16,42 @@ const __dirname = path.dirname(__filename);
 
 // Initialize Firebase Admin
 let firebaseConfig: any;
-let serviceAccountKey: any;
 
 try {
   const configPath = path.join(process.cwd(), "firebase-applet-config.json");
+  const { readFileSync } = await import("fs");
   firebaseConfig = JSON.parse(readFileSync(configPath, "utf8"));
   console.log("Loaded Firebase Config for Project:", firebaseConfig.projectId);
 } catch (e) {
   console.error("Failed to load firebase-applet-config.json", e);
 }
 
-try {
-  const serviceAccountPath = path.join(process.cwd(), "firebase-service-account.json");
-  serviceAccountKey = JSON.parse(readFileSync(serviceAccountPath, "utf8"));
-  console.log("Loaded Firebase Service Account for Project:", serviceAccountKey.project_id);
-} catch (e) {
-  console.error("Failed to load firebase-service-account.json", e);
-}
-
 if (!admin.apps.length) {
   const projectId = firebaseConfig?.projectId;
   console.log(`Initializing Firebase Admin with Project ID: ${projectId}`);
   
-  if (serviceAccountKey) {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccountKey),
-      projectId: projectId,
-    });
+  // Use environment variable for service account
+  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (serviceAccountJson) {
+    try {
+      const serviceAccountKey = JSON.parse(serviceAccountJson);
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccountKey),
+        projectId: projectId,
+      });
+      console.log("Firebase initialized with service account from environment variable");
+    } catch (e) {
+      console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT:", e);
+      admin.initializeApp({
+        projectId: projectId,
+      });
+    }
   } else {
+    console.warn("FIREBASE_SERVICE_ACCOUNT not set, using default credentials");
     admin.initializeApp({
       projectId: projectId,
     });
+  }
   }
 }
 
