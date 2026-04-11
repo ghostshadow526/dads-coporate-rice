@@ -1,8 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
-import { readFileSync } from 'fs';
-import path from 'path';
 import axios from 'axios';
 
 let db: any;
@@ -13,12 +11,19 @@ const initializeFirebase = () => {
   if (initialized) return;
   
   try {
-    const serviceAccountPath = path.join(process.cwd(), 'firebase-service-account.json');
-    const serviceAccountKey = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
+    // Use environment variable for service account in Vercel
+    const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+    
+    if (!serviceAccountJson) {
+      throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set');
+    }
+    
+    const serviceAccountKey = JSON.parse(serviceAccountJson);
     
     if (!admin.apps.length) {
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccountKey),
+        projectId: serviceAccountKey.project_id,
       });
     }
     
@@ -26,6 +31,7 @@ const initializeFirebase = () => {
     initialized = true;
   } catch (e) {
     console.error('Firebase init error:', e);
+    throw e; // Re-throw to fail early if Firebase isn't configured
   }
 };
 
@@ -66,7 +72,14 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   }
 
   try {
-    initializeFirebase();
+    try {
+      initializeFirebase();
+    } catch (fbError: any) {
+      return res.status(500).json({ 
+        error: 'Firebase not configured',
+        details: fbError.message 
+      });
+    }
 
     const { userId, amount, purpose = 'wallet_funding', metadata = {} } = req.body;
 
