@@ -29,28 +29,34 @@ const initializeFirebase = () => {
   }
 };
 
-// Daily transaction limit tracking
-const dailyLimits: { [key: string]: { count: number; resetTime: number } } = {};
-
-const checkDailyLimit = (userId: string): boolean => {
-  const now = Date.now();
-  const limit = dailyLimits[userId];
-
-  if (!limit) {
-    dailyLimits[userId] = { count: 1, resetTime: now + 86400000 };
+// Check daily transaction limit using Firestore
+const checkDailyLimit = async (userId: string): Promise<boolean> => {
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  const limitDocId = `${userId}_${today}`;
+  
+  const limitDoc = await db.collection('transaction_limits').doc(limitDocId).get();
+  
+  if (!limitDoc.exists) {
+    // First transaction today, create the limit doc
+    await db.collection('transaction_limits').doc(limitDocId).set({
+      userId,
+      date: today,
+      count: 1,
+      createdAt: new Date().toISOString(),
+    });
     return true;
   }
-
-  if (now > limit.resetTime) {
-    dailyLimits[userId] = { count: 1, resetTime: now + 86400000 };
-    return true;
-  }
-
-  if (limit.count >= 10) {
+  
+  const data = limitDoc.data();
+  if (data.count >= 10) {
     return false;
   }
-
-  limit.count++;
+  
+  // Increment count
+  await db.collection('transaction_limits').doc(limitDocId).update({
+    count: data.count + 1,
+  });
+  
   return true;
 };
 
@@ -71,7 +77,8 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     }
 
     // Check daily transaction limit
-    if (!checkDailyLimit(userId)) {
+    const canTransact = await checkDailyLimit(userId);
+    if (!canTransact) {
       return res.status(429).json({
         error: 'Limit exceeded',
         details: 'You have exceeded the daily transaction limit (max 10 per day). Please try again tomorrow.',
