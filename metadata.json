@@ -1,0 +1,5 @@
+{
+  "name": "salvagebizhub",
+  "description": "A public-facing web platform for salvagebizhub, featuring investments, cooperative membership, rice sales, and training programs.",
+  "requestFramePermissions": []
+}

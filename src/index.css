@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand-orange: #e75c0b;
+  --color-brand-yellow: #ffb100;
+  --color-brand-green: #00904d;
+  --color-brand-pink: #ff4399;
+  --color-brand-blue: #009cdd;
+  --color-brand-dark: #1a1a1a;
+  --color-brand-light: #f5f5f5;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    text-transform: uppercase !important;
+  }
+}
+
+@layer utilities {
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  
+  @keyframes marquee-reverse {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+  
+  @keyframes marquee-reverse {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+  
+  .animate-marquee-reverse {
+    animation: marquee-reverse 30s linear infinite;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e75c0b;
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #ffb100;
+  }
+}
+
+.bg-brand-dark {
+  background-color: var(--color-brand-dark);
+}
+
+.text-brand-orange {
+  color: var(--color-brand-orange);
+}
+
+.text-brand-green {
+  color: var(--color-brand-green);
+}
+
+.bg-brand-light {
+  background-color: var(--color-brand-light);
+}
