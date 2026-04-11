@@ -2,14 +2,14 @@ export { initializeApp } from 'firebase/app';
 export { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, type User as FirebaseUser } from 'firebase/auth';
 export { initializeFirestore as getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, getDocFromServer, Timestamp } from 'firebase/firestore';
 
-// Import the Firebase configuration
+// Import the Firebase configuration from JSON (Salvage project)
 import firebaseConfig from '../firebase-applet-config.json';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { initializeFirestore, getDocFromServer, doc } from 'firebase/firestore';
 
 // Initialize Firebase SDK
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig as any);
 
 // Suppress Firebase Firestore database not found warnings during initialization
 const originalWarn = console.warn;
@@ -24,7 +24,7 @@ console.warn = warnFilter;
 
 export const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
-}, firebaseConfig.firestoreDatabaseId);
+}, (firebaseConfig as any).firestoreDatabaseId || '(default)');
 
 // Restore console.warn after initialization
 console.warn = originalWarn;

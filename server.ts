@@ -15,22 +15,36 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Initialize Firebase Admin
+let firebaseConfig: any;
+
+try {
+  const configPath = path.join(process.cwd(), "firebase-applet-config.json");
+  const { readFileSync } = await import("fs");
+  firebaseConfig = JSON.parse(readFileSync(configPath, "utf8"));
+  console.log("Loaded Firebase Config for Project:", firebaseConfig.projectId);
+} catch (e) {
+  console.error("Failed to load firebase-applet-config.json", e);
+}
+
 if (!admin.apps.length) {
-  const projectId = process.env.FIREBASE_PROJECT_ID;
+  const projectId = firebaseConfig?.projectId;
   console.log(`Initializing Firebase Admin with Project ID: ${projectId}`);
   
-  // Use environment variables for service account
+  // Use environment variable for service account
   const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
   if (serviceAccountJson) {
     try {
       const serviceAccountKey = JSON.parse(serviceAccountJson);
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccountKey),
+        projectId: projectId,
       });
       console.log("Firebase initialized with service account from environment variable");
     } catch (e) {
       console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT:", e);
-      throw new Error("Invalid FIREBASE_SERVICE_ACCOUNT environment variable");
+      admin.initializeApp({
+        projectId: projectId,
+      });
     }
   } else {
     console.warn("FIREBASE_SERVICE_ACCOUNT not set, using default credentials");
@@ -40,7 +54,8 @@ if (!admin.apps.length) {
   }
 }
 
-const db = admin.firestore();
+console.log("Using default Firestore database");
+const db = getFirestore();
 
 async function startServer() {
   const app = express();
