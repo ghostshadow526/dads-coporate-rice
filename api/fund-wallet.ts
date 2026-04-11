@@ -5,17 +5,34 @@ import axios from 'axios';
 let db: any;
 let initialized = false;
 
-// Initialize Firebase Admin with individual environment variables
+// Initialize Firebase Admin (prefers FIREBASE_SERVICE_ACCOUNT JSON, falls back to split vars)
 const initializeFirebase = () => {
   if (initialized) return;
-  
+
   try {
+    const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+
+    if (serviceAccountJson) {
+      const creds = JSON.parse(serviceAccountJson);
+      if (!admin.apps.length) {
+        admin.initializeApp({
+          credential: admin.credential.cert(creds),
+        });
+      }
+      db = admin.firestore();
+      initialized = true;
+      console.log('Firebase initialized successfully for project:', creds.project_id);
+      return;
+    }
+
+    // Fallback: use individual env vars (PROJECT_ID, CLIENT_EMAIL, PRIVATE_KEY)
     const projectId = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    const rawKey = process.env.FIREBASE_PRIVATE_KEY;
+    const privateKey = rawKey?.includes('\\n') ? rawKey.replace(/\\n/g, '\n') : rawKey;
 
     if (!projectId || !clientEmail || !privateKey) {
-      throw new Error('Missing Firebase environment variables: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, or FIREBASE_PRIVATE_KEY');
+      throw new Error('Missing Firebase environment variables: set FIREBASE_SERVICE_ACCOUNT or FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY');
     }
 
     if (!admin.apps.length) {
