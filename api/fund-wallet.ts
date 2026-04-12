@@ -1,8 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import admin from 'firebase-admin';
+import { Firestore } from '@google-cloud/firestore';
 import axios from 'axios';
 
-let db: any;
+let db: Firestore;
 let initialized = false;
 
 // Initialize Firebase Admin (prefers FIREBASE_SERVICE_ACCOUNT JSON, falls back to split vars)
@@ -16,12 +17,22 @@ const initializeFirebase = () => {
       const creds = JSON.parse(serviceAccountJson);
       // The private key needs to be un-escaped
       creds.private_key = creds.private_key.replace(/\\n/g, '\n');
+      
       if (!admin.apps.length) {
         admin.initializeApp({
           credential: admin.credential.cert(creds),
         });
       }
-      db = admin.firestore();
+
+      db = new Firestore({
+        projectId: creds.project_id,
+        credentials: {
+            client_email: creds.client_email,
+            private_key: creds.private_key,
+        },
+        databaseId: process.env.VITE_FIREBASE_DATABASE_ID,
+      });
+
       initialized = true;
       console.log('Firebase initialized successfully for project:', creds.project_id);
       return;
@@ -47,7 +58,14 @@ const initializeFirebase = () => {
       });
     }
 
-    db = admin.firestore();
+    db = new Firestore({
+        projectId,
+        credentials: {
+            client_email: clientEmail,
+            private_key: privateKey,
+        },
+        databaseId: process.env.VITE_FIREBASE_DATABASE_ID,
+    });
     initialized = true;
     console.log('Firebase initialized successfully for project:', projectId);
   } catch (e) {
