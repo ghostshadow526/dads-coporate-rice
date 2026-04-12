@@ -17,31 +17,55 @@ export default function SustainableGrowthSection() {
             className="space-y-4"
           >
             <h2 className="text-2xl md:text-3xl font-black text-brand-dark leading-tight uppercase">
-              Firm Foundations for <br />
-              <span className="text-brand-orange">Sustainable Agricultural Growth</span>
+              Our Products &amp; Services
             </h2>
             <div className="space-y-6">
               <p className="text-base font-bold text-gray-900 leading-relaxed">
                 We are redefining agriculture and agribusiness by training and empowering our farmers with the tools, funding, and global market access they need to succeed in the agriculture industry.
               </p>
-              
+
               <ReadMore maxHeight="0px" className="mt-0">
                 <div className="space-y-6 text-sm text-gray-600 leading-relaxed">
                   <p>
-                    As an agribusiness and investment company, we operate at the intersection of agriculture, finance, and market intelligence. We understand that, success in today’s agricultural landscape goes beyond production, it requires clarity, strategy, and informed decision-making.
+                    Whether partnering with rice farmers in Nigeria, sourcing premium-quality grains, or producing value-added products, we help customers around the world meet the rising demand for food, feed, and fibre.
                   </p>
                   <p>
-                    Over the years, we have built strong expertise by actively engaging across the agricultural value chain. This experience enables us to analyze market trends, understand consumer demand, and identify profitable opportunities with precision. We help our clients move beyond assumptions and make decisions grounded in real data and proven insights.
+                    At the heart of our operations is a commitment to strengthening food systems, food security, empowering farmers, and delivering high-quality agricultural products that meet global standards. From farm to market, we create value across the entire supply chain, ensuring efficiency, sustainability, and profitability for all stakeholders.
                   </p>
                   <p>
-                    Whether you are a farmer, agro-processor, distributor, or investor, our role is to position you for success. We ensure that every initiative and investment is aligned with actual market demand, reducing risk, improving efficiency, and maximizing returns.
+                    We work closely with rice farmers and agricultural communities across Nigeria, providing support, market access, and structured partnerships that enhance productivity and livelihoods. Through responsible sourcing, we aggregate premium-quality grains and raw materials that meet both local and international demand.
                   </p>
                   <p>
-                    By working with us, or doing business with us, you gain more than a service, we provide you ideas to gain a trusted partner backed by years of hands-on experience and a deep understanding of the agribusiness landscape. We don’t just respond to the market; we help you understand it, navigate it, and grow within it.
+                    Beyond sourcing, we specialize in processing and value addition, transforming raw agricultural produce into high-quality finished and semi-finished products. Our processing capabilities are designed to reduce post-harvest losses, improve product quality, and increase market competitiveness, ensuring that nothing goes to waste and every output delivers maximum value.
                   </p>
-                  <div className="pt-4 border-t border-gray-100">
-                    <p className="text-brand-orange font-black text-xl italic">Salvage Biz-Hub</p>
-                    <p className="text-gray-500 text-xs italic">... Creating wealth through Agriculture...</p>
+
+                  <div className="space-y-3 pt-4 border-t border-gray-100">
+                    <h3 className="font-black text-brand-dark text-base uppercase tracking-tight">Why Partner With Us</h3>
+                    <p>We are more than a supplier, we are a strategic partner.</p>
+                    <ul className="list-disc pl-5 space-y-2">
+                      <li>
+                        <span className="font-semibold">Outsourcing Solutions:</span> Businesses can rely on us for efficient sourcing, aggregation, and processing, allowing them to focus on core operations while we handle the supply chain complexities.
+                      </li>
+                      <li>
+                        <span className="font-semibold">Bridging Food Security Gaps:</span> By connecting farmers to markets and improving production and processing systems, we actively contribute to reducing food shortages and stabilizing supply.
+                      </li>
+                      <li>
+                        <span className="font-semibold">Economic Growth &amp; Empowerment:</span> Our model supports job creation, increases farmer incomes, and strengthens local economies, driving sustainable financial growth across communities.
+                      </li>
+                      <li>
+                        <span className="font-semibold">Global Standards, Local Impact:</span> We combine international best practices with deep local expertise to deliver products that meet global quality requirements while uplifting local producers.
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="space-y-3 pt-4 border-t border-gray-100">
+                    <h3 className="font-black text-brand-dark text-base uppercase tracking-tight">Our Vision in Action</h3>
+                    <p>
+                      As demand for food, feed, and fibre continues to rise globally, we position ourselves as a reliable bridge between production and consumption. By fostering partnerships, investing in processing, and optimizing distribution, we ensure that quality agricultural products reach the right markets at the right time.
+                    </p>
+                    <p>
+                      Partner with us today, whether you are looking to outsource, source premium agricultural products, or collaborate in building a more secure and prosperous food system. Together, we can drive impact, scale opportunity, and shape the future of agriculture.
+                    </p>
                   </div>
                 </div>
               </ReadMore>
