@@ -14,6 +14,8 @@ const initializeFirebase = () => {
 
     if (serviceAccountJson) {
       const creds = JSON.parse(serviceAccountJson);
+      // The private key needs to be un-escaped
+      creds.private_key = creds.private_key.replace(/\\n/g, '\n');
       if (!admin.apps.length) {
         admin.initializeApp({
           credential: admin.credential.cert(creds),
