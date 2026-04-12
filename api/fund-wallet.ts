@@ -198,7 +198,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         amount: Math.round(amount * 100),
         currency: 'NGN',
         reference,
-        notification_url: `${process.env.APP_URL || 'https://your-domain.com'}/api/payment-webhook`,
+        redirect_url: `${process.env.APP_URL || 'https://www.salvagebizhub.com'}/payment-status?ref=${reference}`,
         customer: {
           name: displayName,
           email,
