@@ -19,7 +19,6 @@ const initializeFirebase = () => {
       if (!admin.apps.length) {
         admin.initializeApp({
           credential: admin.credential.cert(creds),
-          databaseURL: `https://${process.env.VITE_FIREBASE_DATABASE_ID}.firebaseio.com`
         });
       }
       db = admin.firestore();
