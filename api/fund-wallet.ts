@@ -204,9 +204,8 @@ export default async (req: VercelRequest, res: VercelResponse) => {
           email,
         },
         metadata: {
-          userId,
-          purpose,
-          ...metadata,
+          userId: userId,
+          purpose: purpose,
         },
       },
       {
