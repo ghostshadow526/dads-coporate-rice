@@ -144,10 +144,12 @@ export default async (req: VercelRequest, res: VercelResponse) => {
 
     const { userId, amount, purpose = 'wallet_funding', metadata = {} } = req.body;
 
-    console.log(`Initializing payment for user ${userId}, amount: ${amount}, purpose: ${purpose}`);
+    const numericAmount = Number(amount);
 
-    if (!userId || !amount) {
-      return res.status(400).json({ error: 'userId and amount are required' });
+    console.log(`Initializing payment for user ${userId}, amount: ${numericAmount}, purpose: ${purpose}`);
+
+    if (!userId || !Number.isFinite(numericAmount) || numericAmount <= 0) {
+      return res.status(400).json({ error: 'userId and a valid positive amount are required' });
     }
 
     // Check daily transaction limit
@@ -179,7 +181,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       id: reference,
       userId,
       email,
-      amount,
+      amount: numericAmount,
       purpose,
       metadata,
       status: 'pending',
@@ -195,7 +197,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     const korapayResponse = await axios.post(
       'https://api.korapay.com/merchant/api/v1/charges/initialize',
       {
-        amount: Math.round(amount * 100),
+        amount: Math.round(numericAmount),
         currency: 'NGN',
         reference,
         redirect_url: `${process.env.APP_URL || 'https://www.salvagebizhub.com'}/payment-status?ref=${reference}`,
@@ -228,9 +230,19 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       throw new Error('Korapay did not return checkout URL');
     }
   } catch (error: any) {
-    console.error('Payment initialization error:', error);
-    return res.status(500).json({
-      error: error.message || 'Payment initialization failed',
+    // Improve visibility into Korapay / Firestore errors
+    const status = error?.response?.status || 500;
+    const gatewayData = error?.response?.data;
+
+    console.error('Payment initialization error:', {
+      message: error?.message,
+      status,
+      gatewayData,
+    });
+
+    return res.status(status).json({
+      error: error?.message || 'Payment initialization failed',
+      gateway: gatewayData || null,
     });
   }
 };
