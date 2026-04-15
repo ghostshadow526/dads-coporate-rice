@@ -19,6 +19,7 @@ import Contact from './pages/Contact';
 import CooperativeLanding from './pages/CooperativeLanding';
 import InvestmentLanding from './pages/InvestmentLanding';
 import PaymentStatus from './pages/PaymentStatus';
+import Admin from './pages/Admin';
 
 // Components
 import Navbar from './components/Navbar';
@@ -47,6 +48,7 @@ export default function App() {
             displayName: firebaseUser.displayName,
             email: firebaseUser.email!,
             role: 'user',
+            isUpgraded: false,
             createdAt: Timestamp.now(),
             walletBalance: 0,
           };
@@ -83,7 +85,8 @@ function AppContent({ user, userProfile }: { user: FirebaseUser | null, userProf
                     location.pathname.startsWith('/invest') || 
                     location.pathname.startsWith('/cooperative') || 
                     location.pathname.startsWith('/buy-rice') || 
-                    location.pathname.startsWith('/training');
+                    location.pathname.startsWith('/training') ||
+                    location.pathname.startsWith('/admin');
 
   return (
     <ErrorBoundary>
@@ -100,6 +103,14 @@ function AppContent({ user, userProfile }: { user: FirebaseUser | null, userProf
             <Route path="/investment-info" element={<InvestmentLanding />} />
             <Route path="/payment-status" element={<PaymentStatus />} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+            <Route
+              path="/admin"
+              element={
+                user && userProfile?.role === 'admin'
+                  ? <DashboardLayout><Admin currentUser={user} profile={userProfile} /></DashboardLayout>
+                  : <Navigate to="/login" />
+              }
+            />
             
             {/* Protected Routes */}
             <Route path="/dashboard" element={user ? <DashboardLayout><Dashboard user={user} profile={userProfile} /></DashboardLayout> : <Navigate to="/login" />} />

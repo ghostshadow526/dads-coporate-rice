@@ -21,14 +21,13 @@ export default function SustainableGrowthSection() {
             </h2>
             <div className="space-y-6">
               <p className="text-base font-bold text-gray-900 leading-relaxed">
-                We are redefining agriculture and agribusiness by training and empowering our farmers with the tools, funding, and global market access they need to succeed in the agriculture industry.
+                Whether partnering with rice farmers in Nigeria, sourcing premium-quality grains, or producing value-added products, we help customers around the world meet the rising demand for food, feed, and fibre.
               </p>
 
               <ReadMore maxHeight="0px" className="mt-0">
                 <div className="space-y-6 text-sm text-gray-600 leading-relaxed">
                   <p>
-                    Whether partnering with rice farmers in Nigeria, sourcing premium-quality grains, or producing value-added products, we help customers around the world meet the rising demand for food, feed, and fibre.
-                  </p>
+                        </p>
                   <p>
                     At the heart of our operations is a commitment to strengthening food systems, food security, empowering farmers, and delivering high-quality agricultural products that meet global standards. From farm to market, we create value across the entire supply chain, ensuring efficiency, sustainability, and profitability for all stakeholders.
                   </p>

@@ -5,7 +5,8 @@ export interface UserProfile {
   displayName: string | null;
   email: string;
   phoneNumber?: string;
-  role: 'user';
+  role: 'user' | 'admin';
+  isUpgraded?: boolean;
   walletBalance?: number;
   createdAt: Timestamp;
 }
