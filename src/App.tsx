@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
 import BoardOfDirectors from './pages/BoardOfDirectors';
 import Testimonials from './pages/Testimonials';
+import Gallery from './pages/Gallery';
 import Dashboard from './pages/Dashboard';
 import Investment from './pages/Investment';
 import Cooperative from './pages/Cooperative';
@@ -98,6 +99,7 @@ function AppContent({ user, userProfile }: { user: FirebaseUser | null, userProf
             <Route path="/about" element={<AboutUs />} />
             <Route path="/about/board" element={<BoardOfDirectors />} />
             <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/cooperative-info" element={<CooperativeLanding />} />
             <Route path="/investment-info" element={<InvestmentLanding />} />

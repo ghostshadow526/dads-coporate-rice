@@ -43,6 +43,7 @@ export default function Navbar({ user, profile }: NavbarProps) {
     { name: 'Join Cooperative (SMCS)', path: '/cooperative-info' },
     { name: 'Buy Rice', path: '/buy-rice' },
     { name: 'Register for Training', path: '/training' },
+    { name: 'Gallery', path: '/gallery' },
     { name: 'Testimonials', path: '/testimonials' },
   ];
 
