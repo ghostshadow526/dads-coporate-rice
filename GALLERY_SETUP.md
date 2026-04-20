@@ -11,73 +11,28 @@
 // 5. Add documents with the following structure:
 /*
 {
-  "imageUrl": "https://ik.imagekit.io/your-project/image1.jpg",
+  "url": "https://ik.imagekit.io/your-project/image1.jpg",
   "title": "Rice Harvest 2024",
   "description": "Our successful harvest from the 2024 farming season",
   "category": "farming",
-  "createdAt": 1713607200000  (Current timestamp in milliseconds)
+  "createdAt": 1713607200000,
+  "createdBy": "userId"
 }
 */
 
 
-// Option 2: Add Test Data via Firebase Console Code Editor
-// =========================================================
-// Copy-paste the code below into your browser console when logged into Firebase:
+// Option 2: Add Test Data via Firebase Console
+// ============================================
+// Copy documents with this structure:
 
 /*
-const db = firebase.firestore();
-
-const galleryData = [
-  {
-    imageUrl: "https://picsum.photos/400/400?random=1",
-    title: "Rice Field Overview",
-    description: "Our main rice farming field during planting season",
-    category: "farming",
-    createdAt: new Date()
-  },
-  {
-    imageUrl: "https://picsum.photos/400/400?random=2",
-    title: "Harvesting Operations",
-    description: "Team harvesting rice during the main season",
-    category: "operations",
-    createdAt: new Date()
-  },
-  {
-    imageUrl: "https://picsum.photos/400/400?random=3",
-    title: "Community Training",
-    description: "Agricultural training session with local farmers",
-    category: "training",
-    createdAt: new Date()
-  },
-  {
-    imageUrl: "https://picsum.photos/400/400?random=4",
-    title: "Cooperative Meeting",
-    description: "Monthly cooperative meeting and discussions",
-    category: "events",
-    createdAt: new Date()
-  },
-  {
-    imageUrl: "https://picsum.photos/400/400?random=5",
-    title: "Warehouse Storage",
-    description: "Our state-of-the-art rice storage facility",
-    category: "facilities",
-    createdAt: new Date()
-  },
-  {
-    imageUrl: "https://picsum.photos/400/400?random=6",
-    title: "Packaging Line",
-    description: "DAD'S RICE packaging at our processing plant",
-    category: "facilities",
-    createdAt: new Date()
-  }
-];
-
-// Add to Firestore
-galleryData.forEach(item => {
-  db.collection('gallery').add(item)
-    .then(() => console.log('Added:', item.title))
-    .catch(error => console.error('Error:', error));
-});
+{
+  "url": "https://picsum.photos/400/400?random=1",
+  "title": "Rice Field Overview",
+  "description": "Our main rice farming field",
+  "category": "farming",
+  "createdAt": 1713607200000
+}
 */
 
 
@@ -86,10 +41,11 @@ galleryData.forEach(item => {
 // If you have ImageKit URLs, use them like this:
 /*
 {
-  "imageUrl": "https://ik.imagekit.io/YOUR_IMAGEKIT_ID/your-image.jpg",
+  "url": "https://ik.imagekit.io/YOUR_IMAGEKIT_ID/your-image.jpg",
   "title": "Image Title",
   "category": "farming",
-  "createdAt": 1713607200000
+  "createdAt": 1713607200000,
+  "createdBy": "userId"
 }
 */
 

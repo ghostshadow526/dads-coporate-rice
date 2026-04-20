@@ -7,10 +7,12 @@ import { toast } from 'sonner';
 
 interface GalleryImage {
   id: string;
-  imageUrl: string;
+  url: string;  // Primary field from Firestore
+  imageUrl?: string;  // Fallback
   title?: string;
   description?: string;
   category?: string;
+  createdBy?: string;
   createdAt?: any;
 }
 
@@ -33,9 +35,11 @@ export default function Gallery() {
       const data = snapshot.docs.map(doc => {
         const docData = doc.data();
         console.log('📷 Gallery item ID:', doc.id);
-        console.log('   - imageUrl:', docData.imageUrl);
+        console.log('   - url:', docData.url);
         console.log('   - title:', docData.title);
         console.log('   - category:', docData.category);
+        console.log('   - createdBy:', docData.createdBy);
+        console.log('   - createdAt:', docData.createdAt);
         return { 
           id: doc.id, 
           ...docData
@@ -103,7 +107,7 @@ export default function Gallery() {
                   <li>Go to <a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-yellow-900">Firebase Console</a></li>
                   <li>Select your project → Firestore Database</li>
                   <li>Create new collection: <code className="bg-yellow-100 px-1.5 py-0.5 rounded">gallery</code></li>
-                  <li>Add document with: <code className="bg-yellow-100 px-1.5 py-0.5 rounded">imageUrl</code>, <code className="bg-yellow-100 px-1.5 py-0.5 rounded">title</code>, <code className="bg-yellow-100 px-1.5 py-0.5 rounded">category</code>, <code className="bg-yellow-100 px-1.5 py-0.5 rounded">createdAt</code></li>
+                  <li>Add document with: <code className="bg-yellow-100 px-1.5 py-0.5 rounded">url</code>, <code className="bg-yellow-100 px-1.5 py-0.5 rounded">title</code>, <code className="bg-yellow-100 px-1.5 py-0.5 rounded">category</code>, <code className="bg-yellow-100 px-1.5 py-0.5 rounded">createdAt</code></li>
                 </ol>
                 <p className="mt-2"><strong>💡 Tip:</strong> Use ImageKit URLs or any publicly accessible image URL</p>
                 <p className="text-[10px] text-yellow-600 mt-1">Check browser console for detailed debug info</p>
@@ -172,12 +176,12 @@ export default function Gallery() {
                       <div className="w-full h-full flex flex-col items-center justify-center bg-gray-200">
                         <Image className="w-12 h-12 text-gray-400 mb-2" />
                         <p className="text-gray-500 text-xs text-center px-2">Image failed to load</p>
-                        <p className="text-gray-400 text-[10px] text-center px-2 mt-1 break-all">{image.imageUrl?.substring(0, 30)}...</p>
+                        <p className="text-gray-400 text-[10px] text-center px-2 mt-1 break-all">{image.url?.substring(0, 30)}...</p>
                       </div>
                     ) : (
                       <>
                         <img
-                          src={image.imageUrl}
+                          src={image.url}
                           alt={image.title || 'Gallery image'}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           loading="lazy"
@@ -250,7 +254,7 @@ export default function Gallery() {
 
               {/* Image */}
               <img
-                src={selectedImage.imageUrl}
+                src={selectedImage.url}
                 alt={selectedImage.title || 'Gallery image'}
                 className="w-full h-full object-contain"
               />
