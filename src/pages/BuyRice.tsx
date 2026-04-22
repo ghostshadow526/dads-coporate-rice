@@ -1,13 +1,20 @@
-import { useState } from 'react';
-import { FirebaseUser, db, collection, addDoc, Timestamp } from '../firebase';
+import { useState, useEffect } from 'react';
+import { FirebaseUser, db, collection, addDoc, Timestamp, getDocs } from '../firebase';
 import { UserProfile, RiceOrder, PaymentRecord } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingBag, ShoppingCart, CheckCircle, ArrowRight, Minus, Plus, Download, CreditCard, ShoppingBasket } from 'lucide-react';
+import { ShoppingBag, ShoppingCart, CheckCircle, ArrowRight, Minus, Plus, Download, CreditCard, ShoppingBasket, Loader } from 'lucide-react';
 import { simulatePayment } from '../services/paymentService';
 import { generateReceiptPDF } from '../services/pdfService';
 import { sendCompanyNotification } from '../services/notificationService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+
+interface RiceProduct {
+  id: string;
+  imageUrl: string;
+  description: string;
+  price: number;
+}
 
 interface BuyRiceProps {
   user: FirebaseUser;
@@ -17,24 +24,49 @@ interface BuyRiceProps {
 export default function BuyRice({ user, profile }: BuyRiceProps) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [cart, setCart] = useState<{ productId: string; name: string; quantity: number; price: number }[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [products, setProducts] = useState<RiceProduct[]>([]);
+  const [cart, setCart] = useState<{ productId: string; description: string; quantity: number; price: number }[]>([]);
   const navigate = useNavigate();
 
-  const products = [
-    { id: 'rice-50kg', name: 'salvagebizhub Premium Rice (50kg)', price: 15000, image: 'https://raw.githubusercontent.com/ghostshadow526/jtech/main/updt3.jpeg' },
-    { id: 'rice-25kg', name: 'salvagebizhub Premium Rice (25kg)', price: 8000, image: 'https://raw.githubusercontent.com/ghostshadow526/jtech/main/update%20rice.jpeg' },
-    { id: 'rice-10kg', name: 'salvagebizhub Premium Rice (10kg)', price: 5000, image: 'https://raw.githubusercontent.com/ghostshadow526/jtech/main/updt2.jpeg' },
-   
-  ];
+  // Fetch products from Firestore
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setProductsLoading(true);
+        const querySnapshot = await getDocs(collection(db, 'buy-rice'));
+        const productsData: RiceProduct[] = [];
+        
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          productsData.push({
+            id: doc.id,
+            imageUrl: data.imageUrl || '',
+            description: data.description || '',
+            price: data.price || 0,
+          });
+        });
+        
+        setProducts(productsData);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        toast.error('Failed to load rice products');
+      } finally {
+        setProductsLoading(false);
+      }
+    };
 
-  const addToCart = (product: any) => {
+    fetchProducts();
+  }, []);
+
+  const addToCart = (product: RiceProduct) => {
     const existing = cart.find(item => item.productId === product.id);
     if (existing) {
       setCart(cart.map(item => item.productId === product.id ? { ...item, quantity: item.quantity + 1 } : item));
     } else {
-      setCart([...cart, { productId: product.id, name: product.name, quantity: 1, price: product.price }]);
+      setCart([...cart, { productId: product.id, description: product.description, quantity: 1, price: product.price }]);
     }
-    toast.success(`${product.name} added to cart!`);
+    toast.success(`${product.description} added to cart!`);
   };
 
   const removeFromCart = (productId: string) => {
@@ -79,31 +111,43 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
             className="grid grid-cols-1 lg:grid-cols-3 gap-12"
           >
             {/* Product List */}
-            <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {products.map((product) => (
-                <div key={product.id} className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="h-64 overflow-hidden">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 uppercase">{product.name}</h3>
-                    <div className="flex justify-between items-center">
-                      <p className="text-2xl font-bold text-green-700">NGN {product.price.toLocaleString()}</p>
-                      <button
-                        onClick={() => addToCart(product)}
-                        className="p-3 bg-green-700 text-white rounded-xl hover:bg-green-800 transition-colors shadow-md"
-                      >
-                        <Plus className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
+            <div className="lg:col-span-2">
+              {productsLoading ? (
+                <div className="flex items-center justify-center py-20">
+                  <Loader className="w-8 h-8 text-green-700 animate-spin" />
                 </div>
-              ))}
+              ) : products.length === 0 ? (
+                <div className="text-center py-20 text-gray-500">
+                  <p>No rice products available at the moment.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                  {products.map((product) => (
+                    <div key={product.id} className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                      <div className="h-64 overflow-hidden">
+                        <img
+                          src={product.imageUrl}
+                          alt={product.description}
+                          className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <h3 className="text-lg font-bold text-gray-900 mb-2 uppercase">{product.description}</h3>
+                        <div className="flex justify-between items-center">
+                          <p className="text-2xl font-bold text-green-700">NGN {product.price.toLocaleString()}</p>
+                          <button
+                            onClick={() => addToCart(product)}
+                            className="p-3 bg-green-700 text-white rounded-xl hover:bg-green-800 transition-colors shadow-md"
+                          >
+                            <Plus className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Cart Summary */}
@@ -125,7 +169,7 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
                       {cart.map((item) => (
                         <div key={item.productId} className="flex justify-between items-center">
                           <div className="flex-grow">
-                            <p className="font-bold text-gray-900 text-sm">{item.name}</p>
+                            <p className="font-bold text-gray-900 text-sm">{item.description}</p>
                             <p className="text-xs text-gray-500">NGN {item.price.toLocaleString()} x {item.quantity}</p>
                           </div>
                           <div className="flex items-center space-x-2">
@@ -137,7 +181,10 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
                             </button>
                             <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
                             <button
-                              onClick={() => addToCart({ id: item.productId, name: item.name, price: item.price })}
+                              onClick={() => {
+                                const product = products.find(p => p.id === item.productId);
+                                if (product) addToCart(product);
+                              }}
                               className="p-1 text-gray-400 hover:text-green-600 transition-colors"
                             >
                               <Plus className="w-4 h-4" />
@@ -192,7 +239,7 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
                 <div className="space-y-2">
                   {cart.map((item) => (
                     <div key={item.productId} className="flex justify-between text-sm">
-                      <span className="text-gray-700">{item.name} x {item.quantity}</span>
+                      <span className="text-gray-700">{item.description} x {item.quantity}</span>
                       <span className="font-bold text-gray-900">NGN {(item.price * item.quantity).toLocaleString()}</span>
                     </div>
                   ))}
