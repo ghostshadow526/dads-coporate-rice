@@ -27,6 +27,14 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
   const [productsLoading, setProductsLoading] = useState(true);
   const [products, setProducts] = useState<RiceProduct[]>([]);
   const [cart, setCart] = useState<{ productId: string; description: string; quantity: number; price: number }[]>([]);
+  const [deliveryInfo, setDeliveryInfo] = useState({
+    fullName: profile?.displayName || '',
+    phoneNumber: profile?.phoneNumber || '',
+    address: '',
+    city: '',
+    state: '',
+    notes: '',
+  });
   const navigate = useNavigate();
 
   // Fetch products from Firestore
@@ -80,10 +88,37 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
 
   const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
+  const isDeliveryInfoValid =
+    deliveryInfo.fullName.trim() !== '' &&
+    deliveryInfo.phoneNumber.trim() !== '' &&
+    deliveryInfo.address.trim() !== '';
+
   const handleCheckout = async () => {
     if (cart.length === 0) return;
+    if (!isDeliveryInfoValid) {
+      toast.error('Please enter your name, phone number, and address.');
+      return;
+    }
     setLoading(true);
     try {
+      await addDoc(collection(db, 'delivery information'), {
+        uid: user.uid,
+        email: user.email || profile?.email || null,
+        fullName: deliveryInfo.fullName.trim(),
+        phoneNumber: deliveryInfo.phoneNumber.trim(),
+        address: deliveryInfo.address.trim(),
+        city: deliveryInfo.city.trim(),
+        state: deliveryInfo.state.trim(),
+        notes: deliveryInfo.notes.trim(),
+        items: cart.map((item) => ({
+          productId: item.productId,
+          description: item.description,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        totalAmount,
+        createdAt: Timestamp.now(),
+      });
       await simulatePayment(totalAmount, 'Rice Purchase', user.uid, { cart });
       // User is redirected to Korapay. Webhook handles order creation.
     } catch (error) {
@@ -251,9 +286,77 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
               </div>
 
               <div className="space-y-4">
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Delivery Information</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">Full Name</label>
+                    <input
+                      type="text"
+                      value={deliveryInfo.fullName}
+                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, fullName: event.target.value })}
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                      placeholder="Enter your full name"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">Phone Number</label>
+                    <input
+                      type="tel"
+                      value={deliveryInfo.phoneNumber}
+                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, phoneNumber: event.target.value })}
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                      placeholder="e.g. 0803 000 0000"
+                      required
+                    />
+                  </div>
+                  <div className="sm:col-span-2 space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">Delivery Address</label>
+                    <input
+                      type="text"
+                      value={deliveryInfo.address}
+                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, address: event.target.value })}
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                      placeholder="Street address"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">City</label>
+                    <input
+                      type="text"
+                      value={deliveryInfo.city}
+                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, city: event.target.value })}
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                      placeholder="City"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">State</label>
+                    <input
+                      type="text"
+                      value={deliveryInfo.state}
+                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, state: event.target.value })}
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                      placeholder="State"
+                    />
+                  </div>
+                  <div className="sm:col-span-2 space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">Delivery Notes (Optional)</label>
+                    <textarea
+                      value={deliveryInfo.notes}
+                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, notes: event.target.value })}
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 min-h-[90px]"
+                      placeholder="Landmark, preferred delivery time, or instructions"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
                 <motion.button
                   onClick={handleCheckout}
-                  disabled={loading}
+                  disabled={loading || !isDeliveryInfoValid}
                   whileHover={{ 
                     borderTopLeftRadius: "2rem",
                     borderBottomRightRadius: "2rem",
