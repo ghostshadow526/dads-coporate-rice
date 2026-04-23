@@ -27,6 +27,13 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
   const [productsLoading, setProductsLoading] = useState(true);
   const [products, setProducts] = useState<RiceProduct[]>([]);
   const [cart, setCart] = useState<{ productId: string; description: string; quantity: number; price: number }[]>([]);
+  const NIGERIAN_STATES = [
+    'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno',
+    'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT', 'Gombe',
+    'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara',
+    'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau',
+    'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'
+  ];
   const [deliveryInfo, setDeliveryInfo] = useState({
     fullName: profile?.displayName || '',
     phoneNumber: profile?.phoneNumber || '',
@@ -333,13 +340,17 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-gray-500 uppercase">State</label>
-                    <input
-                      type="text"
+                    <select
                       value={deliveryInfo.state}
-                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, state: event.target.value })}
+                      onChange={e => setDeliveryInfo({ ...deliveryInfo, state: e.target.value })}
                       className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-                      placeholder="State"
-                    />
+                      required
+                    >
+                      <option value="">Select State</option>
+                      {NIGERIAN_STATES.map(state => (
+                        <option key={state} value={state}>{state}</option>
+                      ))}
+                    </select>
                   </div>
                   <div className="sm:col-span-2 space-y-1">
                     <label className="text-xs font-semibold text-gray-500 uppercase">Delivery Notes (Optional)</label>
