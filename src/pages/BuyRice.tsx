@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FirebaseUser, db, collection, addDoc, Timestamp, getDocs } from '../firebase';
+import { FirebaseUser, db, collection, getDocs } from '../firebase';
 import { UserProfile, RiceOrder, PaymentRecord } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingBag, ShoppingCart, CheckCircle, ArrowRight, Minus, Plus, Download, CreditCard, ShoppingBasket, Loader } from 'lucide-react';
@@ -108,29 +108,31 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
     }
     setLoading(true);
     try {
-      await addDoc(collection(db, 'delivery information'), {
-        uid: user.uid,
-        email: user.email || profile?.email || null,
-        fullName: deliveryInfo.fullName.trim(),
-        phoneNumber: deliveryInfo.phoneNumber.trim(),
-        address: deliveryInfo.address.trim(),
-        city: deliveryInfo.city.trim(),
-        state: deliveryInfo.state.trim(),
-        notes: deliveryInfo.notes.trim(),
-        items: cart.map((item) => ({
-          productId: item.productId,
-          description: item.description,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-        totalAmount,
-        createdAt: Timestamp.now(),
+      // NOTE: Don’t write delivery info to Firestore here.
+      // In production rules, unknown collections (like "delivery information") are denied by default,
+      // which prevents payment initialization from running.
+      // Instead, attach delivery/cart details to the payment metadata; the backend/webhook can persist it.
+
+      const email = user.email || profile?.email || '';
+      const displayName = profile?.displayName || user.displayName || deliveryInfo.fullName.trim() || 'Customer';
+
+      await simulatePayment(totalAmount, 'Rice Purchase', user.uid, {
+        email,
+        displayName,
+        cart,
+        deliveryInfo: {
+          fullName: deliveryInfo.fullName.trim(),
+          phoneNumber: deliveryInfo.phoneNumber.trim(),
+          address: deliveryInfo.address.trim(),
+          city: deliveryInfo.city.trim(),
+          state: deliveryInfo.state.trim(),
+          notes: deliveryInfo.notes.trim(),
+        },
       });
-      await simulatePayment(totalAmount, 'Rice Purchase', user.uid, { cart });
       // User is redirected to Korapay. Webhook handles order creation.
     } catch (error) {
       console.error('Checkout error:', error);
-      toast.error('Checkout failed. Please try again.');
+      toast.error(error instanceof Error ? error.message : 'Checkout failed. Please try again.');
     } finally {
       setLoading(false);
     }

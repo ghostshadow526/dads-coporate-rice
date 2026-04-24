@@ -68,7 +68,10 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   const handlePayMonthlyDue = async () => {
     setProcessing(true);
     try {
-      await simulatePayment(MONTHLY_DUE, 'Cooperative Monthly Due', user.uid);
+      await simulatePayment(MONTHLY_DUE, 'Cooperative Monthly Due', user.uid, {
+        email: user.email || profile?.email || '',
+        displayName: profile?.displayName || user.displayName || 'Customer',
+      });
       // User is redirected to Korapay. Webhook handles payment record creation.
     } catch (error) {
       console.error('Payment error:', error);

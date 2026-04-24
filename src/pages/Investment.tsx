@@ -51,7 +51,10 @@ export default function Investment({ user, profile }: InvestmentProps) {
   const handlePayRegistration = async () => {
     setProcessing(true);
     try {
-      await simulatePayment(REGISTRATION_FEE, 'Investment Access Fee', user.uid);
+      await simulatePayment(REGISTRATION_FEE, 'Investment Access Fee', user.uid, {
+        email: user.email || profile?.email || '',
+        displayName: profile?.displayName || user.displayName || 'Customer',
+      });
       // User is redirected to Korapay.
     } catch (error) {
       console.error('Payment error:', error);
@@ -77,7 +80,13 @@ export default function Investment({ user, profile }: InvestmentProps) {
     setProcessing(true);
     const totalAmount = slots * SLOT_PRICE;
     try {
-      await simulatePayment(totalAmount, `Investment: ${plan}`, user.uid, { plan, slots, formData });
+      await simulatePayment(totalAmount, `Investment: ${plan}`, user.uid, {
+        plan,
+        slots,
+        formData,
+        email: user.email || profile?.email || '',
+        displayName: profile?.displayName || user.displayName || formData.fullName || 'Customer',
+      });
       // User is redirected to Korapay. Webhook handles investment creation.
     } catch (error) {
       console.error('Investment error:', error);

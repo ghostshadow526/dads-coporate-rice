@@ -39,7 +39,11 @@ export default function Training({ user, profile }: TrainingProps) {
     if (!selectedTraining) return;
     setProcessing(true);
     try {
-      await simulatePayment(selectedTraining.price, `Training: ${selectedTraining.title}`, user.uid, { trainingId: selectedTraining.id });
+      await simulatePayment(selectedTraining.price, `Training: ${selectedTraining.title}`, user.uid, {
+        trainingId: selectedTraining.id,
+        email: user.email || profile?.email || '',
+        displayName: profile?.displayName || user.displayName || 'Customer',
+      });
       // User is redirected to Korapay. Webhook handles registration creation.
     } catch (error) {
       console.error('Registration error:', error);

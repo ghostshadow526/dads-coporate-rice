@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Loader2, Wallet, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { auth } from '../firebase';
 
 interface FundWalletProps {
   userId: string;
@@ -22,9 +23,16 @@ export default function FundWallet({ userId }: FundWalletProps) {
     setLoading(true);
     setShowLimitError(false);
     try {
+      const email = auth.currentUser?.email || '';
+      const displayName = auth.currentUser?.displayName || 'Customer';
+
       const response = await axios.post('/api/fund-wallet', {
         userId,
         amount: Number(amount),
+        metadata: {
+          email,
+          displayName,
+        },
       });
 
       if (response.data.checkout_url) {

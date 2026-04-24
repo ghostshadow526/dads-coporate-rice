@@ -127,7 +127,10 @@ export default function Dashboard({ user, profile }: DashboardProps) {
     if (!cooperative) return;
     setProcessingDue(true);
     try {
-      await simulatePayment(MONTHLY_DUE, 'Cooperative Monthly Due', user.uid);
+      await simulatePayment(MONTHLY_DUE, 'Cooperative Monthly Due', user.uid, {
+        email: user.email || profile?.email || '',
+        displayName: profile?.displayName || user.displayName || 'Customer',
+      });
       // User is redirected to Korapay.
     } catch (error) {
       console.error('Payment error:', error);
