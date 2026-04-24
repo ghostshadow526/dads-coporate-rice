@@ -37,9 +37,9 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
   const [deliveryInfo, setDeliveryInfo] = useState({
     fullName: profile?.displayName || '',
     phoneNumber: profile?.phoneNumber || '',
-    address: '',
-    city: '',
-    state: '',
+    address: profile?.address || '',
+    city: profile?.city || '',
+    state: profile?.state || '',
     notes: '',
   });
   const navigate = useNavigate();
@@ -95,15 +95,34 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
 
   const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
+  const hasSavedDeliveryInfo =
+    (profile?.displayName || '').trim() !== '' &&
+    (profile?.phoneNumber || '').trim() !== '' &&
+    (profile?.address || '').trim() !== '' &&
+    (profile?.state || '').trim() !== '';
+
+  const effectiveDeliveryInfo = hasSavedDeliveryInfo
+    ? {
+        fullName: (profile?.displayName || '').trim(),
+        phoneNumber: (profile?.phoneNumber || '').trim(),
+        address: (profile?.address || '').trim(),
+        city: (profile?.city || '').trim(),
+        state: (profile?.state || '').trim(),
+        notes: deliveryInfo.notes,
+      }
+    : deliveryInfo;
+
   const isDeliveryInfoValid =
-    deliveryInfo.fullName.trim() !== '' &&
-    deliveryInfo.phoneNumber.trim() !== '' &&
-    deliveryInfo.address.trim() !== '';
+    effectiveDeliveryInfo.fullName.trim() !== '' &&
+    effectiveDeliveryInfo.phoneNumber.trim() !== '' &&
+    effectiveDeliveryInfo.address.trim() !== '';
 
   const handleCheckout = async () => {
     if (cart.length === 0) return;
     if (!isDeliveryInfoValid) {
-      toast.error('Please enter your name, phone number, and address.');
+      toast.error(hasSavedDeliveryInfo
+        ? 'Please complete your profile delivery information.'
+        : 'Please enter your name, phone number, and address.');
       return;
     }
     setLoading(true);
@@ -114,19 +133,19 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
       // Instead, attach delivery/cart details to the payment metadata; the backend/webhook can persist it.
 
       const email = user.email || profile?.email || '';
-      const displayName = profile?.displayName || user.displayName || deliveryInfo.fullName.trim() || 'Customer';
+      const displayName = profile?.displayName || user.displayName || effectiveDeliveryInfo.fullName.trim() || 'Customer';
 
       await simulatePayment(totalAmount, 'Rice Purchase', user.uid, {
         email,
         displayName,
         cart,
         deliveryInfo: {
-          fullName: deliveryInfo.fullName.trim(),
-          phoneNumber: deliveryInfo.phoneNumber.trim(),
-          address: deliveryInfo.address.trim(),
-          city: deliveryInfo.city.trim(),
-          state: deliveryInfo.state.trim(),
-          notes: deliveryInfo.notes.trim(),
+          fullName: effectiveDeliveryInfo.fullName.trim(),
+          phoneNumber: effectiveDeliveryInfo.phoneNumber.trim(),
+          address: effectiveDeliveryInfo.address.trim(),
+          city: effectiveDeliveryInfo.city.trim(),
+          state: effectiveDeliveryInfo.state.trim(),
+          notes: effectiveDeliveryInfo.notes.trim(),
         },
       });
       // User is redirected to Korapay. Webhook handles order creation.
@@ -296,74 +315,114 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
 
               <div className="space-y-4">
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Delivery Information</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500 uppercase">Full Name</label>
-                    <input
-                      type="text"
-                      value={deliveryInfo.fullName}
-                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, fullName: event.target.value })}
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-                      placeholder="Enter your full name"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500 uppercase">Phone Number</label>
-                    <input
-                      type="tel"
-                      value={deliveryInfo.phoneNumber}
-                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, phoneNumber: event.target.value })}
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-                      placeholder="e.g. 0803 000 0000"
-                      required
-                    />
-                  </div>
-                  <div className="sm:col-span-2 space-y-1">
-                    <label className="text-xs font-semibold text-gray-500 uppercase">Delivery Address</label>
-                    <input
-                      type="text"
-                      value={deliveryInfo.address}
-                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, address: event.target.value })}
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-                      placeholder="Street address"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500 uppercase">City</label>
-                    <input
-                      type="text"
-                      value={deliveryInfo.city}
-                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, city: event.target.value })}
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-                      placeholder="City"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500 uppercase">State</label>
-                    <select
-                      value={deliveryInfo.state}
-                      onChange={e => setDeliveryInfo({ ...deliveryInfo, state: e.target.value })}
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-                      required
+                {hasSavedDeliveryInfo ? (
+                  <div className="space-y-4">
+                    <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500 font-semibold">Name</span>
+                        <span className="font-bold text-gray-900">{effectiveDeliveryInfo.fullName}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500 font-semibold">Phone</span>
+                        <span className="font-bold text-gray-900">{effectiveDeliveryInfo.phoneNumber}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500 font-semibold">Address</span>
+                        <span className="font-bold text-gray-900 text-right">{effectiveDeliveryInfo.address}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500 font-semibold">City / State</span>
+                        <span className="font-bold text-gray-900">{effectiveDeliveryInfo.city}{effectiveDeliveryInfo.city && effectiveDeliveryInfo.state ? ', ' : ''}{effectiveDeliveryInfo.state}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => navigate('/dashboard?tab=profile')}
+                      className="w-full bg-gray-100 text-gray-700 py-4 rounded-xl font-bold hover:bg-gray-200 transition-all"
                     >
-                      <option value="">Select State</option>
-                      {NIGERIAN_STATES.map(state => (
-                        <option key={state} value={state}>{state}</option>
-                      ))}
-                    </select>
+                      Edit delivery info in Profile
+                    </button>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-500 uppercase">Delivery Notes (Optional)</label>
+                      <textarea
+                        value={deliveryInfo.notes}
+                        onChange={(event) => setDeliveryInfo({ ...deliveryInfo, notes: event.target.value })}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 min-h-[90px]"
+                        placeholder="Landmark, preferred delivery time, or instructions"
+                      />
+                    </div>
                   </div>
-                  <div className="sm:col-span-2 space-y-1">
-                    <label className="text-xs font-semibold text-gray-500 uppercase">Delivery Notes (Optional)</label>
-                    <textarea
-                      value={deliveryInfo.notes}
-                      onChange={(event) => setDeliveryInfo({ ...deliveryInfo, notes: event.target.value })}
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 min-h-[90px]"
-                      placeholder="Landmark, preferred delivery time, or instructions"
-                    />
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-500 uppercase">Full Name</label>
+                      <input
+                        type="text"
+                        value={deliveryInfo.fullName}
+                        onChange={(event) => setDeliveryInfo({ ...deliveryInfo, fullName: event.target.value })}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                        placeholder="Enter your full name"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-500 uppercase">Phone Number</label>
+                      <input
+                        type="tel"
+                        value={deliveryInfo.phoneNumber}
+                        onChange={(event) => setDeliveryInfo({ ...deliveryInfo, phoneNumber: event.target.value })}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                        placeholder="e.g. 0803 000 0000"
+                        required
+                      />
+                    </div>
+                    <div className="sm:col-span-2 space-y-1">
+                      <label className="text-xs font-semibold text-gray-500 uppercase">Delivery Address</label>
+                      <input
+                        type="text"
+                        value={deliveryInfo.address}
+                        onChange={(event) => setDeliveryInfo({ ...deliveryInfo, address: event.target.value })}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                        placeholder="Street address"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-500 uppercase">City</label>
+                      <input
+                        type="text"
+                        value={deliveryInfo.city}
+                        onChange={(event) => setDeliveryInfo({ ...deliveryInfo, city: event.target.value })}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                        placeholder="City"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-500 uppercase">State</label>
+                      <select
+                        value={deliveryInfo.state}
+                        onChange={e => setDeliveryInfo({ ...deliveryInfo, state: e.target.value })}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                        required
+                      >
+                        <option value="">Select State</option>
+                        {NIGERIAN_STATES.map(state => (
+                          <option key={state} value={state}>{state}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="sm:col-span-2 space-y-1">
+                      <label className="text-xs font-semibold text-gray-500 uppercase">Delivery Notes (Optional)</label>
+                      <textarea
+                        value={deliveryInfo.notes}
+                        onChange={(event) => setDeliveryInfo({ ...deliveryInfo, notes: event.target.value })}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 min-h-[90px]"
+                        placeholder="Landmark, preferred delivery time, or instructions"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <div className="space-y-4">

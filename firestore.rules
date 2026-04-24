@@ -12,7 +12,11 @@ service cloud.firestore {
     //   - displayName: string (optional)
     //   - email: string (required)
     //   - phoneNumber: string (optional)
+    //   - address: string (optional)
+    //   - city: string (optional)
+    //   - state: string (optional)
     //   - role: string (required, 'user')
+    //   - isUpgraded: bool (optional)
     //   - walletBalance: number (optional)
     //   - createdAt: timestamp (required)
     //
@@ -100,6 +104,18 @@ service cloud.firestore {
         email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
     }
 
+    function isOptionalString(value) {
+      return value == null || value is string;
+    }
+
+    function isOptionalBool(value) {
+      return value == null || value is bool;
+    }
+
+    function isOptionalNumber(value) {
+      return value == null || value is number;
+    }
+
     function hasOnlyAllowedFields(fields) {
       return request.resource.data.keys().hasOnly(fields);
     }
@@ -108,10 +124,29 @@ service cloud.firestore {
     // Domain Validators
     // ===============================================================
     function isValidUser(data) {
-      return hasOnlyAllowedFields(['uid', 'displayName', 'email', 'phoneNumber', 'role', 'createdAt', 'walletBalance']) &&
+      return hasOnlyAllowedFields([
+              'uid',
+              'displayName',
+              'email',
+              'phoneNumber',
+              'address',
+              'city',
+              'state',
+              'role',
+              'isUpgraded',
+              'createdAt',
+              'walletBalance'
+             ]) &&
              data.uid is string && data.uid.size() > 0 &&
+             isOptionalString(data.displayName) &&
              data.email is string && isValidEmail(data.email) &&
-             data.role == 'user' &&
+             isOptionalString(data.phoneNumber) &&
+             isOptionalString(data.address) &&
+             isOptionalString(data.city) &&
+             isOptionalString(data.state) &&
+             data.role in ['user', 'admin'] &&
+             isOptionalBool(data.isUpgraded) &&
+             isOptionalNumber(data.walletBalance) &&
              data.createdAt is timestamp;
     }
 

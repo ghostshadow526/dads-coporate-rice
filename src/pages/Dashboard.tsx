@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FirebaseUser, db, collection, query, where, onSnapshot, orderBy, Timestamp, addDoc, doc } from '../firebase';
+import { FirebaseUser, auth, db, collection, query, where, onSnapshot, orderBy, Timestamp, addDoc, doc, setDoc, updateProfile } from '../firebase';
 import { UserProfile, Investment, CooperativeMember, RiceOrder, TrainingRegistration, PaymentRecord, Training } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -59,6 +59,39 @@ export default function Dashboard({ user, profile }: DashboardProps) {
   const [loading, setLoading] = useState(true);
   const [processingDue, setProcessingDue] = useState(false);
 
+  const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(profile);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    displayName: profile?.displayName || user.displayName || '',
+    phoneNumber: profile?.phoneNumber || '',
+    address: profile?.address || '',
+    city: profile?.city || '',
+    state: profile?.state || '',
+  });
+
+  const coerceTimestamp = (value: any): Timestamp => {
+    if (value && typeof value === 'object' && typeof value.toDate === 'function') return value as Timestamp;
+    if (typeof value === 'string') {
+      const parsed = new Date(value);
+      if (!Number.isNaN(parsed.getTime())) return Timestamp.fromDate(parsed);
+    }
+    return Timestamp.now();
+  };
+
+  useEffect(() => {
+    setCurrentProfile(profile);
+    if (profile && !isEditingProfile) {
+      setProfileForm({
+        displayName: profile.displayName || user.displayName || '',
+        phoneNumber: profile.phoneNumber || '',
+        address: profile.address || '',
+        city: profile.city || '',
+        state: profile.state || '',
+      });
+    }
+  }, [profile, user.displayName, isEditingProfile]);
+
   useEffect(() => {
     if (tabParam && ['overview', 'documents', 'payments', 'profile'].includes(tabParam)) {
       setActiveTab(tabParam);
@@ -69,7 +102,33 @@ export default function Dashboard({ user, profile }: DashboardProps) {
     if (!user) return;
 
     const unsubProfile = onSnapshot(doc(db, 'users', user.uid), (snapshot) => {
-      // Profile is handled via props, but we keep this for real-time updates if needed
+      if (snapshot.exists()) {
+        const raw = snapshot.data() as any;
+        const normalized: UserProfile = {
+          uid: raw?.uid || user.uid,
+          displayName: raw?.displayName ?? user.displayName ?? null,
+          email: raw?.email || user.email || '',
+          phoneNumber: raw?.phoneNumber ?? '',
+          address: raw?.address ?? '',
+          city: raw?.city ?? '',
+          state: raw?.state ?? '',
+          role: raw?.role || 'user',
+          isUpgraded: raw?.isUpgraded ?? false,
+          walletBalance: typeof raw?.walletBalance === 'number' ? raw.walletBalance : 0,
+          createdAt: coerceTimestamp(raw?.createdAt),
+        };
+
+        setCurrentProfile(normalized);
+        if (!isEditingProfile) {
+          setProfileForm({
+            displayName: normalized.displayName || user.displayName || '',
+            phoneNumber: normalized.phoneNumber || '',
+            address: normalized.address || '',
+            city: normalized.city || '',
+            state: normalized.state || '',
+          });
+        }
+      }
     }, (error) => handleFirestoreError(error, OperationType.GET, `users/${user.uid}`));
 
     const unsubInvestments = onSnapshot(
@@ -121,7 +180,59 @@ export default function Dashboard({ user, profile }: DashboardProps) {
       unsubPayments();
       unsubTrainings();
     };
-  }, [user]);
+  }, [user, isEditingProfile]);
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    if (!profileForm.displayName.trim()) {
+      toast.error('Name is required');
+      return;
+    }
+    if (!profileForm.phoneNumber.trim()) {
+      toast.error('Phone number is required');
+      return;
+    }
+    if (!profileForm.address.trim() || !profileForm.city.trim() || !profileForm.state.trim()) {
+      toast.error('Please enter address, city, and state');
+      return;
+    }
+
+    setSavingProfile(true);
+    try {
+      const existing = currentProfile || profile;
+      const mergedProfile: UserProfile = {
+        uid: user.uid,
+        displayName: profileForm.displayName.trim(),
+        email: existing?.email || user.email || '',
+        phoneNumber: profileForm.phoneNumber.trim(),
+        address: profileForm.address.trim(),
+        city: profileForm.city.trim(),
+        state: profileForm.state.trim(),
+        role: existing?.role || 'user',
+        isUpgraded: existing?.isUpgraded ?? false,
+        walletBalance: typeof existing?.walletBalance === 'number' ? existing.walletBalance : 0,
+        createdAt: coerceTimestamp((existing as any)?.createdAt),
+      };
+
+      await setDoc(doc(db, 'users', user.uid), mergedProfile, { merge: true });
+
+      if (auth.currentUser) {
+        try {
+          await updateProfile(auth.currentUser, { displayName: profileForm.displayName.trim() });
+        } catch {
+          // Non-fatal: Firestore is source of truth for app profile
+        }
+      }
+
+      toast.success('Profile updated');
+      setIsEditingProfile(false);
+    } catch (error) {
+      console.error('Profile update error:', error);
+      toast.error('Failed to update profile. Please try again.');
+    } finally {
+      setSavingProfile(false);
+    }
+  };
 
   const handlePayMonthlyDue = async () => {
     if (!cooperative) return;
@@ -595,34 +706,121 @@ export default function Dashboard({ user, profile }: DashboardProps) {
             >
               <div className="flex flex-col items-center text-center mb-10">
                 <div className="w-24 h-24 bg-green-100 rounded-3xl flex items-center justify-center font-bold text-3xl text-green-700 mb-4">
-                  {profile?.displayName?.[0] || 'U'}
+                  {currentProfile?.displayName?.[0] || profile?.displayName?.[0] || 'U'}
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">{profile?.displayName}</h2>
-                <p className="text-gray-500">{profile?.email}</p>
+                <h2 className="text-2xl font-bold text-gray-900">{currentProfile?.displayName || profile?.displayName}</h2>
+                <p className="text-gray-500">{currentProfile?.email || profile?.email}</p>
               </div>
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                     <p className="text-xs font-bold text-gray-400 uppercase mb-1">Account Role</p>
-                    <p className="font-bold text-gray-900 uppercase">{profile?.role}</p>
+                    <p className="font-bold text-gray-900 uppercase">{currentProfile?.role || profile?.role}</p>
                   </div>
                   <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                     <p className="text-xs font-bold text-gray-400 uppercase mb-1">Member Since</p>
                     <p className="font-bold text-gray-900">
-                      {profile?.createdAt ? format(profile.createdAt.toDate(), 'MMMM yyyy') : 'N/A'}
+                      {currentProfile?.createdAt && typeof (currentProfile.createdAt as any).toDate === 'function'
+                        ? format((currentProfile.createdAt as any).toDate(), 'MMMM yyyy')
+                        : profile?.createdAt
+                          ? format(profile.createdAt.toDate(), 'MMMM yyyy')
+                          : 'N/A'}
                     </p>
                   </div>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                  <p className="text-xs font-bold text-gray-400 uppercase mb-1">Phone Number</p>
-                  <p className="font-bold text-gray-900">{profile?.phoneNumber || 'Not provided'}</p>
-                </div>
+                {!isEditingProfile ? (
+                  <>
+                    <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                      <p className="text-xs font-bold text-gray-400 uppercase mb-1">Phone Number</p>
+                      <p className="font-bold text-gray-900">{currentProfile?.phoneNumber || profile?.phoneNumber || 'Not provided'}</p>
+                    </div>
 
-                <button className="w-full bg-green-700 text-white py-4 rounded-xl font-bold hover:bg-green-800 transition-all shadow-md">
-                  Edit Profile
-                </button>
+                    <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                      <p className="text-xs font-bold text-gray-400 uppercase mb-1">Address</p>
+                      <p className="font-bold text-gray-900">{currentProfile?.address || profile?.address || 'Not provided'}</p>
+                      <p className="text-sm text-gray-600">{(currentProfile?.city || profile?.city || '')}{(currentProfile?.city || profile?.city) && (currentProfile?.state || profile?.state) ? ', ' : ''}{currentProfile?.state || profile?.state || ''}</p>
+                    </div>
+
+                    <button
+                      onClick={() => setIsEditingProfile(true)}
+                      className="w-full bg-green-700 text-white py-4 rounded-xl font-bold hover:bg-green-800 transition-all shadow-md"
+                    >
+                      Edit Profile
+                    </button>
+                  </>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-500 uppercase">Full Name</label>
+                      <input
+                        value={profileForm.displayName}
+                        onChange={(e) => setProfileForm({ ...profileForm, displayName: e.target.value })}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                        placeholder="Full name"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-500 uppercase">Phone Number</label>
+                      <input
+                        value={profileForm.phoneNumber}
+                        onChange={(e) => setProfileForm({ ...profileForm, phoneNumber: e.target.value })}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                        placeholder="Phone number"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-500 uppercase">Address</label>
+                      <input
+                        value={profileForm.address}
+                        onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                        placeholder="Street address"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-gray-500 uppercase">City</label>
+                        <input
+                          value={profileForm.city}
+                          onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
+                          className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                          placeholder="City"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-gray-500 uppercase">State</label>
+                        <input
+                          value={profileForm.state}
+                          onChange={(e) => setProfileForm({ ...profileForm, state: e.target.value })}
+                          className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                          placeholder="State"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                      <button
+                        onClick={() => setIsEditingProfile(false)}
+                        disabled={savingProfile}
+                        className="w-full bg-gray-100 text-gray-700 py-4 rounded-xl font-bold hover:bg-gray-200 transition-all disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleSaveProfile}
+                        disabled={savingProfile}
+                        className="w-full bg-green-700 text-white py-4 rounded-xl font-bold hover:bg-green-800 transition-all shadow-md disabled:opacity-50"
+                      >
+                        {savingProfile ? 'Saving...' : 'Save'}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}

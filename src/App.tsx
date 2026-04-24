@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { useState, useEffect } from 'react';
-import { auth, onAuthStateChanged, FirebaseUser, db, doc, getDoc, setDoc, Timestamp } from './firebase';
+import { auth, onAuthStateChanged, FirebaseUser, db, doc, onSnapshot, setDoc, Timestamp } from './firebase';
 import { UserProfile } from './types';
 
 // Pages
@@ -35,34 +35,113 @@ export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const coerceTimestamp = (value: any): Timestamp => {
+    if (value && typeof value === 'object' && typeof value.toDate === 'function') {
+      return value as Timestamp;
+    }
+    if (typeof value === 'string') {
+      const parsed = new Date(value);
+      if (!Number.isNaN(parsed.getTime())) {
+        return Timestamp.fromDate(parsed);
+      }
+    }
+    return Timestamp.now();
+  };
+
+  const normalizeUserProfile = (raw: any, firebaseUser: FirebaseUser): UserProfile => {
+    const createdAt = coerceTimestamp(raw?.createdAt);
+
+    return {
+      uid: raw?.uid || firebaseUser.uid,
+      displayName: raw?.displayName ?? firebaseUser.displayName ?? null,
+      email: raw?.email || firebaseUser.email || '',
+      phoneNumber: raw?.phoneNumber ?? '',
+      address: raw?.address ?? '',
+      city: raw?.city ?? '',
+      state: raw?.state ?? '',
+      role: raw?.role || 'user',
+      isUpgraded: raw?.isUpgraded ?? false,
+      walletBalance: typeof raw?.walletBalance === 'number' ? raw.walletBalance : 0,
+      createdAt,
+    };
+  };
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    let unsubscribeProfile: (() => void) | null = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
+      setLoading(true);
+
+      if (unsubscribeProfile) {
+        unsubscribeProfile();
+        unsubscribeProfile = null;
+      }
+
       if (firebaseUser) {
-        // Fetch or create user profile
-        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-        if (userDoc.exists()) {
-          setUserProfile(userDoc.data() as UserProfile);
-        } else {
-          const newProfile: UserProfile = {
-            uid: firebaseUser.uid,
-            displayName: firebaseUser.displayName,
-            email: firebaseUser.email!,
-            role: 'user',
-            isUpgraded: false,
-            createdAt: Timestamp.now(),
-            walletBalance: 0,
-          };
-          await setDoc(doc(db, 'users', firebaseUser.uid), newProfile);
-          setUserProfile(newProfile);
-        }
+        const userRef = doc(db, 'users', firebaseUser.uid);
+
+        unsubscribeProfile = onSnapshot(
+          userRef,
+          async (snapshot) => {
+            if (snapshot.exists()) {
+              const normalized = normalizeUserProfile(snapshot.data(), firebaseUser);
+              setUserProfile(normalized);
+
+              // Backfill any missing/invalid fields once (e.g., older docs).
+              const raw = snapshot.data() as any;
+              const needsBackfill =
+                raw?.uid !== normalized.uid ||
+                raw?.email !== normalized.email ||
+                raw?.role == null ||
+                raw?.createdAt == null ||
+                (raw?.createdAt && !(typeof raw.createdAt === 'object' && typeof raw.createdAt.toDate === 'function')) ||
+                raw?.walletBalance == null ||
+                raw?.isUpgraded == null ||
+                raw?.phoneNumber == null ||
+                raw?.address == null ||
+                raw?.city == null ||
+                raw?.state == null;
+
+              if (needsBackfill) {
+                await setDoc(userRef, normalized, { merge: true });
+              }
+            } else {
+              const newProfile: UserProfile = {
+                uid: firebaseUser.uid,
+                displayName: firebaseUser.displayName ?? null,
+                email: firebaseUser.email || '',
+                phoneNumber: '',
+                address: '',
+                city: '',
+                state: '',
+                role: 'user',
+                isUpgraded: false,
+                createdAt: Timestamp.now(),
+                walletBalance: 0,
+              };
+              await setDoc(userRef, newProfile);
+              setUserProfile(newProfile);
+            }
+
+            setLoading(false);
+          },
+          () => {
+            // If the profile subscription fails, fall back to showing the app without a profile.
+            setUserProfile(null);
+            setLoading(false);
+          }
+        );
       } else {
         setUserProfile(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeProfile) unsubscribeProfile();
+    };
   }, []);
 
   if (loading) {
