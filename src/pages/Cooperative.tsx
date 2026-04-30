@@ -53,10 +53,40 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   }, [user]);
 
   const handleJoin = async () => {
+    if ((profile?.walletBalance || 0) < REGISTRATION_FEE) {
+      toast.error('Insufficient Wallet Balance', {
+        description: 'Please fund your wallet to join the cooperative.',
+        action: {
+          label: 'Fund Wallet',
+          onClick: () => navigate('/dashboard?tab=wallet'),
+        },
+      });
+      return;
+    }
+
     setProcessing(true);
     try {
-      // Use the test Korapay checkout link
-      window.location.href = 'https://checkout.korapay.com/pay/okfmKpSD2J3PYjT';
+      const memberData: Omit<CooperativeMember, 'id'> = {
+        uid: user.uid,
+        email: user.email || '',
+        displayName: profile?.displayName || user.displayName || 'New Member',
+        status: 'active',
+        createdAt: Timestamp.now(),
+        lastMonthlyPayment: Timestamp.now(),
+      };
+
+      await addDoc(collection(db, 'cooperativeMembers'), memberData);
+
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        walletBalance: (profile?.walletBalance || 0) - REGISTRATION_FEE,
+      });
+
+      toast.success('Welcome to the Cooperative!', {
+        description: 'Your membership is now active.',
+      });
+
+      setMember(memberData as CooperativeMember);
     } catch (error) {
       console.error('Join error:', error);
       toast.error('Failed to join. Please try again.');
@@ -66,13 +96,41 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   };
 
   const handlePayMonthlyDue = async () => {
+    if ((profile?.walletBalance || 0) < MONTHLY_DUE) {
+      toast.error('Insufficient Wallet Balance', {
+        description: 'Please fund your wallet to pay your monthly due.',
+        action: {
+          label: 'Fund Wallet',
+          onClick: () => navigate('/dashboard?tab=wallet'),
+        },
+      });
+      return;
+    }
+
     setProcessing(true);
     try {
-      await simulatePayment(MONTHLY_DUE, 'Cooperative Monthly Due', user.uid, {
-        email: user.email || profile?.email || '',
-        displayName: profile?.displayName || user.displayName || 'Customer',
+      const paymentData: Omit<PaymentRecord, 'id'> = {
+        uid: user.uid,
+        amount: MONTHLY_DUE,
+        purpose: 'Cooperative Monthly Due',
+        status: 'success',
+        createdAt: Timestamp.now(),
+      };
+      await addDoc(collection(db, 'payments'), paymentData);
+
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        walletBalance: (profile?.walletBalance || 0) - MONTHLY_DUE,
       });
-      // User is redirected to Korapay. Webhook handles payment record creation.
+
+      if (member) {
+        const memberRef = doc(db, 'cooperativeMembers', member.id);
+        await updateDoc(memberRef, {
+          lastMonthlyPayment: Timestamp.now(),
+        });
+      }
+
+      toast.success('Monthly due paid successfully!');
     } catch (error) {
       console.error('Payment error:', error);
       toast.error('Payment failed. Please try again.');

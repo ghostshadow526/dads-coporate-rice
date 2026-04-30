@@ -77,8 +77,19 @@ export default function Investment({ user, profile }: InvestmentProps) {
   });
 
   const handleInvest = async () => {
-    setProcessing(true);
     const totalAmount = slots * SLOT_PRICE;
+    if ((profile?.walletBalance || 0) < totalAmount) {
+      toast.error('Insufficient Wallet Balance', {
+        description: 'Please fund your wallet to continue with this investment.',
+        action: {
+          label: 'Fund Wallet',
+          onClick: () => navigate('/dashboard?tab=wallet'),
+        },
+      });
+      return;
+    }
+
+    setProcessing(true);
     try {
       await simulatePayment(totalAmount, `Investment: ${plan}`, user.uid, {
         plan,
@@ -87,7 +98,35 @@ export default function Investment({ user, profile }: InvestmentProps) {
         email: user.email || profile?.email || '',
         displayName: profile?.displayName || user.displayName || formData.fullName || 'Customer',
       });
-      // User is redirected to Korapay. Webhook handles investment creation.
+
+      const investmentData: Omit<InvestmentType, 'id'> = {
+        uid: user.uid,
+        plan,
+        slots,
+        amount: totalAmount,
+        ...formData,
+        createdAt: Timestamp.now(),
+        status: 'active',
+      };
+
+      await addDoc(collection(db, 'investments'), investmentData);
+
+      // Deduct from wallet
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        walletBalance: (profile?.walletBalance || 0) - totalAmount,
+      });
+
+      await sendCompanyNotification(
+        'New Investment',
+        `${profile?.displayName || user.email} has invested NGN ${totalAmount.toLocaleString()} in the ${plan}.`
+      );
+
+      toast.success('Investment Successful!', {
+        description: 'Your investment has been recorded.',
+      });
+
+      setStep(3);
     } catch (error) {
       console.error('Investment error:', error);
       toast.error('Investment failed. Please try again.');

@@ -125,30 +125,47 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
         : 'Please enter your name, phone number, and address.');
       return;
     }
-    setLoading(true);
-    try {
-      // NOTE: Don’t write delivery info to Firestore here.
-      // In production rules, unknown collections (like "delivery information") are denied by default,
-      // which prevents payment initialization from running.
-      // Instead, attach delivery/cart details to the payment metadata; the backend/webhook can persist it.
 
-      const email = user.email || profile?.email || '';
-      const displayName = profile?.displayName || user.displayName || effectiveDeliveryInfo.fullName.trim() || 'Customer';
-
-      await simulatePayment(totalAmount, 'Rice Purchase', user.uid, {
-        email,
-        displayName,
-        cart,
-        deliveryInfo: {
-          fullName: effectiveDeliveryInfo.fullName.trim(),
-          phoneNumber: effectiveDeliveryInfo.phoneNumber.trim(),
-          address: effectiveDeliveryInfo.address.trim(),
-          city: effectiveDeliveryInfo.city.trim(),
-          state: effectiveDeliveryInfo.state.trim(),
-          notes: effectiveDeliveryInfo.notes.trim(),
+    if ((profile?.walletBalance || 0) < totalAmount) {
+      toast.error('Insufficient Wallet Balance', {
+        description: 'Please fund your wallet to purchase rice.',
+        action: {
+          label: 'Fund Wallet',
+          onClick: () => navigate('/dashboard?tab=wallet'),
         },
       });
-      // User is redirected to Korapay. Webhook handles order creation.
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const orderData: Omit<RiceOrder, 'id'> = {
+        uid: user.uid,
+        items: cart,
+        totalAmount,
+        deliveryInfo: effectiveDeliveryInfo,
+        status: 'processing',
+        createdAt: Timestamp.now(),
+      };
+
+      await addDoc(collection(db, 'riceOrders'), orderData);
+
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        walletBalance: (profile?.walletBalance || 0) - totalAmount,
+      });
+
+      await sendCompanyNotification(
+        'New Rice Order',
+        `${profile?.displayName || user.email} has placed an order for rice worth NGN ${totalAmount.toLocaleString()}.`
+      );
+
+      toast.success('Order Placed Successfully!', {
+        description: 'Your order is now being processed.',
+      });
+
+      setCart([]);
+      setStep(3);
     } catch (error) {
       console.error('Checkout error:', error);
       toast.error(error instanceof Error ? error.message : 'Checkout failed. Please try again.');

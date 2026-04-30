@@ -37,14 +37,45 @@ export default function Training({ user, profile }: TrainingProps) {
 
   const handleRegister = async () => {
     if (!selectedTraining) return;
+
+    if ((profile?.walletBalance || 0) < selectedTraining.price) {
+      toast.error('Insufficient Wallet Balance', {
+        description: 'Please fund your wallet to register for this training.',
+        action: {
+          label: 'Fund Wallet',
+          onClick: () => navigate('/dashboard?tab=wallet'),
+        },
+      });
+      return;
+    }
+
     setProcessing(true);
     try {
-      await simulatePayment(selectedTraining.price, `Training: ${selectedTraining.title}`, user.uid, {
+      const registrationData: Omit<TrainingRegistration, 'id'> = {
+        uid: user.uid,
         trainingId: selectedTraining.id,
-        email: user.email || profile?.email || '',
-        displayName: profile?.displayName || user.displayName || 'Customer',
+        trainingTitle: selectedTraining.title,
+        status: 'confirmed',
+        createdAt: Timestamp.now(),
+      };
+
+      await addDoc(collection(db, 'trainingRegistrations'), registrationData);
+
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        walletBalance: (profile?.walletBalance || 0) - selectedTraining.price,
       });
-      // User is redirected to Korapay. Webhook handles registration creation.
+
+      await sendCompanyNotification(
+        'New Training Registration',
+        `${profile?.displayName || user.email} has registered for "${selectedTraining.title}".`
+      );
+
+      toast.success('Registration Successful!', {
+        description: 'You are now registered for the training.',
+      });
+
+      setStep(3);
     } catch (error) {
       console.error('Registration error:', error);
       toast.error('Registration failed. Please try again.');
