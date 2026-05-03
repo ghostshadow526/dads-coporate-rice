@@ -21,7 +21,7 @@ export interface Investment {
   slots: number;
   amount: number;
   status: 'pending' | 'active' | 'completed';
-  paymentId: string;
+  paymentId?: string;
   createdAt: Timestamp;
   fullName: string;
   address: string;
@@ -38,8 +38,10 @@ export interface CooperativeMember {
   id?: string;
   uid: string;
   status: 'pending' | 'active' | 'inactive';
-  registrationFeePaid: boolean;
-  paymentId: string;
+  registrationFeePaid?: boolean;
+  paymentId?: string;
+  email?: string;
+  displayName?: string;
   createdAt: Timestamp;
   lastMonthlyPayment?: Timestamp;
 }
@@ -49,12 +51,21 @@ export interface RiceOrder {
   uid: string;
   items: {
     productId: string;
-    name: string;
+    name?: string;
+    description?: string;
     quantity: number;
     price: number;
   }[];
   totalAmount: number;
-  paymentId: string;
+  deliveryInfo?: {
+    fullName: string;
+    phoneNumber: string;
+    address: string;
+    city?: string;
+    state?: string;
+    notes?: string;
+  };
+  paymentId?: string;
   status: 'pending' | 'processing' | 'shipped' | 'delivered';
   createdAt: Timestamp;
 }
@@ -72,7 +83,9 @@ export interface TrainingRegistration {
   id?: string;
   uid: string;
   trainingId: string;
-  paymentId: string;
+  trainingTitle?: string;
+  status?: 'pending' | 'confirmed' | 'cancelled';
+  paymentId?: string;
   createdAt: Timestamp;
 }
 

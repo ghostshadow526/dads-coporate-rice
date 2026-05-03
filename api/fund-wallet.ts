@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import admin from 'firebase-admin';
-import { Firestore } from '@google-cloud/firestore';
+import { Firestore, Timestamp as FirestoreTimestamp } from '@google-cloud/firestore';
 import axios from 'axios';
 
 let db: Firestore;
@@ -87,7 +87,7 @@ const ensureUserExists = async (userId: string, email: string, displayName?: str
         email: email || null,
         displayName: displayName || 'User',
         walletBalance: 0,
-        createdAt: new Date().toISOString(),
+        createdAt: FirestoreTimestamp.now(),
       });
     }
 
@@ -110,7 +110,7 @@ const checkDailyLimit = async (userId: string): Promise<boolean> => {
       userId,
       date: today,
       count: 1,
-      createdAt: new Date().toISOString(),
+      createdAt: FirestoreTimestamp.now(),
     });
     return true;
   }
@@ -179,13 +179,15 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     // Save transaction in DB
     await db.collection('payments').doc(reference).set({
       id: reference,
+      // Keep both fields for compatibility with frontend queries.
       userId,
+      uid: userId,
       email,
       amount: numericAmount,
       purpose,
       metadata,
       status: 'pending',
-      createdAt: new Date().toISOString(),
+      createdAt: FirestoreTimestamp.now(),
     });
 
     // Initialize Korapay transaction

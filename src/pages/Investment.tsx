@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { FirebaseUser, db, collection, addDoc, Timestamp, query, where, getDocs } from '../firebase';
+import { FirebaseUser, db, collection, addDoc, Timestamp, query, where, getDocs, doc, updateDoc } from '../firebase';
 import { UserProfile, Investment as InvestmentType, PaymentRecord } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { TrendingUp, CheckCircle, ArrowRight, ShieldCheck, DollarSign, Info } from 'lucide-react';
-import { simulatePayment } from '../services/paymentService';
 import { generateInvestmentPDF } from '../services/pdfService';
 import { sendCompanyNotification } from '../services/notificationService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { ensureWalletBalanceOrPay } from '../services/walletGuard';
 
 interface InvestmentProps {
   user: FirebaseUser;
@@ -51,11 +51,38 @@ export default function Investment({ user, profile }: InvestmentProps) {
   const handlePayRegistration = async () => {
     setProcessing(true);
     try {
-      await simulatePayment(REGISTRATION_FEE, 'Investment Access Fee', user.uid, {
-        email: user.email || profile?.email || '',
-        displayName: profile?.displayName || user.displayName || 'Customer',
+      const currentBalance = typeof profile?.walletBalance === 'number' ? profile.walletBalance : 0;
+
+      // If wallet already has funds, use it directly.
+      if (currentBalance >= REGISTRATION_FEE) {
+        await addDoc(collection(db, 'payments'), {
+          uid: user.uid,
+          amount: REGISTRATION_FEE,
+          purpose: 'Investment Access Fee',
+          status: 'success',
+          createdAt: Timestamp.now(),
+        } as Omit<PaymentRecord, 'id'>);
+
+        await updateDoc(doc(db, 'users', user.uid), {
+          walletBalance: currentBalance - REGISTRATION_FEE,
+        });
+
+        toast.success('Access fee paid from wallet');
+        setStep(2);
+        return;
+      }
+
+      // Otherwise redirect to pay (wallet funding).
+      await ensureWalletBalanceOrPay({
+        profile,
+        requiredAmount: REGISTRATION_FEE,
+        uid: user.uid,
+        metadata: {
+          email: user.email || profile?.email || '',
+          displayName: profile?.displayName || user.displayName || 'Customer',
+        },
+        description: 'You need to fund your wallet to pay the investment access fee.',
       });
-      // User is redirected to Korapay.
     } catch (error) {
       console.error('Payment error:', error);
       toast.error('Payment failed. Please try again.');
@@ -78,27 +105,20 @@ export default function Investment({ user, profile }: InvestmentProps) {
 
   const handleInvest = async () => {
     const totalAmount = slots * SLOT_PRICE;
-    if ((profile?.walletBalance || 0) < totalAmount) {
-      toast.error('Insufficient Wallet Balance', {
-        description: 'Please fund your wallet to continue with this investment.',
-        action: {
-          label: 'Fund Wallet',
-          onClick: () => navigate('/dashboard?tab=wallet'),
-        },
-      });
-      return;
-    }
+    const canContinue = await ensureWalletBalanceOrPay({
+      profile,
+      requiredAmount: totalAmount,
+      uid: user.uid,
+      metadata: {
+        email: user.email || profile?.email || '',
+        displayName: profile?.displayName || user.displayName || formData.fullName || 'Customer',
+      },
+      description: 'Please fund your wallet to continue with this investment.',
+    });
+    if (!canContinue) return;
 
     setProcessing(true);
     try {
-      await simulatePayment(totalAmount, `Investment: ${plan}`, user.uid, {
-        plan,
-        slots,
-        formData,
-        email: user.email || profile?.email || '',
-        displayName: profile?.displayName || user.displayName || formData.fullName || 'Customer',
-      });
-
       const investmentData: Omit<InvestmentType, 'id'> = {
         uid: user.uid,
         plan,
@@ -118,7 +138,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
       });
 
       await sendCompanyNotification(
-        'New Investment',
+        'investment',
         `${profile?.displayName || user.email} has invested NGN ${totalAmount.toLocaleString()} in the ${plan}.`
       );
 

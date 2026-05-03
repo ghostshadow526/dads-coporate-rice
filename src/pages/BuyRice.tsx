@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { FirebaseUser, db, collection, getDocs } from '../firebase';
+import { FirebaseUser, db, collection, getDocs, addDoc, Timestamp, doc, updateDoc } from '../firebase';
 import { UserProfile, RiceOrder, PaymentRecord } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingBag, ShoppingCart, CheckCircle, ArrowRight, Minus, Plus, Download, CreditCard, ShoppingBasket, Loader } from 'lucide-react';
-import { simulatePayment } from '../services/paymentService';
 import { generateReceiptPDF } from '../services/pdfService';
 import { sendCompanyNotification } from '../services/notificationService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { ensureWalletBalanceOrPay } from '../services/walletGuard';
 
 interface RiceProduct {
   id: string;
@@ -126,16 +126,17 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
       return;
     }
 
-    if ((profile?.walletBalance || 0) < totalAmount) {
-      toast.error('Insufficient Wallet Balance', {
-        description: 'Please fund your wallet to purchase rice.',
-        action: {
-          label: 'Fund Wallet',
-          onClick: () => navigate('/dashboard?tab=wallet'),
-        },
-      });
-      return;
-    }
+    const canContinue = await ensureWalletBalanceOrPay({
+      profile,
+      requiredAmount: totalAmount,
+      uid: user.uid,
+      metadata: {
+        email: user.email || profile?.email || '',
+        displayName: profile?.displayName || user.displayName || effectiveDeliveryInfo.fullName || 'Customer',
+      },
+      description: 'Please fund your wallet to purchase rice.',
+    });
+    if (!canContinue) return;
 
     setLoading(true);
     try {
@@ -156,7 +157,7 @@ export default function BuyRice({ user, profile }: BuyRiceProps) {
       });
 
       await sendCompanyNotification(
-        'New Rice Order',
+        'order',
         `${profile?.displayName || user.email} has placed an order for rice worth NGN ${totalAmount.toLocaleString()}.`
       );
 

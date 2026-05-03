@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-import { FirebaseUser, db, collection, addDoc, query, onSnapshot, orderBy, Timestamp, where } from '../firebase';
+import { FirebaseUser, db, collection, addDoc, query, onSnapshot, orderBy, Timestamp, where, doc, updateDoc } from '../firebase';
 import { UserProfile, Training as TrainingType, TrainingRegistration, PaymentRecord } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { GraduationCap, Calendar, CheckCircle, ArrowRight, DollarSign, Download, Clock, MapPin, Info } from 'lucide-react';
-import { simulatePayment } from '../services/paymentService';
 import { generateTrainingPassPDF } from '../services/pdfService';
 import { sendCompanyNotification } from '../services/notificationService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { handleFirestoreError, OperationType } from '../services/errorService';
+import { ensureWalletBalanceOrPay } from '../services/walletGuard';
 
 interface TrainingProps {
   user: FirebaseUser;
@@ -17,13 +17,12 @@ interface TrainingProps {
 }
 
 export default function Training({ user, profile }: TrainingProps) {
+    const navigate = useNavigate();
   const [trainings, setTrainings] = useState<TrainingType[]>([]);
   const [selectedTraining, setSelectedTraining] = useState<TrainingType | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [step, setStep] = useState(1);
-  const navigate = useNavigate();
-
   useEffect(() => {
     const q = query(collection(db, 'trainings'), where('isActive', '==', true), orderBy('date', 'asc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -38,16 +37,17 @@ export default function Training({ user, profile }: TrainingProps) {
   const handleRegister = async () => {
     if (!selectedTraining) return;
 
-    if ((profile?.walletBalance || 0) < selectedTraining.price) {
-      toast.error('Insufficient Wallet Balance', {
-        description: 'Please fund your wallet to register for this training.',
-        action: {
-          label: 'Fund Wallet',
-          onClick: () => navigate('/dashboard?tab=wallet'),
-        },
-      });
-      return;
-    }
+    const canContinue = await ensureWalletBalanceOrPay({
+      profile,
+      requiredAmount: selectedTraining.price,
+      uid: user.uid,
+      metadata: {
+        email: user.email || profile?.email || '',
+        displayName: profile?.displayName || user.displayName || 'Customer',
+      },
+      description: 'Please fund your wallet to register for this training.',
+    });
+    if (!canContinue) return;
 
     setProcessing(true);
     try {
@@ -67,7 +67,7 @@ export default function Training({ user, profile }: TrainingProps) {
       });
 
       await sendCompanyNotification(
-        'New Training Registration',
+        'registration',
         `${profile?.displayName || user.email} has registered for "${selectedTraining.title}".`
       );
 

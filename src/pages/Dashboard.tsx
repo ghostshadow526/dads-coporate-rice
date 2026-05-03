@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FirebaseUser, auth, db, collection, query, where, onSnapshot, orderBy, Timestamp, addDoc, doc, setDoc, updateProfile } from '../firebase';
+import { FirebaseUser, auth, db, collection, query, where, onSnapshot, orderBy, Timestamp, addDoc, doc, setDoc, updateDoc, updateProfile } from '../firebase';
 import { UserProfile, Investment, CooperativeMember, RiceOrder, TrainingRegistration, PaymentRecord, Training } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -35,9 +35,9 @@ import {
   Tooltip, 
   ResponsiveContainer
 } from 'recharts';
-import { simulatePayment } from '../services/paymentService';
 import { toast } from 'sonner';
 import FundWallet from '../components/FundWallet';
+import { ensureWalletBalanceOrPay } from '../services/walletGuard';
 
 interface DashboardProps {
   user: FirebaseUser;
@@ -238,11 +238,40 @@ export default function Dashboard({ user, profile }: DashboardProps) {
     if (!cooperative) return;
     setProcessingDue(true);
     try {
-      await simulatePayment(MONTHLY_DUE, 'Cooperative Monthly Due', user.uid, {
-        email: user.email || profile?.email || '',
-        displayName: profile?.displayName || user.displayName || 'Customer',
+      const canContinue = await ensureWalletBalanceOrPay({
+        profile,
+        requiredAmount: MONTHLY_DUE,
+        uid: user.uid,
+        metadata: {
+          email: user.email || profile?.email || '',
+          displayName: profile?.displayName || user.displayName || 'Customer',
+        },
+        description: 'Please fund your wallet to pay your monthly due.',
       });
-      // User is redirected to Korapay.
+
+      if (!canContinue) return;
+
+      const currentBalance = typeof profile?.walletBalance === 'number' ? profile.walletBalance : 0;
+
+      await addDoc(collection(db, 'payments'), {
+        uid: user.uid,
+        amount: MONTHLY_DUE,
+        purpose: 'Cooperative Monthly Due',
+        status: 'success',
+        createdAt: Timestamp.now(),
+      });
+
+      await updateDoc(doc(db, 'users', user.uid), {
+        walletBalance: currentBalance - MONTHLY_DUE,
+      });
+
+      if (cooperative?.id) {
+        await updateDoc(doc(db, 'cooperativeMembers', cooperative.id), {
+          lastMonthlyPayment: Timestamp.now(),
+        });
+      }
+
+      toast.success('Monthly due paid successfully!');
     } catch (error) {
       console.error('Payment error:', error);
       toast.error('Payment failed.');

@@ -99,7 +99,9 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     );
 
     const paymentData = korapayResponse.data.data;
-    const { status, amount } = paymentData;
+    const { status } = paymentData;
+    const gatewayAmountRaw = (paymentData as any)?.amount;
+    const gatewayAmount = Number(gatewayAmountRaw);
 
     const paymentRef = db.collection('payments').doc(reference);
     const paymentDoc = await paymentRef.get();
@@ -108,12 +110,25 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       return res.status(404).json({ error: 'Payment not found' });
     }
 
-    const payment = paymentDoc.data();
-    const { userId } = payment;
+    const payment = paymentDoc.data() as any;
+    const userId: string | undefined = payment?.userId || payment?.uid;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'Payment record is missing userId/uid' });
+    }
+
+    const paymentAmount = Number(payment?.amount);
+    if (!Number.isFinite(paymentAmount) || paymentAmount <= 0) {
+      return res.status(400).json({ error: 'Payment record has invalid amount' });
+    }
 
     if (status === 'success') {
       if (payment.status !== 'success') {
-        await paymentRef.update({ status: 'success' });
+        await paymentRef.update({
+          status: 'success',
+          verifiedAt: new Date().toISOString(),
+          gatewayAmount: Number.isFinite(gatewayAmount) ? gatewayAmount : null,
+        });
 
         const userRef = db.collection('users').doc(userId);
         await db.runTransaction(async (transaction) => {
@@ -121,7 +136,13 @@ export default async (req: VercelRequest, res: VercelResponse) => {
           if (!userDoc.exists) {
             throw new Error('User not found');
           }
-          const newBalance = (userDoc.data().walletBalance || 0) + amount;
+
+          const existingBalanceRaw = (userDoc.data() as any)?.walletBalance;
+          const existingBalance = Number(existingBalanceRaw);
+          const safeExistingBalance = Number.isFinite(existingBalance) ? existingBalance : 0;
+
+          // Credit based on our stored payment amount (keeps units consistent for the app).
+          const newBalance = safeExistingBalance + paymentAmount;
           transaction.update(userRef, { walletBalance: newBalance });
         });
       }

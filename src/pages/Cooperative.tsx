@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { FirebaseUser, db, collection, addDoc, query, where, onSnapshot, orderBy, Timestamp } from '../firebase';
+import { FirebaseUser, db, collection, addDoc, query, where, onSnapshot, orderBy, Timestamp, doc, updateDoc } from '../firebase';
 import { UserProfile, CooperativeMember, PaymentRecord } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { Users, CheckCircle, ArrowRight, ShieldCheck, Download, CreditCard, Info, History, TrendingUp, Leaf } from 'lucide-react';
-import { simulatePayment } from '../services/paymentService';
 import { toast } from 'sonner';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { ensureWalletBalanceOrPay } from '../services/walletGuard';
 
 interface CooperativeProps {
   user: FirebaseUser;
@@ -24,8 +24,6 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
-  const navigate = useNavigate();
-
   const REGISTRATION_FEE = 5000;
   const MONTHLY_DUE = 5000;
 
@@ -53,16 +51,17 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   }, [user]);
 
   const handleJoin = async () => {
-    if ((profile?.walletBalance || 0) < REGISTRATION_FEE) {
-      toast.error('Insufficient Wallet Balance', {
-        description: 'Please fund your wallet to join the cooperative.',
-        action: {
-          label: 'Fund Wallet',
-          onClick: () => navigate('/dashboard?tab=wallet'),
-        },
-      });
-      return;
-    }
+    const canContinue = await ensureWalletBalanceOrPay({
+      profile,
+      requiredAmount: REGISTRATION_FEE,
+      uid: user.uid,
+      metadata: {
+        email: user.email || profile?.email || '',
+        displayName: profile?.displayName || user.displayName || 'Customer',
+      },
+      description: 'Please fund your wallet to join the cooperative.',
+    });
+    if (!canContinue) return;
 
     setProcessing(true);
     try {
@@ -96,16 +95,17 @@ export default function Cooperative({ user, profile }: CooperativeProps) {
   };
 
   const handlePayMonthlyDue = async () => {
-    if ((profile?.walletBalance || 0) < MONTHLY_DUE) {
-      toast.error('Insufficient Wallet Balance', {
-        description: 'Please fund your wallet to pay your monthly due.',
-        action: {
-          label: 'Fund Wallet',
-          onClick: () => navigate('/dashboard?tab=wallet'),
-        },
-      });
-      return;
-    }
+    const canContinue = await ensureWalletBalanceOrPay({
+      profile,
+      requiredAmount: MONTHLY_DUE,
+      uid: user.uid,
+      metadata: {
+        email: user.email || profile?.email || '',
+        displayName: profile?.displayName || user.displayName || 'Customer',
+      },
+      description: 'Please fund your wallet to pay your monthly due.',
+    });
+    if (!canContinue) return;
 
     setProcessing(true);
     try {
