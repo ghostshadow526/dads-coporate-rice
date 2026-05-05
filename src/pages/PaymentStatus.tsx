@@ -5,7 +5,9 @@ import axios from 'axios';
 
 export default function PaymentStatus() {
   const [searchParams] = useSearchParams();
-  const reference = searchParams.get('reference');
+  // Korapay redirect URL historically used `ref`, but our verify endpoint expects `reference`.
+  // Accept both for backward compatibility.
+  const reference = searchParams.get('reference') || searchParams.get('ref');
   const [status, setStatus] = useState<'loading' | 'success' | 'failed'>('loading');
   const [message, setMessage] = useState('Verifying your payment...');
 

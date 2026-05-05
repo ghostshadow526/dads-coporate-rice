@@ -348,7 +348,7 @@ export default function Dashboard({ user, profile }: DashboardProps) {
                     </button>
                   </div>
                   <p className="text-gray-500 text-[9px] font-medium">Wallet Balance</p>
-                  <h3 className="text-base font-bold text-gray-900">NGN {(profile?.walletBalance || 0).toLocaleString()}</h3>
+                  <h3 className="text-base font-bold text-gray-900">NGN {(currentProfile?.walletBalance ?? profile?.walletBalance ?? 0).toLocaleString()}</h3>
                 </div>
 
                 <div className="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">

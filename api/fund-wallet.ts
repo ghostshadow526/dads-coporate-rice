@@ -202,7 +202,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         amount: Math.round(numericAmount),
         currency: 'NGN',
         reference,
-        redirect_url: `${process.env.APP_URL || 'https://www.salvagebizhub.com'}/payment-status?ref=${reference}`,
+        redirect_url: `${process.env.APP_URL || 'https://www.salvagebizhub.com'}/payment-status?reference=${reference}`,
         customer: {
           name: displayName,
           email,
