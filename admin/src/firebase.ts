@@ -26,7 +26,11 @@ const app = initializeApp(firebaseConfig as any);
 
 // Initialize services
 export const auth = getAuth(app);
-export const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+export const db = initializeFirestore(
+  app,
+  { experimentalForceLongPolling: true },
+  (firebaseConfig as any).firestoreDatabaseId || '(default)'
+);
 
 // Google Provider
 const googleProvider = new GoogleAuthProvider();

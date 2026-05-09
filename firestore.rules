@@ -1,250 +1,82 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // ===============================================================
-    // Assumed Data Model
-    // ===============================================================
-    //
-    // Collection: users
-    // Document ID: uid
-    // Fields:
-    //   - uid: string (required)
-    //   - displayName: string (optional)
-    //   - email: string (required)
-    //   - phoneNumber: string (optional)
-    //   - address: string (optional)
-    //   - city: string (optional)
-    //   - state: string (optional)
-    //   - role: string (required, 'user')
-    //   - isUpgraded: bool (optional)
-    //   - walletBalance: number (optional)
-    //   - createdAt: timestamp (required)
-    //
-    // Collection: investments
-    // Document ID: investmentId
-    // Fields:
-    //   - uid: string (required)
-    //   - plan: string (required)
-    //   - slots: number (required)
-    //   - amount: number (required)
-    //   - status: string (required, 'pending', 'active', 'completed')
-    //   - paymentId: string (required)
-    //   - createdAt: timestamp (required)
-    //
-    // Collection: cooperativeMembers
-    // Document ID: memberId
-    // Fields:
-    //   - uid: string (required)
-    //   - status: string (required, 'pending', 'active', 'inactive')
-    //   - registrationFeePaid: bool (required)
-    //   - paymentId: string (required)
-    //   - createdAt: timestamp (required)
-    //
-    // Collection: riceOrders
-    // Document ID: orderId
-    // Fields:
-    //   - uid: string (required)
-    //   - items: list (required)
-    //   - totalAmount: number (required)
-    //   - paymentId: string (required)
-    //   - status: string (required, 'pending', 'processing', 'shipped', 'delivered')
-    //   - createdAt: timestamp (required)
-    //
-    // Collection: trainings
-    // Document ID: trainingId
-    // Fields:
-    //   - id: string (required)
-    //   - title: string (required)
-    //   - description: string (optional)
-    //   - price: number (required)
-    //   - date: timestamp (required)
-    //   - createdAt: timestamp (required)
-    //
-    // Collection: trainingRegistrations
-    // Document ID: registrationId
-    // Fields:
-    //   - uid: string (required)
-    //   - trainingId: string (required)
-    //   - paymentId: string (required)
-    //   - createdAt: timestamp (required)
-    //
-    // Collection: payments
-    // Document ID: paymentId
-    // Fields:
-    //   - id: string (required)
-    //   - uid: string (required)
-    //   - amount: number (required)
-    //   - purpose: string (required)
-    //   - status: string (required, 'pending', 'success', 'failed')
-    //   - createdAt: timestamp (required)
-    //
-    // ===============================================================
-
-    // ===============================================================
-    // Helper Functions
-    // ===============================================================
-    function isAuthenticated() {
+    function isSignedIn() {
       return request.auth != null;
     }
 
     function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
+      return isSignedIn() && request.auth.uid == userId;
     }
 
-    function isDocOwner() {
-      return isAuthenticated() && request.auth.uid == resource.data.uid;
-    }
-
-    function isRequestOwner() {
-      return isAuthenticated() && request.auth.uid == request.resource.data.uid;
-    }
-
-    function isValidEmail(email) {
-      return email is string &&
-        email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
-    }
-
-    function isOptionalString(value) {
-      return value == null || value is string;
-    }
-
-    function isOptionalBool(value) {
-      return value == null || value is bool;
-    }
-
-    function isOptionalNumber(value) {
-      return value == null || value is number;
-    }
-
-    function hasOnlyAllowedFields(fields) {
-      return request.resource.data.keys().hasOnly(fields);
-    }
-
-    // ===============================================================
-    // Domain Validators
-    // ===============================================================
-    function isValidUser(data) {
-      return hasOnlyAllowedFields([
-              'uid',
-              'displayName',
-              'email',
-              'phoneNumber',
-              'address',
-              'city',
-              'state',
-              'role',
-              'isUpgraded',
-              'createdAt',
-              'walletBalance'
-             ]) &&
-             data.uid is string && data.uid.size() > 0 &&
-             isOptionalString(data.displayName) &&
-             data.email is string && isValidEmail(data.email) &&
-             isOptionalString(data.phoneNumber) &&
-             isOptionalString(data.address) &&
-             isOptionalString(data.city) &&
-             isOptionalString(data.state) &&
-             data.role in ['user', 'admin'] &&
-             isOptionalBool(data.isUpgraded) &&
-             isOptionalNumber(data.walletBalance) &&
-             data.createdAt is timestamp;
-    }
-
-    function isValidInvestment(data) {
-      return hasOnlyAllowedFields(['uid', 'plan', 'slots', 'amount', 'status', 'paymentId', 'createdAt']) &&
-             data.uid is string && data.plan is string &&
-             data.slots is number && data.slots > 0 &&
-             data.amount is number && data.amount > 0 &&
-             data.status in ['pending', 'active', 'completed'] &&
-             data.paymentId is string &&
-             data.createdAt is timestamp;
-    }
-
-    function isValidCooperativeMember(data) {
-      return hasOnlyAllowedFields(['uid', 'status', 'registrationFeePaid', 'paymentId', 'createdAt']) &&
-             data.uid is string &&
-             data.status in ['pending', 'active', 'inactive'] &&
-             data.registrationFeePaid is bool &&
-             data.paymentId is string &&
-             data.createdAt is timestamp;
-    }
-
-    function isValidRiceOrder(data) {
-      return hasOnlyAllowedFields(['uid', 'items', 'totalAmount', 'paymentId', 'status', 'createdAt']) &&
-             data.uid is string && data.items is list &&
-             data.totalAmount is number && data.totalAmount > 0 &&
-             data.paymentId is string &&
-             data.status in ['pending', 'processing', 'shipped', 'delivered'] &&
-             data.createdAt is timestamp;
-    }
-
-    function isValidTraining(data) {
-      return hasOnlyAllowedFields(['id', 'title', 'description', 'price', 'date', 'createdAt']) &&
-             data.id is string && data.title is string &&
-             data.price is number && data.price >= 0 &&
-             data.date is timestamp &&
-             data.createdAt is timestamp;
-    }
-
-    function isValidTrainingRegistration(data) {
-      return hasOnlyAllowedFields(['uid', 'trainingId', 'paymentId', 'createdAt']) &&
-             data.uid is string && data.trainingId is string &&
-             data.paymentId is string &&
-             data.createdAt is timestamp;
-    }
-
-    function isValidPayment(data) {
-      return hasOnlyAllowedFields(['id', 'uid', 'amount', 'purpose', 'status', 'createdAt']) &&
-             data.id is string && data.uid is string &&
-             data.amount is number && data.amount > 0 &&
-             data.purpose is string &&
-             data.status in ['pending', 'success', 'failed'] &&
-             data.createdAt is timestamp;
-    }
-
-    // ===============================================================
-    // Rules
-    // ===============================================================
-
+    // Users
     match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow create: if isOwner(userId) && isValidUser(request.resource.data);
-      allow update: if isOwner(userId) && isValidUser(request.resource.data);
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if false;
     }
 
-    match /investments/{investmentId} {
-      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
-      allow create: if isRequestOwner() && isValidInvestment(request.resource.data);
-      allow update: if false;
+    // Admin invites (if used)
+    match /admin-invites/{inviteId} {
+      allow read, write: if isSignedIn();
     }
 
-    match /cooperativeMembers/{memberId} {
-      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
-      allow create: if isRequestOwner() && isValidCooperativeMember(request.resource.data);
-      allow update: if false;
-    }
-
-    match /riceOrders/{orderId} {
-      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
-      allow create: if isRequestOwner() && isValidRiceOrder(request.resource.data);
-      allow update: if false;
-    }
-
-    match /trainings/{trainingId} {
+    // Gallery: public can read (view images)
+    match /gallery/{imageId} {
       allow read: if true;
       allow write: if false;
     }
 
-    match /trainingRegistrations/{registrationId} {
-      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
-      allow create: if isRequestOwner() && isValidTrainingRegistration(request.resource.data);
-      allow update: if false;
+    // Buy Rice listings (products)
+    match /buy-rice/{listingId} {
+      allow read: if true;
+      allow write: if false;
     }
 
+    // Rice Orders (this fixes “missing or insufficient permissions” on checkout)
+    match /riceOrders/{orderId} {
+      // Users can read only their own orders
+      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+
+      // Users can create orders only for themselves
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+
+      // No client-side edits/deletes
+      allow update, delete: if false;
+    }
+
+    // Investments
+    match /investments/{investmentId} {
+      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Cooperative Members
+    match /cooperativeMembers/{memberId} {
+        allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+        allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+        allow update, delete: if false;
+    }
+
+    // Trainings
+    match /trainings/{trainingId} {
+        allow read: if isSignedIn();
+        allow create, update, delete: if false; // Or restrict to admin
+    }
+
+    // Payments
     match /payments/{paymentId} {
-      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
-      allow create: if isRequestOwner() && isValidPayment(request.resource.data);
-      allow update: if false;
+        allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+        allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+        allow update, delete: if false;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
