@@ -413,7 +413,18 @@ export default function Investment({ user, profile }: InvestmentProps) {
 
                     <motion.button
                       onClick={handleInvest}
-                      disabled={processing || !formData.fullName || !formData.address || !formData.phone}
+                      disabled={
+                        processing ||
+                        !formData.fullName ||
+                        !formData.address ||
+                        !formData.phone ||
+                        !formData.nextOfKin ||
+                        !formData.nextOfKinPhone ||
+                        !formData.relationship ||
+                        !formData.bankName ||
+                        !formData.accountNumber ||
+                        !formData.accountName
+                      }
                       whileHover={{ 
                         borderTopLeftRadius: "2rem",
                         borderBottomRightRadius: "2rem",

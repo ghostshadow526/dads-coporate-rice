@@ -72,7 +72,7 @@ export default function InvestmentLanding() {
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-8">
               <Link 
-                to="/investment"
+                to="/login"
                 className="bg-brand-orange text-white px-10 py-5 rounded-2xl font-black text-xl uppercase tracking-tighter hover:bg-white hover:text-brand-orange transition-all shadow-2xl flex items-center group"
               >
                 Start Investing Now
