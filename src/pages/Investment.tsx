@@ -8,6 +8,8 @@ import { sendCompanyNotification } from '../services/notificationService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { ensureWalletBalanceOrPay } from '../services/walletGuard';
+import InvestmentAgreementModal from '../components/InvestmentAgreementModal';
+import InvestmentDisclaimerModal from '../components/InvestmentDisclaimerModal';
 
 interface InvestmentProps {
   user: FirebaseUser;
@@ -20,6 +22,9 @@ export default function Investment({ user, profile }: InvestmentProps) {
   const [processing, setProcessing] = useState(false);
   const [slots, setSlots] = useState(1);
   const [plan, setPlan] = useState('Standard Plan');
+  const [showAgreementModal, setShowAgreementModal] = useState(false);
+  const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
+  const [agreementData, setAgreementData] = useState<any>(null);
   const navigate = useNavigate();
 
   const REGISTRATION_FEE = 5000;
@@ -68,7 +73,14 @@ export default function Investment({ user, profile }: InvestmentProps) {
         });
 
         toast.success('Access fee paid from wallet');
-        setStep(2);
+        // Store temporary investment data for modal
+        setAgreementData({
+          fullName: profile?.displayName || '',
+          address: '',
+          slots: 1,
+          amount: 0,
+        });
+        setShowAgreementModal(true);
         return;
       }
 
@@ -83,6 +95,15 @@ export default function Investment({ user, profile }: InvestmentProps) {
         },
         description: 'You need to fund your wallet to pay the investment access fee.',
       });
+      
+      // After successful payment, show the agreement modal
+      setAgreementData({
+        fullName: profile?.displayName || '',
+        address: '',
+        slots: 1,
+        amount: 0,
+      });
+      setShowAgreementModal(true);
     } catch (error) {
       console.error('Payment error:', error);
       toast.error('Payment failed. Please try again.');
@@ -164,7 +185,37 @@ export default function Investment({ user, profile }: InvestmentProps) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <>
+      {/* Agreement Modal */}
+      {showAgreementModal && (
+        <InvestmentAgreementModal
+          user={user}
+          investment={agreementData}
+          onComplete={() => {
+            setShowAgreementModal(false);
+            setShowDisclaimerModal(true);
+          }}
+          onCancel={() => {
+            setShowAgreementModal(false);
+          }}
+        />
+      )}
+
+      {/* Disclaimer Modal */}
+      {showDisclaimerModal && (
+        <InvestmentDisclaimerModal
+          onAccept={() => {
+            setShowDisclaimerModal(false);
+            setStep(2);
+          }}
+          onDecline={() => {
+            setShowDisclaimerModal(false);
+            setStep(1);
+          }}
+        />
+      )}
+
+      <div className="max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-lg font-bold text-gray-900 mb-0.5 tracking-tight uppercase">Invest in salvagebizhub Rice</h1>
         <p className="text-gray-500 text-[11px]">Secure your future by investing in sustainable agriculture.</p>
@@ -474,6 +525,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
           </AnimatePresence>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

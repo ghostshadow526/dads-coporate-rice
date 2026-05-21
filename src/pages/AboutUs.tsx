@@ -89,17 +89,18 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* About US */}
-      <section className="py-24 bg-gray-50">
+      {/* Why Choose Us */}
+      <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-4xl"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 tracking-tight uppercase mb-8">Why Choose Us</h2>
-            <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="space-y-8"
+            >
+              <h2 className="text-4xl font-bold text-gray-900 tracking-tight uppercase">WHO ARE WE</h2>
+              <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
               <ReadMore maxHeight="200px">
                 <div className="space-y-6">
                   <p>
@@ -116,40 +117,6 @@ export default function AboutUs() {
                   </p>
                 </div>
               </ReadMore>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Why Choose Us*/}
-      <section className="py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="space-y-8"
-            >
-              <h2 className="text-4xl font-bold text-gray-900 tracking-tight uppercase">WHO ARE WE</h2>
-              <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
-                <ReadMore maxHeight="150px">
-                  <div className="space-y-6">
-                    <p>
-                      Salvage Biz-Hub Nigeria Limited stands out as a trusted agribusiness partner because we combine practical farming expertise, structured investment management, and professional business consulting under one integrated platform.
-                      Our Key Strengths.
-                    </p>
-                    <p>
-                      •	Integrated value chain: cultivation, processing, and sales
-                      <br />•	Strong focus on sustainability and food security
-                      <br />•	Transparent and structured investment models
-                      <br />•	Proven track record in agribusiness development
-                      <br />•	Experienced management and technical teams
-                      <br />•	Strong institutional relationships and regulatory compliance
-                      <br />We do not just operate farms, we build sustainable agricultural businesses that deliver value to investors, partners, and communities.
-                    </p>
-                  </div>
-                </ReadMore>
               </div>
             </motion.div>
             <motion.div
@@ -175,6 +142,39 @@ export default function AboutUs() {
               </ul>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* About US */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl"
+          >
+            <h2 className="text-4xl font-bold text-gray-900 tracking-tight uppercase mb-8">Why Choose Us</h2>
+              <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
+                <ReadMore maxHeight="150px">
+                  <div className="space-y-6">
+                    <p>
+                      Salvage Biz-Hub Nigeria Limited stands out as a trusted agribusiness partner because we combine practical farming expertise, structured investment management, and professional business consulting under one integrated platform.
+                      Our Key Strengths.
+                    </p>
+                    <p>
+                      •	Integrated value chain: cultivation, processing, and sales
+                      <br />•	Strong focus on sustainability and food security
+                      <br />•	Transparent and structured investment models
+                      <br />•	Proven track record in agribusiness development
+                      <br />•	Experienced management and technical teams
+                      <br />•	Strong institutional relationships and regulatory compliance
+                      <br />We do not just operate farms, we build sustainable agricultural businesses that deliver value to investors, partners, and communities.
+                    </p>
+                  </div>
+                </ReadMore>
+              </div>
+            </motion.div>
         </div>
       </section>
 
