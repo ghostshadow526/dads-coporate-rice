@@ -541,7 +541,7 @@ export default function Dashboard({ user, profile }: DashboardProps) {
                     <FileText className="text-orange-600 w-6 h-6" />
                   </div>
                   <h3 className="font-bold text-gray-900 mb-2">Constitution</h3>
-                  <p className="text-gray-500 text-sm mb-6 flex-grow">Official salvagebizhub Cooperative Constitution and operational guidelines.</p>
+                  <p className="text-gray-500 text-sm mb-6 flex-grow">SMCS Constitution - Official cooperative constitution and operational guidelines.</p>
                   <button 
                     onClick={() => generateConstitutionPDF(profile)}
                     className="w-full bg-gray-50 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all flex items-center justify-center space-x-2"
@@ -556,7 +556,7 @@ export default function Dashboard({ user, profile }: DashboardProps) {
                     <FileText className="text-orange-600 w-6 h-6" />
                   </div>
                   <h3 className="font-bold text-gray-900 mb-2">Bye-Laws</h3>
-                  <p className="text-gray-500 text-sm mb-6 flex-grow">Rules and regulations governing members of the salvagebizhub Cooperative.</p>
+                  <p className="text-gray-500 text-sm mb-6 flex-grow">SMCS Bye-Laws - Rules and regulations governing members of the cooperative.</p>
                   <button 
                     onClick={() => generateByeLawsPDF(profile)}
                     className="w-full bg-gray-50 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all flex items-center justify-center space-x-2"

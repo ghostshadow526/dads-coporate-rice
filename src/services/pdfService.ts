@@ -88,29 +88,23 @@ export const generateTrainingPassPDF = (registration: any, training: any, user: 
 };
 
 export const generateConstitutionPDF = (user: any) => {
-  const doc = new jsPDF();
-  doc.setFontSize(22);
-  doc.text("salvagebizhub COOPERATIVE CONSTITUTION", 105, 20, { align: 'center' });
-  doc.setFontSize(12);
-  doc.text(`Issued to: ${user?.displayName || 'Member'}`, 20, 40);
-  doc.text("1. NAME AND OBJECTIVES", 20, 60);
-  doc.text("The name of the cooperative shall be salvagebizhub Cooperative Society.", 20, 70);
-  doc.text("2. MEMBERSHIP", 20, 80);
-  doc.text("Membership is open to all individuals interested in sustainable agriculture.", 20, 90);
-  doc.save("salvagebizhub_constitution.pdf");
+  // Download the SMCS Constitution PDF
+  const link = document.createElement('a');
+  link.href = '/SMCS CONSTITUTION.pdf';
+  link.download = 'SMCS_Constitution.pdf';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };
 
 export const generateByeLawsPDF = (user: any) => {
-  const doc = new jsPDF();
-  doc.setFontSize(22);
-  doc.text("salvagebizhub COOPERATIVE BYE-LAWS", 105, 20, { align: 'center' });
-  doc.setFontSize(12);
-  doc.text(`Issued to: ${user?.displayName || 'Member'}`, 20, 40);
-  doc.text("1. MONTHLY DUES", 20, 60);
-  doc.text("Members are required to pay a monthly due of NGN 2,000.", 20, 70);
-  doc.text("2. VOTING RIGHTS", 20, 80);
-  doc.text("Each active member is entitled to one vote during general meetings.", 20, 90);
-  doc.save("salvagebizhub_bye_laws.pdf");
+  // Download the SMCS Bye-Laws PDF
+  const link = document.createElement('a');
+  link.href = '/SMCS BYE LAWS.pdf';
+  link.download = 'SMCS_Bye_Laws.pdf';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };
 
 export const generateAgreementPDF = (data: any) => {
