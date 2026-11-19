@@ -82,6 +82,80 @@ service cloud.firestore {
         allow update, delete: if false;
     }
 
+    // KYC Submissions
+    match /kycSubmissions/{submissionId} {
+        allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+        allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+        allow update: if isSignedIn() && resource.data.uid == request.auth.uid;
+        allow delete: if false;
+    }
+
+    function isValidContractSubmission(data) {
+      return data.uid == request.auth.uid &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 150 &&
+             data.phoneNo is string && data.phoneNo.size() > 0 && data.phoneNo.size() <= 40 &&
+             data.email is string && data.email.size() > 0 && data.email.size() <= 150 &&
+             data.nextOfKin is string && data.nextOfKin.size() <= 150 &&
+             data.nextOfKinPhone is string && data.nextOfKinPhone.size() <= 40 &&
+             data.hectaresInvested is string && data.hectaresInvested.size() > 0 && data.hectaresInvested.size() <= 40 &&
+             data.totalAmountPaid is string && data.totalAmountPaid.size() > 0 && data.totalAmountPaid.size() <= 60 &&
+             data.bankName is string && data.bankName.size() > 0 && data.bankName.size() <= 120 &&
+             data.acctName is string && data.acctName.size() > 0 && data.acctName.size() <= 150 &&
+             data.acctNo is string && data.acctNo.size() > 0 && data.acctNo.size() <= 40 &&
+             data.investorSign is string && data.investorSign.size() > 0 && data.investorSign.size() <= 150 &&
+             data.selectedSlot in ['Bronze', 'Silver', 'Gold', ''] &&
+             data.status == 'submitted';
+    }
+
+    // Investment Contract Form Submissions
+    match /contractSubmissions/{submissionId} {
+        allow get: if isSignedIn() && resource.data.uid == request.auth.uid;
+        allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+        allow create: if isSignedIn() &&
+                         submissionId.matches('^[a-zA-Z0-9_\\-]+$') &&
+                         submissionId.size() <= 128 &&
+                         isValidContractSubmission(request.resource.data);
+        allow update: if isSignedIn() &&
+                         resource.data.uid == request.auth.uid &&
+                         request.resource.data.uid == resource.data.uid &&
+                         isValidContractSubmission(request.resource.data);
+        allow delete: if false;
+    }
+
+    function isValidAgreementSubmission(data) {
+      return data.uid == request.auth.uid &&
+             data.effectiveDay is string && data.effectiveDay.size() <= 40 &&
+             data.effectiveMonthYear is string && data.effectiveMonthYear.size() <= 80 &&
+             data.partnerName is string && data.partnerName.size() > 0 && data.partnerName.size() <= 150 &&
+             data.partnerAddress is string && data.partnerAddress.size() > 0 && data.partnerAddress.size() <= 300 &&
+             data.fundingPackage is string && data.fundingPackage.size() > 0 && data.fundingPackage.size() <= 120 &&
+             data.numberOfSlots is string && data.numberOfSlots.size() > 0 && data.numberOfSlots.size() <= 40 &&
+             data.amountPaid is string && data.amountPaid.size() > 0 && data.amountPaid.size() <= 80 &&
+             data.noticeAddress is string && data.noticeAddress.size() > 0 && data.noticeAddress.size() <= 300 &&
+             data.partnerSignName is string && data.partnerSignName.size() > 0 && data.partnerSignName.size() <= 150 &&
+             data.partnerSignature is string && data.partnerSignature.size() > 0 && data.partnerSignature.size() <= 150 &&
+             data.partnerSignDate is string && data.partnerSignDate.size() <= 50 &&
+             data.nokSignature is string && data.nokSignature.size() <= 150 &&
+             data.nokName is string && data.nokName.size() > 0 && data.nokName.size() <= 150 &&
+             data.nokRelationship is string && data.nokRelationship.size() <= 80 &&
+             data.status == 'submitted';
+    }
+
+    // Joint-Venture Farming Agreement Submissions
+    match /agreementSubmissions/{submissionId} {
+        allow get: if isSignedIn() && resource.data.uid == request.auth.uid;
+        allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+        allow create: if isSignedIn() &&
+                         submissionId.matches('^[a-zA-Z0-9_\\-]+$') &&
+                         submissionId.size() <= 128 &&
+                         isValidAgreementSubmission(request.resource.data);
+        allow update: if isSignedIn() &&
+                         resource.data.uid == request.auth.uid &&
+                         request.resource.data.uid == resource.data.uid &&
+                         isValidAgreementSubmission(request.resource.data);
+        allow delete: if false;
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

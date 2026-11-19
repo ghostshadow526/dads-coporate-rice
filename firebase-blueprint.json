@@ -97,6 +97,66 @@
         "createdAt": { "type": "string", "format": "date-time", "description": "When the payment was made." }
       },
       "required": ["id", "uid", "amount", "purpose", "status"]
+    },
+    "ContractSubmission": {
+      "title": "ContractSubmission",
+      "description": "Fillable SBH Rice Farming Investment Contract Form submission.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user ID of the investor." },
+        "name": { "type": "string", "maxLength": 150, "description": "Investor full name." },
+        "phoneNo": { "type": "string", "maxLength": 40, "description": "Investor phone number." },
+        "email": { "type": "string", "maxLength": 150, "description": "Investor email address." },
+        "hectaresInvested": { "type": "string", "maxLength": 40, "description": "Number of hectares invested." },
+        "totalAmountPaid": { "type": "string", "maxLength": 60, "description": "Total amount paid." },
+        "bankName": { "type": "string", "maxLength": 120, "description": "Investor bank name." },
+        "acctName": { "type": "string", "maxLength": 150, "description": "Investor bank account name." },
+        "acctNo": { "type": "string", "maxLength": 40, "description": "Investor bank account number." },
+        "investorSign": { "type": "string", "maxLength": 150, "description": "Investor typed signature." },
+        "selectedSlot": { "type": "string", "enum": ["Bronze", "Silver", "Gold", ""], "description": "Selected slot package." },
+        "status": { "type": "string", "enum": ["submitted"], "description": "Submission status." },
+        "submittedAt": { "type": "string", "format": "date-time", "description": "Submission timestamp." }
+      },
+      "required": ["uid", "name", "phoneNo", "email", "hectaresInvested", "totalAmountPaid", "bankName", "acctName", "acctNo", "investorSign", "status"]
+    },
+    "KycSubmission": {
+      "title": "KycSubmission",
+      "description": "Fillable SBH KYC Form submission.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user ID of the investor." },
+        "fullName": { "type": "string", "maxLength": 150, "description": "Applicant full name." },
+        "email": { "type": "string", "maxLength": 150, "description": "Applicant email." },
+        "phoneNumber": { "type": "string", "maxLength": 40, "description": "Applicant phone number." },
+        "status": { "type": "string", "enum": ["submitted"], "description": "Submission status." },
+        "submittedAt": { "type": "string", "format": "date-time", "description": "Submission timestamp." }
+      },
+      "required": ["uid", "fullName", "email", "phoneNumber", "status"]
+    },
+    "AgreementSubmission": {
+      "title": "AgreementSubmission",
+      "description": "Fillable 6-page SBH Joint-Venture Farming Agreement submission.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user ID of the partner." },
+        "effectiveDay": { "type": "string", "maxLength": 40, "description": "Agreement effective day." },
+        "effectiveMonthYear": { "type": "string", "maxLength": 80, "description": "Agreement effective month and year." },
+        "partnerName": { "type": "string", "maxLength": 150, "description": "Partner full name." },
+        "partnerAddress": { "type": "string", "maxLength": 300, "description": "Partner address." },
+        "fundingPackage": { "type": "string", "maxLength": 120, "description": "Selected funding package." },
+        "numberOfSlots": { "type": "string", "maxLength": 40, "description": "Number of slots subscribed." },
+        "amountPaid": { "type": "string", "maxLength": 80, "description": "Amount paid." },
+        "noticeAddress": { "type": "string", "maxLength": 300, "description": "Address for legal notices." },
+        "partnerSignName": { "type": "string", "maxLength": 150, "description": "Partner printed name on signature block." },
+        "partnerSignature": { "type": "string", "maxLength": 150, "description": "Partner typed signature." },
+        "partnerSignDate": { "type": "string", "maxLength": 50, "description": "Partner signature date." },
+        "nokSignature": { "type": "string", "maxLength": 150, "description": "Next of Kin typed signature." },
+        "nokName": { "type": "string", "maxLength": 150, "description": "Next of Kin name." },
+        "nokRelationship": { "type": "string", "maxLength": 80, "description": "Next of Kin relationship." },
+        "status": { "type": "string", "enum": ["submitted"], "description": "Submission status." },
+        "submittedAt": { "type": "string", "format": "date-time", "description": "Submission timestamp." }
+      },
+      "required": ["uid", "partnerName", "partnerAddress", "fundingPackage", "numberOfSlots", "amountPaid", "noticeAddress", "partnerSignName", "partnerSignature", "nokName", "status"]
     }
   },
   "firestore": {
@@ -106,6 +166,9 @@
     "/riceOrders/{orderId}": { "schema": "RiceOrder", "description": "Rice purchase records." },
     "/trainings/{trainingId}": { "schema": "Training", "description": "Training programs." },
     "/trainingRegistrations/{registrationId}": { "schema": "TrainingRegistration", "description": "Training registrations." },
-    "/payments/{paymentId}": { "schema": "Payment", "description": "Payment records." }
+    "/payments/{paymentId}": { "schema": "Payment", "description": "Payment records." },
+    "/contractSubmissions/{submissionId}": { "schema": "ContractSubmission", "description": "Submitted SBH Investment Contract Forms." },
+    "/kycSubmissions/{submissionId}": { "schema": "KycSubmission", "description": "Submitted SBH KYC Forms." },
+    "/agreementSubmissions/{submissionId}": { "schema": "AgreementSubmission", "description": "Submitted 6-Page SBH Joint-Venture Farming Agreements." }
   }
 }

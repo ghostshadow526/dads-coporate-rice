@@ -40,6 +40,8 @@ export default function Navbar({ user, profile }: NavbarProps) {
       ]
     },
     { name: 'Investor Portal', path: '/investment-info' },
+    { name: 'Investment Contract', path: '/contract' },
+    { name: 'KYC Verification', path: '/kyc' },
     { name: 'Join Cooperative (SMCS)', path: '/cooperative-info' },
     { name: 'Buy Rice', path: '/buy-rice' },
     { name: 'Register for Training', path: '/training' },

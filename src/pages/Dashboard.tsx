@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { FirebaseUser, auth, db, collection, query, where, onSnapshot, orderBy, Timestamp, addDoc, doc, setDoc, updateDoc, updateProfile } from '../firebase';
 import { UserProfile, Investment, CooperativeMember, RiceOrder, TrainingRegistration, PaymentRecord, Training } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -13,6 +13,7 @@ import {
   ShoppingBag, 
   GraduationCap, 
   CheckCircle, 
+  ShieldCheck, 
   Clock, 
   AlertCircle,
   Search,
@@ -535,6 +536,81 @@ export default function Dashboard({ user, profile }: DashboardProps) {
               className="space-y-8"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Official Contract Document (Form 1) */}
+                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col">
+                  <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
+                    <FileText className="text-emerald-700 w-6 h-6" />
+                  </div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <h3 className="font-bold text-gray-900">1. SBH Contract Form</h3>
+                    <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full uppercase">
+                      Form 1 • Fillable
+                    </span>
+                  </div>
+                  <p className="text-gray-500 text-sm mb-6 flex-grow">
+                    Official Salvage Biz-Hub Nig Ltd Rice Farming Investment (EOP) Contract Form. Complete first after access fee.
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <Link 
+                      to="/contract"
+                      className="w-full bg-green-700 text-white py-3 rounded-xl font-bold hover:bg-green-800 transition-all flex items-center justify-center space-x-2 shadow-md"
+                    >
+                      <FileText className="w-4 h-4" />
+                      <span>Open & Fill Contract Form</span>
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Official KYC Document (Form 2) */}
+                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col">
+                  <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center mb-6">
+                    <ShieldCheck className="text-green-600 w-6 h-6" />
+                  </div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <h3 className="font-bold text-gray-900">2. SBH KYC Form</h3>
+                    <span className="text-[10px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full uppercase">
+                      Form 2 • Fillable
+                    </span>
+                  </div>
+                  <p className="text-gray-500 text-sm mb-6 flex-grow">
+                    Official Salvage Biz-Hub Nig Ltd Know Your Customer (KYC) Document. Complete second or download.
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <Link 
+                      to="/kyc"
+                      className="w-full bg-brand-orange text-white py-3 rounded-xl font-bold hover:bg-brand-orange/90 transition-all flex items-center justify-center space-x-2 shadow-md"
+                    >
+                      <FileText className="w-4 h-4" />
+                      <span>Open & Fill KYC Document</span>
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Official Joint-Venture Farming Agreement (Form 3) */}
+                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col">
+                  <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
+                    <FileText className="text-emerald-700 w-6 h-6" />
+                  </div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <h3 className="font-bold text-gray-900">3. Joint-Venture Agreement</h3>
+                    <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full uppercase">
+                      Form 3 • 6 Pages
+                    </span>
+                  </div>
+                  <p className="text-gray-500 text-sm mb-6 flex-grow">
+                    Official Salvage Biz-Hub Nig Ltd 6-Page Joint-Venture Farming Agreement signed after KYC.
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <Link 
+                      to="/agreement"
+                      className="w-full bg-emerald-700 text-white py-3 rounded-xl font-bold hover:bg-emerald-800 transition-all flex items-center justify-center space-x-2 shadow-md"
+                    >
+                      <FileText className="w-4 h-4" />
+                      <span>Open & Sign Agreement</span>
+                    </Link>
+                  </div>
+                </div>
+
                 {/* Constitution & Bye-Laws */}
                 <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col">
                   <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mb-6">

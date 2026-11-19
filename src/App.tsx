@@ -21,6 +21,9 @@ import CooperativeLanding from './pages/CooperativeLanding';
 import InvestmentLanding from './pages/InvestmentLanding';
 import PaymentStatus from './pages/PaymentStatus';
 import Admin from './pages/Admin';
+import Kyc from './pages/Kyc';
+import ContractForm from './pages/ContractForm';
+import AgreementForm from './pages/AgreementForm';
 
 // Components
 import Navbar from './components/Navbar';
@@ -61,6 +64,9 @@ export default function App() {
       state: raw?.state ?? '',
       role: raw?.role || 'user',
       isUpgraded: raw?.isUpgraded ?? false,
+      contractCompleted: raw?.contractCompleted ?? false,
+      kycCompleted: raw?.kycCompleted ?? false,
+      agreementCompleted: raw?.agreementCompleted ?? false,
       walletBalance: typeof raw?.walletBalance === 'number' ? raw.walletBalance : 0,
       createdAt,
     };
@@ -182,6 +188,9 @@ function AppContent({ user, userProfile }: { user: FirebaseUser | null, userProf
             <Route path="/contact" element={<Contact />} />
             <Route path="/cooperative-info" element={<CooperativeLanding />} />
             <Route path="/investment-info" element={<InvestmentLanding />} />
+            <Route path="/contract" element={<ContractForm user={user} profile={userProfile} />} />
+            <Route path="/kyc" element={<Kyc user={user} profile={userProfile} />} />
+            <Route path="/agreement" element={<AgreementForm user={user} profile={userProfile} />} />
             <Route path="/payment-status" element={<PaymentStatus />} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
             <Route

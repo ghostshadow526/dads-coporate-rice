@@ -10,6 +10,9 @@ export interface UserProfile {
   state?: string;
   role: 'user' | 'admin';
   isUpgraded?: boolean;
+  contractCompleted?: boolean;
+  kycCompleted?: boolean;
+  agreementCompleted?: boolean;
   walletBalance?: number;
   createdAt: Timestamp;
 }

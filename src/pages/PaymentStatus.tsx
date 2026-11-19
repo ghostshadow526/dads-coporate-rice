@@ -10,8 +10,14 @@ export default function PaymentStatus() {
   const reference = searchParams.get('reference') || searchParams.get('ref');
   const [status, setStatus] = useState<'loading' | 'success' | 'failed'>('loading');
   const [message, setMessage] = useState('Verifying your payment...');
+  const [postPaymentRedirect, setPostPaymentRedirect] = useState<string | null>(null);
 
   useEffect(() => {
+    const savedRedirect = sessionStorage.getItem('postPaymentRedirect');
+    if (savedRedirect) {
+      setPostPaymentRedirect(savedRedirect);
+    }
+
     const verifyPayment = async () => {
       if (!reference) {
         setStatus('failed');
@@ -58,12 +64,24 @@ export default function PaymentStatus() {
             </div>
             <h2 className="text-3xl font-black text-gray-900 mb-4 uppercase tracking-tighter">Payment Successful!</h2>
             <p className="text-gray-600 mb-8">{message}</p>
-            <Link
-              to="/dashboard"
-              className="w-full bg-brand-orange text-white py-4 rounded-full font-bold hover:bg-brand-dark transition-all shadow-lg"
-            >
-              Go to Dashboard
-            </Link>
+            <div className="w-full flex flex-col gap-3">
+              {postPaymentRedirect && (
+                <Link
+                  to={postPaymentRedirect}
+                  onClick={() => sessionStorage.removeItem('postPaymentRedirect')}
+                  className="w-full bg-green-700 text-white py-4 rounded-full font-bold hover:bg-green-800 transition-all shadow-lg"
+                >
+                  Continue to Contract, KYC & Agreement Forms
+                </Link>
+              )}
+              <Link
+                to="/dashboard"
+                onClick={() => sessionStorage.removeItem('postPaymentRedirect')}
+                className="w-full bg-brand-orange text-white py-4 rounded-full font-bold hover:bg-brand-dark transition-all shadow-lg"
+              >
+                Go to Dashboard
+              </Link>
+            </div>
           </div>
         )}
 

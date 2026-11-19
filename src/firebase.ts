@@ -4,12 +4,12 @@ export { initializeFirestore as getFirestore, collection, doc, getDoc, getDocs, 
 
 // Import the Firebase configuration from JSON (Salvage project)
 import firebaseConfig from '../firebase-applet-config.json';
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { initializeFirestore, getDocFromServer, doc } from 'firebase/firestore';
 
-// Initialize Firebase SDK
-const app = initializeApp(firebaseConfig as any);
+// Initialize Firebase SDK safely
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig as any);
 
 // Suppress Firebase Firestore database not found warnings during initialization
 const originalWarn = console.warn;
