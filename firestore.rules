@@ -156,6 +156,45 @@ service cloud.firestore {
         allow delete: if false;
     }
 
+    function isValidCertificateSubmission(data) {
+      return data.uid == request.auth.uid &&
+             data.keys().hasAll([
+               'uid', 'irCode', 'investorName', 'periodMonths', 'tenureOfInvestment',
+               'areaOfInvestment', 'amountInvested', 'subscriptionDate', 'paymentDate',
+               'status', 'submittedAt'
+             ]) &&
+             data.keys().hasOnly([
+               'uid', 'irCode', 'investorName', 'periodMonths', 'tenureOfInvestment',
+               'areaOfInvestment', 'amountInvested', 'subscriptionDate', 'paymentDate',
+               'status', 'submittedAt'
+             ]) &&
+             data.irCode is string && data.irCode.size() <= 60 &&
+             data.investorName is string && data.investorName.size() > 0 && data.investorName.size() <= 150 &&
+             data.periodMonths is string && data.periodMonths.size() > 0 && data.periodMonths.size() <= 40 &&
+             data.tenureOfInvestment is string && data.tenureOfInvestment.size() > 0 && data.tenureOfInvestment.size() <= 80 &&
+             data.areaOfInvestment is string && data.areaOfInvestment.size() > 0 && data.areaOfInvestment.size() <= 120 &&
+             data.amountInvested is string && data.amountInvested.size() > 0 && data.amountInvested.size() <= 80 &&
+             data.subscriptionDate is string && data.subscriptionDate.size() > 0 && data.subscriptionDate.size() <= 50 &&
+             data.paymentDate is string && data.paymentDate.size() > 0 && data.paymentDate.size() <= 50 &&
+             data.status == 'submitted' &&
+             data.submittedAt is timestamp;
+    }
+
+    // Certificate of Investment Submissions
+    match /certificateSubmissions/{submissionId} {
+        allow get: if isSignedIn() && resource.data.uid == request.auth.uid;
+        allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+        allow create: if isSignedIn() &&
+                         submissionId.matches('^[a-zA-Z0-9_\\-]+$') &&
+                         submissionId.size() <= 128 &&
+                         isValidCertificateSubmission(request.resource.data);
+        allow update: if isSignedIn() &&
+                         resource.data.uid == request.auth.uid &&
+                         request.resource.data.uid == resource.data.uid &&
+                         isValidCertificateSubmission(request.resource.data);
+        allow delete: if false;
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

@@ -329,31 +329,38 @@ export default function Kyc({ user, profile }: KycProps) {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-2 sm:px-4 lg:px-8 py-6 flex flex-col items-center">
-        {/* Three-Step Onboarding Flow Strip */}
-        <div className="w-full max-w-4xl mb-4 bg-slate-800/80 border border-white/10 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+        {/* Four-Step Onboarding Flow Strip */}
+        <div className="w-full max-w-5xl mb-4 bg-slate-800/80 border border-white/10 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <div className="flex items-center flex-wrap gap-2">
             <Link
               to={isOnboarding ? '/contract?onboarding=true' : '/contract'}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-emerald-400 font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-emerald-400 font-semibold transition-colors"
             >
-              1. SBH Contract Form
+              1. Contract Form
             </Link>
             <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-brand-orange text-white font-bold">
-              2. SBH KYC Form
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-brand-orange text-white font-bold">
+              2. KYC Form
             </span>
             <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <Link
               to="/agreement"
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold transition-colors"
             >
-              3. Joint-Venture Agreement
+              3. JV Agreement
+            </Link>
+            <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <Link
+              to="/certificate"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold transition-colors"
+            >
+              4. Certificate
             </Link>
           </div>
           <span className="text-[11px] text-slate-400">
             {isOnboarding
-              ? 'Step 2 of 3: Submit KYC to open your Joint-Venture Agreement.'
-              : 'Form 2 of 3 • Complete directly on the original SBH KYC document.'}
+              ? 'Step 2 of 4: Submit KYC to open Agreement & Certificate.'
+              : 'Form 2 of 4 • Complete directly on the original SBH KYC document.'}
           </span>
         </div>
 

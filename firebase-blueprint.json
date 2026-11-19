@@ -157,6 +157,25 @@
         "submittedAt": { "type": "string", "format": "date-time", "description": "Submission timestamp." }
       },
       "required": ["uid", "partnerName", "partnerAddress", "fundingPackage", "numberOfSlots", "amountPaid", "noticeAddress", "partnerSignName", "partnerSignature", "nokName", "status"]
+    },
+    "CertificateSubmission": {
+      "title": "CertificateSubmission",
+      "description": "Fillable SBH Certificate of Investment submission.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user ID of the investor." },
+        "irCode": { "type": "string", "maxLength": 60, "description": "Investor reference IR Code." },
+        "investorName": { "type": "string", "maxLength": 150, "description": "Certified investor full name." },
+        "periodMonths": { "type": "string", "maxLength": 40, "description": "Investment duration in months." },
+        "tenureOfInvestment": { "type": "string", "maxLength": 80, "description": "Tenure of investment." },
+        "areaOfInvestment": { "type": "string", "maxLength": 120, "description": "Area of investment." },
+        "amountInvested": { "type": "string", "maxLength": 80, "description": "Amount invested." },
+        "subscriptionDate": { "type": "string", "maxLength": 50, "description": "Subscription date." },
+        "paymentDate": { "type": "string", "maxLength": 50, "description": "Payment date." },
+        "status": { "type": "string", "enum": ["submitted"], "description": "Submission status." },
+        "submittedAt": { "type": "string", "format": "date-time", "description": "Submission timestamp." }
+      },
+      "required": ["uid", "investorName", "periodMonths", "tenureOfInvestment", "areaOfInvestment", "amountInvested", "subscriptionDate", "paymentDate", "status", "submittedAt"]
     }
   },
   "firestore": {
@@ -169,6 +188,7 @@
     "/payments/{paymentId}": { "schema": "Payment", "description": "Payment records." },
     "/contractSubmissions/{submissionId}": { "schema": "ContractSubmission", "description": "Submitted SBH Investment Contract Forms." },
     "/kycSubmissions/{submissionId}": { "schema": "KycSubmission", "description": "Submitted SBH KYC Forms." },
-    "/agreementSubmissions/{submissionId}": { "schema": "AgreementSubmission", "description": "Submitted 6-Page SBH Joint-Venture Farming Agreements." }
+    "/agreementSubmissions/{submissionId}": { "schema": "AgreementSubmission", "description": "Submitted 6-Page SBH Joint-Venture Farming Agreements." },
+    "/certificateSubmissions/{submissionId}": { "schema": "CertificateSubmission", "description": "Submitted SBH Certificates of Investment." }
   }
 }

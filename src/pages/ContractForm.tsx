@@ -210,14 +210,14 @@ export default function ContractForm({ user, profile }: ContractFormProps) {
                     Official SBH Investment Contract Form
                   </h1>
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                    Form 1 of 3
+                    Form 1 of 4
                   </span>
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-500/20 text-green-400 border border-green-500/30">
                     <ShieldCheck className="w-3 h-3" /> Digitally Fillable
                   </span>
                 </div>
                 <p className="text-xs text-slate-400">
-                  Salvage Biz-Hub Nig Ltd • RC: 1840192 • Complete Contract Form first, then KYC Form & Joint-Venture Agreement
+                  Salvage Biz-Hub Nig Ltd • RC: 1840192 • Complete Contract Form first, then KYC, Agreement & Certificate
                 </p>
               </div>
             </div>
@@ -304,25 +304,32 @@ export default function ContractForm({ user, profile }: ContractFormProps) {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-2 sm:px-4 lg:px-8 py-6 flex flex-col items-center">
-        {/* Three-Step Onboarding Flow Strip */}
-        <div className="w-full max-w-4xl mb-4 bg-slate-800/80 border border-white/10 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+        {/* Four-Step Onboarding Flow Strip */}
+        <div className="w-full max-w-5xl mb-4 bg-slate-800/80 border border-white/10 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <div className="flex items-center flex-wrap gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-green-600 text-white font-bold">
-              1. SBH Contract Form
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-green-600 text-white font-bold">
+              1. Contract Form
             </span>
             <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <Link
               to={isOnboarding ? '/kyc?onboarding=true' : '/kyc'}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold transition-colors"
             >
-              2. SBH KYC Form
+              2. KYC Form
             </Link>
             <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <Link
               to="/agreement"
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold transition-colors"
             >
-              3. Joint-Venture Agreement
+              3. JV Agreement
+            </Link>
+            <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <Link
+              to="/certificate"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold transition-colors"
+            >
+              4. Certificate
             </Link>
           </div>
           <span className="text-[11px] text-slate-400">
@@ -809,8 +816,8 @@ export default function ContractForm({ user, profile }: ContractFormProps) {
               <Lock className="w-4 h-4 text-emerald-400" />
             </div>
             <div>
-              <p className="font-bold text-white">Step 1 of 3: SBH Investment Contract Form</p>
-              <p className="text-slate-400">After submitting this contract form, you will proceed to KYC Verification and then the Joint-Venture Agreement.</p>
+              <p className="font-bold text-white">Step 1 of 4: SBH Investment Contract Form</p>
+              <p className="text-slate-400">After submitting this contract form, you will complete KYC, Agreement, and Certificate of Investment.</p>
             </div>
           </div>
 

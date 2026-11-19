@@ -12,6 +12,7 @@ import {
   LogOut,
   Home,
   Wallet,
+  Award,
   X
 } from 'lucide-react';
 import { auth } from '../firebase';
@@ -52,6 +53,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
     { id: 'contract', label: 'Contract Form', icon: FileText, path: '/contract' },
     { id: 'kyc', label: 'KYC Document', icon: FileCheck, path: '/kyc' },
     { id: 'agreement', label: 'JV Agreement', icon: FileText, path: '/agreement' },
+    { id: 'certificate', label: 'Certificate', icon: Award, path: '/certificate' },
     { id: 'documents', label: 'Documents', icon: FileText, path: '/dashboard?tab=documents' },
     { id: 'payments', label: 'Payments', icon: CreditCard, path: '/dashboard?tab=payments' },
     { id: 'home', label: 'Back to Home', icon: Home, path: '/' },

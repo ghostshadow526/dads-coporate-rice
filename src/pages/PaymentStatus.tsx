@@ -71,7 +71,7 @@ export default function PaymentStatus() {
                   onClick={() => sessionStorage.removeItem('postPaymentRedirect')}
                   className="w-full bg-green-700 text-white py-4 rounded-full font-bold hover:bg-green-800 transition-all shadow-lg"
                 >
-                  Continue to Contract, KYC & Agreement Forms
+                  Continue to Onboarding Forms (Contract, KYC, Agreement & Certificate)
                 </Link>
               )}
               <Link

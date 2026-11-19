@@ -24,6 +24,7 @@ import Admin from './pages/Admin';
 import Kyc from './pages/Kyc';
 import ContractForm from './pages/ContractForm';
 import AgreementForm from './pages/AgreementForm';
+import CertificateForm from './pages/CertificateForm';
 
 // Components
 import Navbar from './components/Navbar';
@@ -67,6 +68,7 @@ export default function App() {
       contractCompleted: raw?.contractCompleted ?? false,
       kycCompleted: raw?.kycCompleted ?? false,
       agreementCompleted: raw?.agreementCompleted ?? false,
+      certificateCompleted: raw?.certificateCompleted ?? false,
       walletBalance: typeof raw?.walletBalance === 'number' ? raw.walletBalance : 0,
       createdAt,
     };
@@ -191,6 +193,7 @@ function AppContent({ user, userProfile }: { user: FirebaseUser | null, userProf
             <Route path="/contract" element={<ContractForm user={user} profile={userProfile} />} />
             <Route path="/kyc" element={<Kyc user={user} profile={userProfile} />} />
             <Route path="/agreement" element={<AgreementForm user={user} profile={userProfile} />} />
+            <Route path="/certificate" element={<CertificateForm user={user} profile={userProfile} />} />
             <Route path="/payment-status" element={<PaymentStatus />} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
             <Route

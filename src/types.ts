@@ -13,6 +13,7 @@ export interface UserProfile {
   contractCompleted?: boolean;
   kycCompleted?: boolean;
   agreementCompleted?: boolean;
+  certificateCompleted?: boolean;
   walletBalance?: number;
   createdAt: Timestamp;
 }

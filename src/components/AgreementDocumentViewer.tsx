@@ -12,6 +12,7 @@ import {
 } from '../services/agreementPdfService';
 import { fetchUserContractSubmission } from '../services/contractPdfService';
 import { fetchUserKycSubmission } from '../services/kycPdfService';
+import CertificatePopupModal from './CertificatePopupModal';
 import {
   FileText,
   Download,
@@ -61,6 +62,7 @@ export default function AgreementDocumentViewer({
   const [activeField, setActiveField] = useState<string | null>(null);
   const [loadingExisting, setLoadingExisting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showCertificatePopup, setShowCertificatePopup] = useState(false);
   const [validationErrors, setValidationErrors] = useState<ValidationErrorItem[]>([]);
   const navigate = useNavigate();
 
@@ -196,8 +198,8 @@ export default function AgreementDocumentViewer({
         id: submission.id,
         submittedAt: new Date(),
       });
-      setShowSuccessModal(true);
-      toast.success('Joint-Venture Farming Agreement signed & submitted!');
+      setShowCertificatePopup(true);
+      toast.success('Agreement signed! Opening your final Certificate of Investment...');
       if (onSubmitted) {
         onSubmitted(submission.id, formData);
       }
@@ -262,7 +264,7 @@ export default function AgreementDocumentViewer({
                       SBH Joint-Venture Farming Agreement
                     </h1>
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                      Form 3 of 3 • 6 Pages
+                      Form 3 of 4 • 6 Pages
                     </span>
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-green-500/20 text-green-400 border border-green-500/30">
                       <ShieldCheck className="w-3 h-3" /> Digitally Fillable
@@ -417,13 +419,13 @@ export default function AgreementDocumentViewer({
 
       {/* Main Scrollable Document Body */}
       <main className="flex-1 w-full max-w-6xl mx-auto px-2 sm:px-4 lg:px-8 py-6 flex flex-col items-center">
-        {/* Three-Step Onboarding Flow Strip */}
-        <div className="w-full max-w-4xl mb-4 bg-slate-800/80 border border-white/10 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+        {/* Four-Step Onboarding Flow Strip */}
+        <div className="w-full max-w-5xl mb-4 bg-slate-800/80 border border-white/10 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <div className="flex items-center flex-wrap gap-2">
             <Link
               to="/contract?onboarding=true"
               onClick={onClosePopup}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-emerald-400 font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-emerald-400 font-semibold transition-colors"
             >
               1. Contract Form
             </Link>
@@ -431,14 +433,22 @@ export default function AgreementDocumentViewer({
             <Link
               to="/kyc?onboarding=true"
               onClick={onClosePopup}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-emerald-400 font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-emerald-400 font-semibold transition-colors"
             >
               2. KYC Form
             </Link>
             <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-600 text-white font-bold">
-              3. Joint-Venture Agreement
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-600 text-white font-bold">
+              3. JV Agreement
             </span>
+            <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <Link
+              to="/certificate"
+              onClick={onClosePopup}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold transition-colors"
+            >
+              4. Certificate
+            </Link>
           </div>
           <span className="text-[11px] text-slate-400">
             {loadingExisting ? 'Syncing your details...' : 'Fillable blanks are on Page 1, Page 2, and Page 6 (*).'}
@@ -771,9 +781,9 @@ export default function AgreementDocumentViewer({
               <Lock className="w-4 h-4 text-emerald-400" />
             </div>
             <div>
-              <p className="font-bold text-white">Step 3 of 3: Joint-Venture Farming Agreement</p>
+              <p className="font-bold text-white">Step 3 of 4: Joint-Venture Farming Agreement</p>
               <p className="text-slate-400">
-                Complete Pages 1, 2 & 6, then submit to unlock your investment slots and download your signed 6-page PDF.
+                Complete Pages 1, 2 & 6, then submit to open your final Certificate of Investment and download your 6-page PDF.
               </p>
             </div>
           </div>
@@ -853,20 +863,17 @@ export default function AgreementDocumentViewer({
               </div>
 
               <div className="flex flex-col gap-3">
-                {user && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowSuccessModal(false);
-                      if (onClosePopup) onClosePopup();
-                      navigate('/invest');
-                    }}
-                    className="w-full inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-black py-3.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg"
-                  >
-                    <span>Proceed to Investment Packages</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSuccessModal(false);
+                    setShowCertificatePopup(true);
+                  }}
+                  className="w-full inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-black py-3.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg"
+                >
+                  <span>Open Final Certificate of Investment (Step 4)</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
@@ -897,6 +904,22 @@ export default function AgreementDocumentViewer({
           </div>
         )}
       </AnimatePresence>
+
+      {/* Post-Agreement Final Form Popup: Certificate of Investment */}
+      <CertificatePopupModal
+        isOpen={showCertificatePopup}
+        onClose={() => {
+          setShowCertificatePopup(false);
+          if (submittedData) {
+            setShowSuccessModal(true);
+          }
+        }}
+        user={user}
+        profile={profile}
+        agreementSubmittedId={submittedData?.id}
+        onDownloadAgreementPdf={handleDownload}
+        onDownloadKycPdf={onDownloadKycPdf}
+      />
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { FirebaseUser, db, collection, addDoc, Timestamp, query, where, getDocs, doc, updateDoc } from '../firebase';
 import { UserProfile, Investment as InvestmentType, PaymentRecord } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { TrendingUp, CheckCircle, ArrowRight, ShieldCheck, DollarSign, Info, FileText, UserCheck, FileSignature } from 'lucide-react';
+import { TrendingUp, CheckCircle, ArrowRight, ShieldCheck, DollarSign, Info, FileText, UserCheck, FileSignature, Award } from 'lucide-react';
 import { sendCompanyNotification } from '../services/notificationService';
 import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -23,6 +23,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
   const [hasContract, setHasContract] = useState(false);
   const [hasKyc, setHasKyc] = useState(false);
   const [hasAgreement, setHasAgreement] = useState(false);
+  const [hasCertificate, setHasCertificate] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const autoPayTriggeredRef = useRef(false);
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
     const checkAccess = async () => {
       if (!user) return;
       try {
-        const [accessSnap, contractSnap, kycSnap, agreementSnap] = await Promise.all([
+        const [accessSnap, contractSnap, kycSnap, agreementSnap, certSnap] = await Promise.all([
           getDocs(
             query(
               collection(db, 'payments'),
@@ -46,20 +47,23 @@ export default function Investment({ user, profile }: InvestmentProps) {
           getDocs(query(collection(db, 'contractSubmissions'), where('uid', '==', user.uid))),
           getDocs(query(collection(db, 'kycSubmissions'), where('uid', '==', user.uid))),
           getDocs(query(collection(db, 'agreementSubmissions'), where('uid', '==', user.uid))),
+          getDocs(query(collection(db, 'certificateSubmissions'), where('uid', '==', user.uid))),
         ]);
 
         const paid = !accessSnap.empty;
         const contractDone = !contractSnap.empty || Boolean(profile?.contractCompleted);
         const kycDone = !kycSnap.empty || Boolean(profile?.kycCompleted);
         const agreementDone = !agreementSnap.empty || Boolean(profile?.agreementCompleted);
+        const certDone = !certSnap.empty || Boolean(profile?.certificateCompleted);
 
         setHasPaidAccessFee(paid);
         setHasContract(contractDone);
         setHasKyc(kycDone);
         setHasAgreement(agreementDone);
+        setHasCertificate(certDone);
 
         if (paid) {
-          if (contractDone && kycDone && agreementDone) {
+          if (contractDone && kycDone && agreementDone && certDone) {
             setStep(2);
           } else {
             setStep(1);
@@ -72,7 +76,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
       }
     };
     checkAccess();
-  }, [user, profile?.contractCompleted, profile?.kycCompleted, profile?.agreementCompleted]);
+  }, [user, profile?.contractCompleted, profile?.kycCompleted, profile?.agreementCompleted, profile?.certificateCompleted]);
 
   // If user returned from Korapay wallet funding to complete the 5k fee
   useEffect(() => {
@@ -251,7 +255,7 @@ export default function Investment({ user, profile }: InvestmentProps) {
                   <div>
                     <h3 className="font-bold text-blue-900 mb-1 uppercase">Investment Access & Form Fee</h3>
                     <p className="text-blue-800 text-sm">
-                      To access our investment opportunities, a one-time fee of <strong>NGN 5,000</strong> is required. Once paid, you will complete: <strong>1. SBH Contract Form</strong>, <strong>2. SBH KYC Form</strong>, and <strong>3. Joint-Venture Farming Agreement</strong>.
+                      To access our investment opportunities, a one-time fee of <strong>NGN 5,000</strong> is required. Once paid, you will complete: <strong>1. Contract Form</strong>, <strong>2. KYC Form</strong>, <strong>3. Joint-Venture Agreement</strong>, and <strong>4. Certificate of Investment</strong>.
                     </p>
                   </div>
                 </div>
@@ -303,17 +307,17 @@ export default function Investment({ user, profile }: InvestmentProps) {
                   <div>
                     <h3 className="font-bold text-green-900 mb-1 uppercase">₦5,000 Fee Paid — Complete Required Documents</h3>
                     <p className="text-green-800 text-sm">
-                      Complete your three official Salvage Biz-Hub documents in sequence before selecting your investment slots: <strong>1. Contract Form</strong> → <strong>2. KYC Form</strong> → <strong>3. Joint-Venture Farming Agreement</strong>.
+                      Complete your four official Salvage Biz-Hub documents in sequence before selecting your investment slots: <strong>1. Contract Form</strong> → <strong>2. KYC Form</strong> → <strong>3. Joint-Venture Agreement</strong> → <strong>4. Certificate of Investment</strong>.
                     </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Form 1: Contract Form */}
-                  <div className={`p-5 rounded-2xl border-2 transition-all flex flex-col ${hasContract ? 'bg-green-50/60 border-green-300' : 'bg-white border-green-600 shadow-md'}`}>
+                  <div className={`p-4 rounded-2xl border-2 transition-all flex flex-col ${hasContract ? 'bg-green-50/60 border-green-300' : 'bg-white border-green-600 shadow-md'}`}>
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-green-700 text-white">
-                        Step 1 (First)
+                        Step 1
                       </span>
                       {hasContract && (
                         <span className="inline-flex items-center gap-1 text-xs font-bold text-green-700">
@@ -323,30 +327,30 @@ export default function Investment({ user, profile }: InvestmentProps) {
                     </div>
                     <div className="flex items-center gap-2 mb-2">
                       <FileText className="w-5 h-5 text-green-700 shrink-0" />
-                      <h4 className="font-bold text-gray-900 text-sm">SBH Contract Form</h4>
+                      <h4 className="font-bold text-gray-900 text-sm">Contract Form</h4>
                     </div>
                     <p className="text-xs text-gray-600 mb-4 flex-grow">
-                      Official Salvage Biz-Hub Nig Ltd Rice Farming Investment (EOP) Contract document.
+                      Official Salvage Biz-Hub Rice Farming Investment (EOP) Contract.
                     </p>
                     <button
                       type="button"
                       onClick={() => navigate('/contract?onboarding=true')}
-                      className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all ${
+                      className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all ${
                         hasContract
                           ? 'bg-green-100 text-green-800 hover:bg-green-200'
                           : 'bg-green-700 text-white hover:bg-green-800 shadow-md'
                       }`}
                     >
-                      <span>{hasContract ? 'Review Contract Form' : 'Fill Contract Form'}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>{hasContract ? 'Review' : 'Fill Form 1'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
                   {/* Form 2: KYC Form */}
-                  <div className={`p-5 rounded-2xl border-2 transition-all flex flex-col ${hasKyc ? 'bg-green-50/60 border-green-300' : hasContract ? 'bg-white border-brand-orange shadow-md' : 'bg-gray-50 border-gray-200'}`}>
+                  <div className={`p-4 rounded-2xl border-2 transition-all flex flex-col ${hasKyc ? 'bg-green-50/60 border-green-300' : hasContract ? 'bg-white border-brand-orange shadow-md' : 'bg-gray-50 border-gray-200'}`}>
                     <div className="flex items-center justify-between mb-3">
                       <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full ${hasContract ? 'bg-brand-orange text-white' : 'bg-gray-300 text-gray-700'}`}>
-                        Step 2 (Second)
+                        Step 2
                       </span>
                       {hasKyc && (
                         <span className="inline-flex items-center gap-1 text-xs font-bold text-green-700">
@@ -356,16 +360,16 @@ export default function Investment({ user, profile }: InvestmentProps) {
                     </div>
                     <div className="flex items-center gap-2 mb-2">
                       <UserCheck className="w-5 h-5 text-brand-orange shrink-0" />
-                      <h4 className="font-bold text-gray-900 text-sm">SBH KYC Form</h4>
+                      <h4 className="font-bold text-gray-900 text-sm">KYC Form</h4>
                     </div>
                     <p className="text-xs text-gray-600 mb-4 flex-grow">
-                      Know Your Customer compliance form. Submitting KYC pops up the Joint-Venture Agreement.
+                      Compliance KYC document. Pops up Agreement upon submit.
                     </p>
                     <button
                       type="button"
                       onClick={() => navigate('/kyc?onboarding=true')}
                       disabled={!hasContract}
-                      className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                         hasKyc
                           ? 'bg-green-100 text-green-800 hover:bg-green-200'
                           : hasContract
@@ -373,16 +377,16 @@ export default function Investment({ user, profile }: InvestmentProps) {
                             : 'bg-gray-200 text-gray-500'
                       }`}
                     >
-                      <span>{!hasContract ? 'Complete Step 1 First' : hasKyc ? 'Review KYC Form' : 'Fill KYC Form'}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>{!hasContract ? 'Locked' : hasKyc ? 'Review' : 'Fill KYC'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
                   {/* Form 3: Joint-Venture Agreement */}
-                  <div className={`p-5 rounded-2xl border-2 transition-all flex flex-col ${hasAgreement ? 'bg-green-50/60 border-green-300' : hasKyc ? 'bg-white border-emerald-600 shadow-md' : 'bg-gray-50 border-gray-200'}`}>
+                  <div className={`p-4 rounded-2xl border-2 transition-all flex flex-col ${hasAgreement ? 'bg-green-50/60 border-green-300' : hasKyc ? 'bg-white border-emerald-600 shadow-md' : 'bg-gray-50 border-gray-200'}`}>
                     <div className="flex items-center justify-between mb-3">
                       <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full ${hasKyc ? 'bg-emerald-700 text-white' : 'bg-gray-300 text-gray-700'}`}>
-                        Step 3 (Final)
+                        Step 3
                       </span>
                       {hasAgreement && (
                         <span className="inline-flex items-center gap-1 text-xs font-bold text-green-700">
@@ -392,16 +396,16 @@ export default function Investment({ user, profile }: InvestmentProps) {
                     </div>
                     <div className="flex items-center gap-2 mb-2">
                       <FileSignature className="w-5 h-5 text-emerald-700 shrink-0" />
-                      <h4 className="font-bold text-gray-900 text-sm">Joint-Venture Agreement</h4>
+                      <h4 className="font-bold text-gray-900 text-sm">JV Agreement</h4>
                     </div>
                     <p className="text-xs text-gray-600 mb-4 flex-grow">
-                      6-page Salvage Biz-Hub Joint-Venture Farming Agreement to sign after KYC.
+                      6-page Joint-Venture Farming Agreement. Pops up Certificate on submit.
                     </p>
                     <button
                       type="button"
                       onClick={() => navigate('/agreement')}
                       disabled={!hasKyc}
-                      className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                         hasAgreement
                           ? 'bg-green-100 text-green-800 hover:bg-green-200'
                           : hasKyc
@@ -409,8 +413,44 @@ export default function Investment({ user, profile }: InvestmentProps) {
                             : 'bg-gray-200 text-gray-500'
                       }`}
                     >
-                      <span>{!hasKyc ? 'Complete KYC First' : hasAgreement ? 'Review / Sign Agreement' : 'Sign Agreement'}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>{!hasKyc ? 'Locked' : hasAgreement ? 'Review' : 'Sign Agreement'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  {/* Form 4: Certificate of Investment */}
+                  <div className={`p-4 rounded-2xl border-2 transition-all flex flex-col ${hasCertificate ? 'bg-green-50/60 border-green-300' : hasAgreement ? 'bg-white border-amber-500 shadow-md' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full ${hasAgreement ? 'bg-amber-600 text-white' : 'bg-gray-300 text-gray-700'}`}>
+                        Step 4 (Last)
+                      </span>
+                      {hasCertificate && (
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-green-700">
+                          <CheckCircle className="w-4 h-4" /> Issued
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Award className="w-5 h-5 text-amber-600 shrink-0" />
+                      <h4 className="font-bold text-gray-900 text-sm">Certificate</h4>
+                    </div>
+                    <p className="text-xs text-gray-600 mb-4 flex-grow">
+                      Final SBH Certificate of Investment to complete onboarding.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/certificate')}
+                      disabled={!hasAgreement}
+                      className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                        hasCertificate
+                          ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                          : hasAgreement
+                            ? 'bg-amber-600 text-white hover:bg-amber-700 shadow-md'
+                            : 'bg-gray-200 text-gray-500'
+                      }`}
+                    >
+                      <span>{!hasAgreement ? 'Locked' : hasCertificate ? 'Review' : 'Complete Certificate'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>

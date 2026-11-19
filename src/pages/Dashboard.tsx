@@ -20,9 +20,10 @@ import {
   Bell,
   LogOut,
   ChevronRight,
-  Plus,
-  DollarSign,
-  Wallet
+  Home,
+  Wallet,
+  Award,
+  DollarSign
 } from 'lucide-react';
 import { generateInvestmentPDF, generateReceiptPDF, generateTrainingPassPDF, generateConstitutionPDF, generateByeLawsPDF } from '../services/pdfService';
 import { format } from 'date-fns';
@@ -607,6 +608,31 @@ export default function Dashboard({ user, profile }: DashboardProps) {
                     >
                       <FileText className="w-4 h-4" />
                       <span>Open & Sign Agreement</span>
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Official Certificate of Investment (Form 4) */}
+                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col">
+                  <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center mb-6">
+                    <Award className="text-amber-600 w-6 h-6" />
+                  </div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <h3 className="font-bold text-gray-900">4. Investment Certificate</h3>
+                    <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full uppercase">
+                      Form 4 • Final
+                    </span>
+                  </div>
+                  <p className="text-gray-500 text-sm mb-6 flex-grow">
+                    Official Salvage Biz-Hub Nig Ltd Certificate of Investment issued after completing the Agreement.
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <Link 
+                      to="/certificate"
+                      className="w-full bg-amber-600 text-white py-3 rounded-xl font-bold hover:bg-amber-700 transition-all flex items-center justify-center space-x-2 shadow-md"
+                    >
+                      <Award className="w-4 h-4" />
+                      <span>Open Certificate Form</span>
                     </Link>
                   </div>
                 </div>
